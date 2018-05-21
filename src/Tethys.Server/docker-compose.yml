@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  tethys.webapi:
+    image: tethyswebapi
+    build:
+      context: .
+      dockerfile: Tethys.WebApi/Dockerfile

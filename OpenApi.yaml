@@ -1,0 +1,165 @@
+swagger: "2.0"
+info:
+  description: "This is the Open API definition of `Tethys` - REST Mock Server. More info at [Tethys github repository](http://github.com/saturn72/Tethys)"
+  version: "1.0.0"
+  title: "Tethys REST Mock Server"
+  termsOfService: "http://github.com/saturn72/Tethys/terms/"
+  contact:
+    email: "roi@saturn72.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "petstore.swagger.io"
+basePath: "/"
+tags:
+- name: "setup"
+  description: "Setup API call sequence"
+schemes:
+- "http"
+paths:
+  /setup/http-call:
+    post:
+      tags: 
+      - "setup"
+      summary: "Defines expected incoming HTTP requests and corrosponding response"
+      description: ""
+      operationId: "addHttpCall"
+      responses:
+        200:
+          description: OK
+        404:
+          description: "Bad or missing data"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Setup object contains the next incoming request and the outgoing response"
+        required: true
+        schema:
+          $ref: "#/definitions/HttpCall"
+definitions:
+  HttpCall:
+    type: "object"
+    properties:
+      request:
+        $ref: "#/definitions/Request"
+      response:
+        $ref: "#/definitions/Response"
+  Request:
+    type: "object"
+    description: "Data of expected incoming HTTP request"
+    properties:
+      resource:
+        type: "string"
+        description: "API resource referenced by http call"
+      query:
+        type: "string"
+        description: "http call query parameters sent used in http request"
+      httpMethod: 
+        $ref: "#/definitions/HttpMethod"
+      body:
+        type: "string"
+        description: "json representation of the body sent in http request"
+    required:
+      - "resource"
+      - "httpMethod"
+  Response:
+    type: "object"
+    description: "Details of outgoing HTTP response"
+    properties:
+      httpStatusCode: 
+        $ref: "#/definitions/HttpStatusCode"
+      body:
+        type: "string"
+        description: "json representation of the body sent in http response"  
+    required:
+      - "httpStatusCode"
+  HttpMethod:
+    type: "string"
+    description: "Http method type"
+    enum: 
+      - "GET"
+      - "HEAD"
+      - "POST"
+      - "PUT"
+      - "DELETE"
+      - "CONNECT"
+      - "OPTIONS"
+      - "TRACE"
+      - "PATCH"
+  HttpStatusCode:
+    type: "integer"
+    format: "int16"
+    enum:
+      - 100
+      - 101
+      - 102
+      - 200
+      - 201
+      - 202
+      - 203
+      - 204
+      - 205
+      - 206
+      - 207
+      - 208
+      - 226
+      - 300
+      - 301
+      - 302
+      - 303
+      - 304
+      - 305
+      - 306
+      - 307
+      - 308
+      - 400
+      - 401
+      - 402
+      - 403
+      - 404
+      - 405
+      - 406
+      - 407
+      - 408
+      - 409
+      - 410
+      - 411
+      - 412
+      - 413
+      - 414
+      - 415
+      - 416
+      - 417
+      - 418
+      - 420
+      - 422
+      - 423
+      - 424
+      - 425
+      - 426
+      - 428
+      - 429
+      - 431
+      - 444
+      - 449
+      - 450
+      - 451
+      - 499 
+      - 500
+      - 501
+      - 502
+      - 503
+      - 504
+      - 505
+      - 506
+      - 507
+      - 508
+      - 509
+      - 510
+      - 511
+      - 598
+      - 599
+ 
+externalDocs:
+  description: "Find out more about Tethys"
+  url: "http://github.com/saturn72/tethys"
