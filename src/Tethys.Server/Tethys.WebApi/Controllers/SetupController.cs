@@ -5,7 +5,7 @@ using Tethys.WebApi.Models;
 
 namespace Tethys.WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route(Consts.SetupControllerRoute)]
     public class SetupController : Controller
     {
         private readonly HttpCallRepository _httpCallRepository;
