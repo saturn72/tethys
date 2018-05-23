@@ -22,6 +22,7 @@ namespace Tethys.WebApi.DbModel.Repositories.LiteDb
 
         public void Insert(HttpCall httpCall)
         {
+            httpCall.WasExecuted = false;
             _liteDbUnitOfWork.Insert(httpCall);
         }
         public IEnumerable<HttpCall> GetBy(ISpecification<HttpCall> spec)

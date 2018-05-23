@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
@@ -34,7 +36,8 @@ namespace Tethys.WebApi.Controllers
 
             var httpCall = await Task.FromResult(_httpCallRepository.GetNextHttpCall());
 
-            //AssertRequest(httpcal)
+            ReportViaWebSocket(actualRequest, httpCall.Request);
+
             //TODO: send via web socket
             if(httpCall == null)
                 return new BadRequestObjectResult(new
@@ -53,6 +56,20 @@ namespace Tethys.WebApi.Controllers
             return httpCall.Response.ToHttpResponseMessage();
         }
 
+        private void ReportViaWebSocket(Request actualRequest, Request expectedRequest)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("Incoming Http Request:");
+            sb.AppendLine(actualRequest.ToReportFormat().Replace("\n", "\t\n"));
+            sb.AppendLine("Expected Http Request:");
+            sb.AppendLine(expectedRequest.ToReportFormat().Replace("\n", "\t\n"));
+
+            sb.AppendLine("Start comparing incoming request");
+
+            var report = sb.ToString();
+            throw new System.NotImplementedException();
+        }
+
         private async Task<Request> BuildActualRequest()
         {
             string body;
@@ -62,11 +79,12 @@ namespace Tethys.WebApi.Controllers
             }
 
             var headerDictionary = Request.Headers.ToDictionary(s => s.Key, s => s.Value);
+            var httpContextItems = Request.HttpContext.Items;
             return new Request
             {
-                HttpMethod = (HttpMethod)Request.HttpContext.Items[Consts.OriginalRequestHttpMethod],
-                Resource = Request.HttpContext.Items[Consts.OriginalRequestPath].ToString(),
-                Query = Request.HttpContext.Items[Consts.OriginalRequestQuery].ToString(),
+                HttpMethod = Enum.Parse<HttpMethod>(httpContextItems[Consts.OriginalRequestHttpMethod].ToString(),true),
+                Resource = httpContextItems[Consts.OriginalRequestPath].ToString(),
+                Query = httpContextItems[Consts.OriginalRequestQuery].ToString(),
                 Body = body,
                 Headers = headerDictionary as IDictionary<string, string>
             };
