@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Tethys.WebApi.DbModel.Repositories;
 using Tethys.WebApi.Models;
 
 namespace Tethys.WebApi.Controllers
@@ -8,9 +9,9 @@ namespace Tethys.WebApi.Controllers
     [Route(Consts.SetupControllerRoute)]
     public class SetupController : Controller
     {
-        private readonly HttpCallRepository _httpCallRepository;
+        private readonly IHttpCallRepository _httpCallRepository;
 
-        public SetupController(HttpCallRepository httpCallRepository)
+        public SetupController(IHttpCallRepository httpCallRepository)
         {
             _httpCallRepository = httpCallRepository;
         }

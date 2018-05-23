@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
+using Tethys.WebApi.DbModel.Repositories;
+using Tethys.WebApi.DbModel.Repositories.LiteDb;
 
 namespace Tethys.WebApi
 {
@@ -32,7 +34,9 @@ namespace Tethys.WebApi
                 if (File.Exists(xmlPath))
                     c.IncludeXmlComments(xmlPath);
             });
-            services.AddSingleton<HttpCallRepository>();
+            var dbName = Configuration["liteDb:name"];
+            services.AddTransient(sr => new UnitOfWorkLiteDb(dbName));
+            services.AddTransient<IHttpCallRepository, HttpCallRepositoryLiteDb>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

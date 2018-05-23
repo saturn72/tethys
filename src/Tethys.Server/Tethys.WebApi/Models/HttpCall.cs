@@ -9,5 +9,6 @@ namespace Tethys.WebApi.Models
         [Required] public Response Response { get; set; }
         public long Id { get; set; }
         public bool WasExecuted { get; set; }
+
     }
 }
