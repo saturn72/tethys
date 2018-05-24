@@ -5,8 +5,8 @@
 </head>
 <body>
 
-<h1>Tethys User dashboard</h1>
-<h2>User ID</h2>
+    <h1>Tethys User dashboard</h1>
+    <h2>User ID</h2>
     <input type="number" name="user-id" placeholder="User id goes here" />
     <br />
     <br />
@@ -31,16 +31,21 @@
             console.log("get response from server");
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.onreadystatechange = function () {
-                if (xmlHttp.status == 404) {
-                    userDetails.style.backgroundColor = "#ffa500";
-                }
+                var resStatus = xmlHttp.status;
+                var bgColor = resStatus >= 400 && resStatus < 500
+                    ? "#ffa500"
+                    : resStatus >= 200 && resStatus < 300
+                        ? "#add8e6"
+                        : "#fff";
+
+                userDetails.style.backgroundColor = bgColor;
                 console.log(xmlHttp.responseText);
                 userDetails.value = xmlHttp.responseText;
 
             };
             xmlHttp.open("GET", getUrl);
             xmlHttp.timeout = 1000;
-            xmlHttp.ontimeout = function() {
+            xmlHttp.ontimeout = function () {
                 userDetails.style.backgroundColor = "#ffc0cb";
                 userDetails.value = "Timeout error message";
             }

@@ -20,6 +20,7 @@ namespace Tethys.Samples
             foreach (var cdp in Process.GetProcessesByName("chromedriver.exe"))
                 cdp.Kill();
         }
+
         [Fact]
         public async Task NotFoundExample()
         {
@@ -112,7 +113,7 @@ namespace Tethys.Samples
                 //what the server should return
                 Response = new
                 {
-                    Delay = 5000,
+                    Delay = 3000,
                     HttpstatusCode = StatusCodes.Status200OK,
                 }
             };
@@ -153,6 +154,76 @@ namespace Tethys.Samples
                 //assert message
                 var actualUserDetails = userDetailsElem.GetAttribute("value");
                 Assert.Contains("Timeout error message", actualUserDetails);
+            }
+        }
+
+
+        [Fact]
+        public async Task GetUserExample()
+        {
+            //start tethys.webapi process if required
+
+            HttpClient testHttpClient = new HttpClient()
+            {
+                BaseAddress = new Uri("http://localhost:4880"), //set the server Uri
+            };
+
+            //TODO: listen to server output via web socket
+
+            const int userId = 1;
+            var expUserDetails = "{\'first_name\":\"Roi\",\"last_name\":\"shabtai\"}";
+            object httpCall = new
+            {
+                //Expected incoming request
+                Request = new
+                {
+                    Resource = "/api/users/" + userId,
+                    HttpMethod = "GET"
+                },
+                //what the server should return
+                Response = new
+                {
+                    HttpstatusCode = StatusCodes.Status200OK,
+                    Body = expUserDetails,
+                }
+            };
+
+            var content = JsonConvert.SerializeObject(httpCall);
+            var contentBytes = Encoding.UTF8.GetBytes(content);
+            //send seup request to tethys 
+            var body = new ByteArrayContent(contentBytes);
+            body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var setupHttpRequest =
+                new HttpRequestMessage(HttpMethod.Post, new Uri(testHttpClient.BaseAddress, "tethys/api/setup"))
+                {
+                    Content = body
+                };
+            var setupResponse = await testHttpClient.SendAsync(setupHttpRequest);
+
+            //Start tests
+            var co = new ChromeOptions();
+            co.AddArgument("--start-maximized");
+
+            var indexUri = new System.Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
+            using (var driver = new ChromeDriver(".", co))
+            {
+                driver.Navigate().GoToUrl(indexUri.AbsoluteUri);
+                var userIdElem = driver.FindElementByName("user-id");
+                userIdElem.SendKeys("1");
+
+                var submitElem = driver.FindElementByName("submit");
+                submitElem.Click();
+                Thread.Sleep(1000); //wait for timeout
+                var userDetailsElem = driver.FindElementByName("user-details");
+
+                //assert bg color
+                var userDetailsBgColor = userDetailsElem.GetCssValue("background-color");
+                Assert.Equal("rgba(173, 216, 230, 1)", userDetailsBgColor);
+
+                //assert message
+                var actualUserDetails = userDetailsElem.GetAttribute("value");
+                Assert.Contains(expUserDetails, actualUserDetails);
             }
         }
     }
