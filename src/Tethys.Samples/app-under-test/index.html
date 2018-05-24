@@ -1,0 +1,42 @@
+﻿<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Tethy Sample Application</title>
+</head>
+<body>
+
+<h1>Tethys User dashboard</h1>
+<h2>User ID</h2>
+    <input type="number" name="user-id" placeholder="User id goes here" />
+    <br />
+    <br />
+    <h2>User Details</h2>
+<textarea name="user-details" readonly placeholder="No User was fetched yet..." rows="10" cols="100"></textarea>
+    <br />
+    <br />
+    <input name="submit" type="submit" onclick="getUserData()" value="Get User Details" />
+
+    <script>
+
+        function getUserData() {
+            var userId = document.getElementsByName("user-id")[0].value;
+            var getUrl = "http://localhost:4880/api/users/" + userId;
+
+            console.log("Would get user data from: " + getUrl);
+
+            console.log("get response from server");
+            var userDetails = document.getElementsByName("user-details")[0];
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function () {
+                console.log(xmlHttp.responseText);
+                userDetails.value = xmlHttp.responseText;
+
+            };
+            xmlHttp.open("GET", getUrl);
+            xmlHttp.send(null);
+        }
+    </script>
+
+
+</body>
+</html>

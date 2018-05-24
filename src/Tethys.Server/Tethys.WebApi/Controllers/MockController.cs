@@ -32,10 +32,7 @@ namespace Tethys.WebApi.Controllers
         public async Task<IActionResult> Get()
         {
             var actualRequest = await BuildActualRequest();
-            
-
             var httpCall = await Task.FromResult(_httpCallRepository.GetNextHttpCall());
-
             ReportViaWebSocket(actualRequest, httpCall.Request);
 
             //TODO: send via web socket
@@ -67,7 +64,7 @@ namespace Tethys.WebApi.Controllers
             sb.AppendLine("Start comparing incoming request");
 
             var report = sb.ToString();
-            throw new System.NotImplementedException();
+           // throw new System.NotImplementedException("//Publish to websocket");
         }
 
         private async Task<Request> BuildActualRequest()

@@ -25,6 +25,8 @@ namespace Tethys.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddCors();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info {Title = "Tethys API", Version = "v1"});
@@ -54,6 +56,8 @@ namespace Tethys.WebApi
                 c.RoutePrefix = "tethys/swagger";
                 c.SwaggerEndpoint(Consts.SwaggerEndPointPrefix + "/v1/swagger.json", "Tethys API");
             });
+
+            app.UseCors(builder => builder.AllowAnyOrigin());
             app.UseMvc();
         }
     }
