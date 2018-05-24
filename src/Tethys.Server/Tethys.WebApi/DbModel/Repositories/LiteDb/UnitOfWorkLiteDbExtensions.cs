@@ -1,7 +1,16 @@
-﻿namespace Tethys.WebApi.DbModel.Repositories.LiteDb
+﻿using System.Collections.Generic;
+using LiteDB;
+
+namespace Tethys.WebApi.DbModel.Repositories.LiteDb
 {
     public static class UnitOfWorkLiteDbExtensions
     {
+
+        public static IEnumerable<TQueryResult> Query<TQueryResult>(this UnitOfWorkLiteDb unitOfWorkLiteDb, ISpecification<TQueryResult> spec)
+        {
+            return unitOfWorkLiteDb.Query(spec.Criteria);
+        }
+
         public static void Insert<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb, TDomainModel model)
         {
 

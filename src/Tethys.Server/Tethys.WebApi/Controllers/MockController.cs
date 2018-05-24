@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
@@ -50,7 +51,12 @@ namespace Tethys.WebApi.Controllers
                     }
                 });
             httpCall.WasHandled = true;
+            httpCall.HandledOnUtc = DateTime.UtcNow;
+            
             _httpCallRepository.Update(httpCall);
+
+            //delay before response
+            Thread.Sleep(httpCall.Response.Delay);
             return httpCall.Response.ToHttpResponseMessage();
         }
 

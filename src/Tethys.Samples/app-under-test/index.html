@@ -19,13 +19,16 @@
     <script>
 
         function getUserData() {
+            var userDetails = document.getElementsByName("user-details")[0];
+
+            userDetails.setAttribute("background-color", "#fff");
+
             var userId = document.getElementsByName("user-id")[0].value;
             var getUrl = "http://localhost:4880/api/users/" + userId;
 
             console.log("Would get user data from: " + getUrl);
 
             console.log("get response from server");
-            var userDetails = document.getElementsByName("user-details")[0];
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.onreadystatechange = function () {
                 console.log(xmlHttp.responseText);
@@ -33,6 +36,12 @@
 
             };
             xmlHttp.open("GET", getUrl);
+            xmlHttp.timeout = 1000;
+            xmlHttp.ontimeout = function() {
+                userDetails.style.backgroundColor = "#ffc0cb";
+                userDetails.value = "Timeout error message";
+            }
+
             xmlHttp.send(null);
         }
     </script>

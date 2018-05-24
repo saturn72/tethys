@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using LiteDB;
 
 namespace Tethys.WebApi.DbModel.Repositories.LiteDb
@@ -9,6 +10,7 @@ namespace Tethys.WebApi.DbModel.Repositories.LiteDb
         #region Fields
 
         private readonly string _dbName;
+        private readonly object _lockObject = new object();
 
         #endregion
 
@@ -25,15 +27,18 @@ namespace Tethys.WebApi.DbModel.Repositories.LiteDb
         {
             using (var db = new LiteDatabase(_dbName))
             {
-                command(db);
+                lock (_lockObject)
+                {
+                    command(db);
+                }
             }
         }
 
-        public IEnumerable<TQueryResult> Query<TQueryResult>(ISpecification<TQueryResult> spec)
+        public IEnumerable<TQueryResult> Query<TQueryResult>(Expression<Func<TQueryResult, bool>> criteria)
         {
             using (var db = new LiteDatabase(_dbName))
             {
-                return db.GetCollection<TQueryResult>().Find(spec.Criteria);
+                return db.GetCollection<TQueryResult>().Find(criteria);
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Tethys.WebApi.Models;
 
 namespace Tethys.WebApi.DbModel.Repositories.LiteDb
@@ -33,6 +34,17 @@ namespace Tethys.WebApi.DbModel.Repositories.LiteDb
         public void Update(HttpCall httpCall)
         {
             _liteDbUnitOfWork.Update(httpCall);
+        }
+
+        public void FlushUnhandled()
+        {
+            var notHandledOrFlushed = _liteDbUnitOfWork.Query<HttpCall>(hc => !hc.WasHandled && !hc.Flushed );
+            foreach (var nf in notHandledOrFlushed)
+            {
+                nf.FlushedOnUtc = DateTime.UtcNow;
+                nf.Flushed = true;
+                _liteDbUnitOfWork.Update(nf);
+            }
         }
     }
 }

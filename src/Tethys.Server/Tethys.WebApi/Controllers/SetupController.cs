@@ -32,6 +32,7 @@ namespace Tethys.WebApi.Controllers
                     data = httpCall
                 });
 
+            await Task.Run(() => _httpCallRepository.FlushUnhandled());
             await Task.Run(() => _httpCallRepository.Insert(httpCall));
             return new ObjectResult(httpCall) {StatusCode = StatusCodes.Status201Created};
         }
