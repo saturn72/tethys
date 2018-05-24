@@ -32,7 +32,7 @@ namespace Tethys.Samples
             //TODO: listen to server output via web socket
 
             const int userId = 1;
-            var expectedUserDetails = "{id:\'" + userId + "\',message:\'user not found\'}";
+            var expectedUserDetails = "{userId:\'" + userId + "\',message:\'user id not found\'}";
             object httpCall = new
             {
                 //Expected incoming request

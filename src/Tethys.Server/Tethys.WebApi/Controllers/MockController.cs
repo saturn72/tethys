@@ -49,7 +49,8 @@ namespace Tethys.WebApi.Controllers
                         body = actualRequest.Body
                     }
                 });
-
+            httpCall.WasHandled = true;
+            _httpCallRepository.Update(httpCall);
             return httpCall.Response.ToHttpResponseMessage();
         }
 

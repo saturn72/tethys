@@ -7,5 +7,6 @@ namespace Tethys.WebApi.DbModel.Repositories
     {
         void Insert(HttpCall httpCall);
         IEnumerable<HttpCall> GetBy(ISpecification<HttpCall> spec);
+        void Update(HttpCall httpCall);
     }
 }

@@ -11,6 +11,16 @@
                 col.Insert(model);
             });
         }
+
+        public static void Update<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb, TDomainModel model)
+        {
+            unitOfWorkLiteDb.Command(db =>
+                {
+                    var col = db.GetCollection<TDomainModel>();
+                    col.Update(model);
+                });
+        }
+
         /*    public static void DeleteById<TDomainModel>(this UnitOfWorkLiteDb UnitOfWorkLiteDb, long id)
                 where TDomainModel 
             {
@@ -48,16 +58,7 @@
 
 
 
-            public static void Update<TDomainModel>(this UnitOfWorkLiteDb UnitOfWorkLiteDb, TDomainModel model)
-                where TDomainModel : DomainModelBase<long>
-            {
-
-                UnitOfWorkLiteDb.Command(db => GetCollection<TDomainModel>(db).Update(model)
-               //var dbModel = col.FindById(model.Id);
-               //CopyAllProperties(source: model, destination: dbModel);
-               //col.Update(dbModel);
-               );
-            }
+           
 
             private static void CopyAllProperties<TDomainModel>(TDomainModel source, */
     }
