@@ -78,8 +78,13 @@ namespace Tethys.Samples
                 submitElem.Click();
 
                 var userDetailsElem = driver.FindElementByName("user-details");
+
                 var actualUserDetails = userDetailsElem.GetAttribute("value");
                 Assert.Equal(expectedUserDetails, actualUserDetails);
+
+                //assert bg color
+                var userDetailsBgColor = userDetailsElem.GetCssValue("background-color");
+                Assert.Equal("rgba(255, 165, 0, 1)", userDetailsBgColor);
             }
         }
 

@@ -31,6 +31,9 @@
             console.log("get response from server");
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.onreadystatechange = function () {
+                if (xmlHttp.status == 404) {
+                    userDetails.style.backgroundColor = "#ffa500";
+                }
                 console.log(xmlHttp.responseText);
                 userDetails.value = xmlHttp.responseText;
 
