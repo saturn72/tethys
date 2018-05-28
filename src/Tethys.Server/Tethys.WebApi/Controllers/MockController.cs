@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Tethys.WebApi.DbModel.Repositories;
 using Tethys.WebApi.Models;
+using Tethys.WebApi.WebSockets;
 
 namespace Tethys.WebApi.Controllers
 {
@@ -69,9 +70,7 @@ namespace Tethys.WebApi.Controllers
             sb.AppendLine(expectedRequest.ToReportFormat().Replace("\n", "\t\n"));
 
             sb.AppendLine("Start comparing incoming request");
-
-            var report = sb.ToString();
-           // throw new System.NotImplementedException("//Publish to websocket");
+            WebSocketOutlet.AddToBuffer(sb.ToString());
         }
 
         private async Task<Request> BuildActualRequest()
