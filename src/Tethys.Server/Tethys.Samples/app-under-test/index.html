@@ -1,9 +1,12 @@
 ﻿<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="utf-8" />
     <title>Tethy Sample Application</title>
 </head>
 <body>
+
+    <script src="./lib/signalr.min.js"></script>
 
     <h1>Tethys User dashboard</h1>
     <h2>User ID</h2>
@@ -12,6 +15,12 @@
     <br />
     <h2>User Details</h2>
 <textarea name="user-details" readonly placeholder="No User was fetched yet..." rows="10" cols="100"></textarea>
+    <br />
+    <br />
+    <input name="submit" type="submit" onclick="getUserData()" value="Get User Details" />
+
+    <h2>Push Notifications from server</h2>
+<textarea name="push-notify" readonly rows="10" cols="100"></textarea>
     <br />
     <br />
     <input name="submit" type="submit" onclick="getUserData()" value="Get User Details" />
@@ -52,8 +61,29 @@
 
             xmlHttp.send(null);
         }
+
+        const notifyTextArea = document.getElementsByName("push-notify")[0];
+
+        function updateStatus(message) {
+            const appendto = notifyTextArea.value == "" ? notifyTextArea.value : notifyTextArea.value + '\n';
+            notifyTextArea.value = appendto + message;
+        }
+
+        document.addEventListener("DOMContentLoaded",
+            function (event) {
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl("http://localhost:4880/ws")
+                    .build();
+                updateStatus('Start receiving notifications...');
+                notifyTextArea.style.backgroundColor = "#bfe6bf";
+
+                connection.on("ReceiveMessage", (message) => {
+                    updateStatus(message);
+                    notifyTextArea.scrollTop = notifyTextArea.scrollHeight;
+                });
+
+                connection.start().catch(err => console.error(err.toString()));
+            });
     </script>
-
-
 </body>
 </html>

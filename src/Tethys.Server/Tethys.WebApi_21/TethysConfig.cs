@@ -3,12 +3,10 @@
     public class TethysConfig
     {
         public short HttpPort { get; set; }
-        public string WebSocketSuffix { get; set; }
-        public static TethysConfig Default =>
+        public static TethysConfig Default => 
             new TethysConfig
             {
-                HttpPort = 4880,
-                WebSocketSuffix = "ws"
+                HttpPort = 4880
             };
     }
 }

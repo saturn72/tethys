@@ -64,7 +64,7 @@ namespace Tethys.WebApi.Controllers
             return httpCall.Response.ToHttpResponseMessage();
         }
 
-        [HttpPost(Consts.MockControllerRoute + "/push")]
+        [HttpPost("push")]
         public async Task<IActionResult> Push([FromBody]IEnumerable<PushNotification> notifications)
         {
             foreach (var notification in notifications)

@@ -3,7 +3,6 @@ using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +25,7 @@ namespace Tethys.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc();
             services.AddCors();
             services.AddSignalR(options => options.EnableDetailedErrors = true);
 
@@ -45,16 +44,11 @@ namespace Tethys.WebApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
-            //else
-            //{
-            //    app.UseHsts();
-            //}
+
             var rewriteOptions = new RewriteOptions();
             rewriteOptions//.AddRewrite(@"^(?i)(?!)tethys/(.*)", "mock/$1", true)
                 .Add(RedirectRules.RedirectRequests);
@@ -72,13 +66,10 @@ namespace Tethys.WebApi
                 c.SwaggerEndpoint(Consts.SwaggerEndPointPrefix + "/v1/swagger.json", "Tethys API");
             });
 
-            var wsSuffix = Configuration["tethysConfig:webSocketSuffix"];
             app.UseSignalR(router =>
             {
-                router.MapHub<MockHub>("/" + wsSuffix);
+                router.MapHub<MockHub>("/ws");
             });
-
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
     }
