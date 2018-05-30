@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using ServiceStack.Text;
+using Tethys.TestFramework.Commands;
 using Xunit.Abstractions;
 
 namespace Tethys.TestFramework
@@ -64,7 +65,7 @@ namespace Tethys.TestFramework
             await SendPostRequestToTethys(httpCall, "setup");
         }
 
-        protected void SendPushNotifications(IEnumerable<object> pushNotifications)
+        protected void SendPushNotifications(IEnumerable<PushNotification> pushNotifications)
         {
             SendPostRequestToTethys(pushNotifications, "mock/push");
         }

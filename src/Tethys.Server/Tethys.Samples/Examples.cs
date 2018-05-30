@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using OpenQA.Selenium;
 using Tethys.TestFramework;
+using Tethys.TestFramework.Commands;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,21 +17,7 @@ namespace Tethys.Samples
     public class Examples : WebTestBase
     {
         private static readonly Uri AutUri = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
-        private static ClientWebSocket _clientWebSocket;
         private const int Buffersize = 1024 * 4;
-        //public Examples()
-        //{
-        //    //_outputHelper = outputHelper;
-        //    ////for test purpose only
-
-
-        //    //_clientWebSocket = new ClientWebSocket();
-        //    //_clientWebSocket.ConnectAsync(new Uri("ws://" + TethysServerUrl + "/tethys/ws"), CancellationToken.None);
-
-        //    //_cts = new CancellationTokenSource();
-        //    //var thread = new Thread(async () => await LogIncomingWebSocketData(_clientWebSocket, _cts.Token));
-        //    //thread.Start();
-        //}
 
         [Fact]
         public async Task NotFoundExample()
@@ -157,31 +145,16 @@ namespace Tethys.Samples
         }
 
         [Fact]
-        public async Task ReceivePushNotifications()
+        public void ReceiveAsyncPushNotifications()
         {
-            const int userId = 1;
-            var expUserDetails = "{\'first_name\":\"Roi\",\"last_name\":\"shabtai\"}";
-            object httpCall = new
-            {
-                //Expected incoming request
-                Request = new
-                {
-                    Resource = "/api/users/" + userId,
-                    HttpMethod = "GET"
-                },
-                //what the server should return
-                Response = new
-                {
-                    HttpstatusCode = StatusCodes.Status200OK,
-                    Body = expUserDetails,
-                }
-            };
-            await MockHttpRequest(httpCall);
-            var pushNotifications = new List<object>();
+            var indexUri = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
+            WebDriver.Navigate().GoToUrl(indexUri.AbsoluteUri);
+
+            var pushNotifications = new List<PushNotification>();
             var random = new Random(123);
             for (var i = 0; i < 5; i++)
                 pushNotifications.Add(
-                    new
+                    new PushNotification
                     {
                         Key = "ReceiveMessage",
                         Delay = random.Next(150, 3000),
@@ -189,28 +162,58 @@ namespace Tethys.Samples
                     });
             SendPushNotifications(pushNotifications);
 
+
+            Thread.Sleep(pushNotifications.Select(n => n.Delay).Sum());
             //Start tests
-            var indexUri = new System.Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
-            WebDriver.Navigate().GoToUrl(indexUri.AbsoluteUri);
-            var userIdElem = WebDriver.FindElementByName("user-id");
-            userIdElem.SendKeys("1");
-
-            var submitElem = WebDriver.FindElementByName("submit");
-            submitElem.Click();
-            Thread.Sleep(1000); //wait for timeout
-            var userDetailsElem = WebDriver.FindElementByName("user-details");
-
-            //assert bg color
-            var userDetailsBgColor = userDetailsElem.GetCssValue("background-color");
-            Assert.Equal("rgba(173, 216, 230, 1)", userDetailsBgColor);
-
-            //assert message
-            var actualUserDetails = userDetailsElem.GetAttribute("value");
-            Assert.Contains(expUserDetails, actualUserDetails);
+            var notifications = WebDriver.FindElementByName("push-notify");
+            var value = notifications.GetAttribute("value");
+            Assert.Contains("this is notification #", value);
         }
 
+        [Fact]
+        public void ReceiveMultiAsyncPushNotifications()
+        {
+            var indexUri = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
+            WebDriver.Navigate().GoToUrl(indexUri.AbsoluteUri);
+
+            var pushNotifications1 = new List<PushNotification>();
+            var random = new Random(123);
+            for (var i = 0; i < 5; i++)
+                pushNotifications1.Add(
+                    new PushNotification
+                    {
+                        Key = "ReceiveMessage",
+                        Delay = random.Next(150, 1000),
+                        Body = "Type 1 notification #" + i
+                    });
+            SendPushNotifications(pushNotifications1);
+
+            var pushNotifications2 = new List<PushNotification>();
+            for (var i = 0; i < 5; i++)
+                pushNotifications2.Add(
+                    new PushNotification
+                    {
+                        Key = "ReceiveMessageType2",
+                        Delay = random.Next(150, 3000),
+                        Body = "Type 2 notification #" + i
+                    });
+            SendPushNotifications(pushNotifications2);
+
+            var sleepTime = Math.Max(pushNotifications1.Select(n => n.Delay).Sum(),
+                pushNotifications2.Select(n => n.Delay).Sum());
+            Thread.Sleep(sleepTime);
+            //Start tests
+            var notifications1 = WebDriver.FindElementByName("push-notify");
+            var value1 = notifications1.GetAttribute("value");
+            Assert.Contains("Type 1 notification #", value1);
+
+            var notifications2 = WebDriver.FindElementByName("push-notify-2");
+            var value2 = notifications2.GetAttribute("value");
+            Assert.Contains("Type 2 notification #", value2);
+        }
+
+
         private StringBuilder _webSocketLog;
-        private readonly CancellationTokenSource _cts;
 
         private async Task LogIncomingWebSocketData(WebSocket clientWebSocket, CancellationToken cToken)
         {
@@ -232,16 +235,6 @@ namespace Tethys.Samples
                     //                    _outputHelper.WriteLine(inMessage);
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            Thread.Sleep(10000);
-            //Dispose ClientWebsockets
-            _cts.Cancel();
-            _clientWebSocket.Abort();
-            _clientWebSocket.Dispose();
-            base.Dispose();
         }
     }
 }

@@ -20,11 +20,24 @@
     <input name="submit" type="submit" onclick="getUserData()" value="Get User Details" />
 
     <h2>Push Notifications from server</h2>
-<textarea name="push-notify" readonly rows="10" cols="100"></textarea>
-    <br />
-    <br />
-    <input name="submit" type="submit" onclick="getUserData()" value="Get User Details" />
-
+    <table>
+        <tr>
+            <th>
+                <h3>Notification Type 1</h3>
+            </th>
+            <th>
+                <h3>Notification Type 2</h3>
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <textarea name="push-notify" readonly rows="10" cols="100"></textarea>
+            </td>
+            <td>
+                <textarea name="push-notify-2" readonly rows="10" cols="100"></textarea>
+            </td>
+        </tr>
+    </table>
     <script>
 
         function getUserData() {
@@ -62,11 +75,12 @@
             xmlHttp.send(null);
         }
 
-        const notifyTextArea = document.getElementsByName("push-notify")[0];
+        const notifyTextArea1 = document.getElementsByName("push-notify")[0];
+        const notifyTextArea2 = document.getElementsByName("push-notify-2")[0];
 
-        function updateStatus(message) {
-            const appendto = notifyTextArea.value == "" ? notifyTextArea.value : notifyTextArea.value + '\n';
-            notifyTextArea.value = appendto + message;
+        function updateStatus(message, textArea) {
+            const appendto = !textArea.value || textArea.value === "" ? textArea.value : textArea.value + '\n';
+            textArea.value = appendto + JSON.stringify(message);
         }
 
         document.addEventListener("DOMContentLoaded",
@@ -74,12 +88,19 @@
                 const connection = new signalR.HubConnectionBuilder()
                     .withUrl("http://localhost:4880/ws")
                     .build();
-                updateStatus('Start receiving notifications...');
-                notifyTextArea.style.backgroundColor = "#bfe6bf";
+                updateStatus('Start receiving notifications...', notifyTextArea1);
+                notifyTextArea1.style.backgroundColor = "#bfe6bf";
+                updateStatus('Start receiving notifications...', notifyTextArea2);
+                notifyTextArea2.style.backgroundColor = "#bfe6bf";
 
                 connection.on("ReceiveMessage", (message) => {
-                    updateStatus(message);
-                    notifyTextArea.scrollTop = notifyTextArea.scrollHeight;
+                    updateStatus(message, notifyTextArea1);
+                    notifyTextArea1.scrollTop = notifyTextArea1.scrollHeight;
+                });
+
+                connection.on("ReceiveMessageType2", (message) => {
+                    updateStatus(message, notifyTextArea2);
+                    notifyTextArea2.scrollTop = notifyTextArea2.scrollHeight;
                 });
 
                 connection.start().catch(err => console.error(err.toString()));

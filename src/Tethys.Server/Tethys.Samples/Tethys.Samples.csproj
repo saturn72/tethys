@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Tethys.Server\Tethys.TestFramework\Tethys.TestFramework.csproj" />
+    <ProjectReference Include="..\Tethys.TestFramework\Tethys.TestFramework.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +32,18 @@
   <ItemGroup>
     <None Update="app-under-test\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="app-under-test\lib\signalr.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="app-under-test\lib\signalr.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="app-under-test\lib\signalr.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="app-under-test\lib\signalr.min.js.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

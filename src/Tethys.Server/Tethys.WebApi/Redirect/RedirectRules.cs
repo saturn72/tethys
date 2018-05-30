@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Rewrite;
 using Tethys.WebApi.Models;
 
-namespace Tethys.WebApi
+namespace Tethys.WebApi.Redirect
 {
     public class RedirectRules
     {

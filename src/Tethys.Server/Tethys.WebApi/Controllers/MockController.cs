@@ -65,14 +65,18 @@ namespace Tethys.WebApi.Controllers
         }
 
         [HttpPost("push")]
-        public async Task<IActionResult> Push([FromBody]IEnumerable<PushNotification> notifications)
+        public IActionResult Push([FromBody]IEnumerable<PushNotification> notifications)
         {
-            foreach (var notification in notifications)
+            Task.Run(() =>
             {
-                Thread.Sleep(notification.Delay);
-                await _mockHub.Clients.All.SendAsync(notification.Key, notification.Body);
-            }
-            return Ok();
+                foreach (var notification in notifications)
+                {
+                    Thread.Sleep(notification.Delay);
+                    _mockHub.Clients.All.SendAsync(notification.Key, notification.Body);
+                }
+            });
+
+            return Accepted();
         }
 
         private void ReportViaWebSocket(Request actualRequest, Request expectedRequest)

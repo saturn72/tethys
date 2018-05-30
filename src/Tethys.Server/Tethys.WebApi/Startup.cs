@@ -12,6 +12,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Tethys.WebApi.DbModel.Repositories;
 using Tethys.WebApi.DbModel.Repositories.LiteDb;
 using Tethys.WebApi.Hubs;
+using Tethys.WebApi.Redirect;
 
 namespace Tethys.WebApi
 {
