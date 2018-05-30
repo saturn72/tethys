@@ -10,7 +10,6 @@ using OpenQA.Selenium;
 using Tethys.TestFramework;
 using Tethys.TestFramework.Commands;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tethys.Samples
 {
@@ -125,7 +124,7 @@ namespace Tethys.Samples
             };
             await MockHttpRequest(httpCall);
             //Start tests
-            var indexUri = new System.Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
+            var indexUri = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
             WebDriver.Navigate().GoToUrl(indexUri.AbsoluteUri);
             var userIdElem = WebDriver.FindElementByName("user-id");
             userIdElem.SendKeys("1");
