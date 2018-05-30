@@ -1,4 +1,4 @@
-﻿namespace Tethys.TestFramework.Commands
+﻿namespace Tethys.TestFramework.Models
 {
     public class PushNotification
     {

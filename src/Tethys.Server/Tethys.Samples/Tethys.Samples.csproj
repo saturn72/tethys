@@ -33,12 +33,6 @@
     <None Update="app-under-test\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="app-under-test\lib\signalr.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="app-under-test\lib\signalr.js.map">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="app-under-test\lib\signalr.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -48,7 +42,7 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="ECHO Kill all chromedriver instances&#xD;&#xA;Taskkill /IM chromedriver.exe /F" />
+    <Exec Command="ECHO Kill all chromedriver instances&#xD;&#xA;TASKLIST /fi &quot;imagename eq chromedriver.exe&quot; |find &quot;:&quot; &gt; nul&#xD;&#xA;if errorlevel 1 Taskkill /IM chromedriver.exe /F&amp;exit" />
   </Target>
 
 </Project>

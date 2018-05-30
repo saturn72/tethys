@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.WebSockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using OpenQA.Selenium;
 using Tethys.TestFramework;
-using Tethys.TestFramework.Commands;
+using Tethys.TestFramework.Models;
 using Xunit;
 
 namespace Tethys.Samples
@@ -16,7 +14,40 @@ namespace Tethys.Samples
     public class Examples : WebTestBase
     {
         private static readonly Uri AutUri = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
-        private const int Buffersize = 1024 * 4;
+
+        [Fact]
+        public async Task GetTethysNotificationsExample()
+        {
+            const int userId = 1;
+            var expUserDetails = "{\'first_name\":\"Roi\",\"last_name\":\"shabtai\"}";
+            object httpCall = new
+            {
+                //Expected incoming request
+                Request = new
+                {
+                    Resource = "/api/users/" + userId,
+                    HttpMethod = "GET"
+                },
+                //what the server should return
+                Response = new
+                {
+                    HttpstatusCode = StatusCodes.Status200OK,
+                    Body = expUserDetails,
+                }
+            };
+            await MockHttpRequest(httpCall);
+            //Start tests
+            var indexUri = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
+            WebDriver.Navigate().GoToUrl(indexUri.AbsoluteUri);
+            var userIdElem = WebDriver.FindElementByName("user-id");
+            userIdElem.SendKeys("1");
+
+            var submitElem = WebDriver.FindElementByName("submit");
+            submitElem.Click();
+            Thread.Sleep(500); //wait for timeout
+            
+            throw new NotImplementedException();
+        }
 
         [Fact]
         public async Task NotFoundExample()
@@ -131,7 +162,7 @@ namespace Tethys.Samples
 
             var submitElem = WebDriver.FindElementByName("submit");
             submitElem.Click();
-            Thread.Sleep(1000); //wait for timeout
+            Thread.Sleep(500); //wait for timeout
             var userDetailsElem = WebDriver.FindElementByName("user-details");
 
             //assert bg color
@@ -144,7 +175,7 @@ namespace Tethys.Samples
         }
 
         [Fact]
-        public void ReceiveAsyncPushNotifications()
+        public void ReceiveAsyncPushNotificationsExample()
         {
             var indexUri = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
             WebDriver.Navigate().GoToUrl(indexUri.AbsoluteUri);
@@ -170,7 +201,7 @@ namespace Tethys.Samples
         }
 
         [Fact]
-        public void ReceiveMultiAsyncPushNotifications()
+        public void ReceiveMultiAsyncPushNotificationsExample()
         {
             var indexUri = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
             WebDriver.Navigate().GoToUrl(indexUri.AbsoluteUri);
@@ -211,29 +242,5 @@ namespace Tethys.Samples
             Assert.Contains("Type 2 notification #", value2);
         }
 
-
-        private StringBuilder _webSocketLog;
-
-        private async Task LogIncomingWebSocketData(WebSocket clientWebSocket, CancellationToken cToken)
-        {
-            if (_webSocketLog == null)
-                _webSocketLog = new StringBuilder();
-
-            var buffer = new byte[Buffersize];
-            while (clientWebSocket.State == WebSocketState.Open)
-            {
-                var result = await clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cToken);
-                if (result.MessageType == WebSocketMessageType.Close)
-                {
-                    await clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
-                }
-                else
-                {
-                    var inMessage = Encoding.UTF8.GetString(buffer);
-                    _webSocketLog.AppendLine(inMessage);
-                    //                    _outputHelper.WriteLine(inMessage);
-                }
-            }
-        }
     }
 }

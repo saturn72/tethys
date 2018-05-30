@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using ServiceStack.Text;
-using Tethys.TestFramework.Commands;
+using Tethys.TestFramework.Models;
 using Xunit.Abstractions;
 
 namespace Tethys.TestFramework
@@ -21,6 +22,7 @@ namespace Tethys.TestFramework
 
         private HttpClient _httpClient;
         private static IWebDriver _webDriver;
+        private ClientWebSocket _clientWebSocket;
 
         #endregion
 
@@ -31,6 +33,54 @@ namespace Tethys.TestFramework
             BaseAddress = new Uri("http://" + _tethysServerUrl),
         });
 
+        //protected ClientWebSocket TethysWebSocketClient =>
+        //    _clientWebSocket ?? (_clientWebSocket = CreatewebSocketClient());
+
+        //private ClientWebSocket CreatewebSocketClient()
+        //{
+        //    var ws = new ClientWebSocket();
+        //    ws.ConnectAsync(new Uri("ws"), )
+        //    ws.Options.
+        //    {
+        //        Options
+        //    }
+        //    ws.
+
+        //    var wsc = new WebSocketClient()
+        //var Buffersize = 1024 * 4;
+
+        //    var buffer = WebSocket.CreateClientBuffer(Buffersize, Buffersize);
+        //    ClientWebSocket.
+        //    throw new NotImplementedException();
+        //}
+        /*
+         * 
+
+        private StringBuilder _webSocketLog;
+
+        private async Task LogIncomingWebSocketData(WebSocket clientWebSocket, CancellationToken cToken)
+        {
+            if (_webSocketLog == null)
+                _webSocketLog = new StringBuilder();
+
+            var buffer = new byte[Buffersize];
+            while (clientWebSocket.State == WebSocketState.Open)
+            {
+                var result = await clientWebSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cToken);
+                if (result.MessageType == WebSocketMessageType.Close)
+                {
+                    await clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+                }
+                else
+                {
+                    var inMessage = Encoding.UTF8.GetString(buffer);
+                    _webSocketLog.AppendLine(inMessage);
+                    //                    _outputHelper.WriteLine(inMessage);
+                }
+            }
+        }
+
+         */
         protected static IWebDriver WebDriver
         {
             get
@@ -62,7 +112,7 @@ namespace Tethys.TestFramework
 
         protected virtual async Task MockHttpRequest(object httpCall)
         {
-            await SendPostRequestToTethys(httpCall, "setup");
+            await SendPostRequestToTethys(httpCall, "mock/setup");
         }
 
         protected void SendPushNotifications(IEnumerable<PushNotification> pushNotifications)

@@ -7,7 +7,6 @@
         public const string SwaggerEndPointPrefix = "/swagger";
         public const string WebSocketRoutePrefix = "/ws";
         public const string MockControllerRoute = ApiBaseUrl + "/api/mock";
-        public const string SetupControllerRoute = ApiBaseUrl + "/api/setup";
         public const string OriginalRequest = "original-request";
     }
 }

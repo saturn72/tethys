@@ -12,6 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.TestHost">
+      <HintPath>..\..\..\..\..\..\Users\roi.shabtai\.nuget\packages\microsoft.aspnetcore.testhost\2.0.3\lib\netstandard2.0\Microsoft.AspNetCore.TestHost.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\..\..\..\Users\roi.shabtai\.nuget\packages\newtonsoft.json\11.0.2\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
     </Reference>

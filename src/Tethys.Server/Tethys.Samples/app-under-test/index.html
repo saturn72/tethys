@@ -23,10 +23,10 @@
     <table>
         <tr>
             <th>
-                <h3>Notification Type 1</h3>
+                <h3>Notification Type 1(Key = 'ReceiveMessage')</h3>
             </th>
             <th>
-                <h3>Notification Type 2</h3>
+                <h3>Notification Type 2 (Key = 'ReceiveMessageType2')</h3>
             </th>
         </tr>
         <tr>
@@ -37,9 +37,19 @@
                 <textarea name="push-notify-2" readonly rows="10" cols="100"></textarea>
             </td>
         </tr>
+        <tr>
+            <td>
+                <input type="submit" onclick="clearTextArea('push-notify')" value="Clear Notifications"></input>
+            </td>
+            <td>
+                <input type="submit" onclick="clearTextArea('push-notify-2')" value="Clear Notifications"></input>
+            </td>
+        </tr>
     </table>
     <script>
-
+        function clearTextArea(name) {
+            document.getElementsByName(name)[0].value = "Notifications cleared";
+        }
         function getUserData() {
             var userDetails = document.getElementsByName("user-details")[0];
 
@@ -88,7 +98,7 @@
                 const connection = new signalR.HubConnectionBuilder()
                     .withUrl("http://localhost:4880/ws")
                     .build();
-                updateStatus('Start receiving notifications...', notifyTextArea1);
+                updateStatus("Start receiving notifications...", notifyTextArea1);
                 notifyTextArea1.style.backgroundColor = "#bfe6bf";
                 updateStatus('Start receiving notifications...', notifyTextArea2);
                 notifyTextArea2.style.backgroundColor = "#bfe6bf";

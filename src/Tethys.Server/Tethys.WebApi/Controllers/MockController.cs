@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.AspNetCore.SignalR;
@@ -33,12 +34,13 @@ namespace Tethys.WebApi.Controllers
         }
         #endregion
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             var actualRequest = await BuildActualRequest();
             var httpCall = await Task.FromResult(_httpCallRepository.GetNextHttpCall());
-            ReportViaWebSocket(actualRequest, httpCall.Request);
+            await ReportViaWebSocket(actualRequest, httpCall.Request);
 
             //TODO: send via web socket
             if (httpCall == null)
@@ -64,6 +66,24 @@ namespace Tethys.WebApi.Controllers
             return httpCall.Response.ToHttpResponseMessage();
         }
 
+        [HttpPost("setup")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Post([FromBody] HttpCall httpCall)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new
+                {
+                    message = "Bad or missing data",
+                    errors = ModelState.Values.Select(x => x.Errors),
+                    data = httpCall
+                });
+
+            await Task.Run(() => _httpCallRepository.FlushUnhandled());
+            await Task.Run(() => _httpCallRepository.Insert(httpCall));
+            return new ObjectResult(httpCall) { StatusCode = StatusCodes.Status201Created };
+        }
+
         [HttpPost("push")]
         public IActionResult Push([FromBody]IEnumerable<PushNotification> notifications)
         {
@@ -79,7 +99,7 @@ namespace Tethys.WebApi.Controllers
             return Accepted();
         }
 
-        private void ReportViaWebSocket(Request actualRequest, Request expectedRequest)
+        private async Task ReportViaWebSocket(Request actualRequest, Request expectedRequest)
         {
             var sb = new StringBuilder();
             sb.AppendLine("Incoming Http Request:");
@@ -88,7 +108,7 @@ namespace Tethys.WebApi.Controllers
             sb.AppendLine(expectedRequest.ToReportFormat().Replace("\n", "\t\n"));
 
             sb.AppendLine("Start comparing incoming request");
-            //MockHub.AddToBuffer(sb.ToString());
+            await _mockHub.Clients.All.SendAsync("tethys-log",sb.ToString());
         }
 
         private async Task<Request> BuildActualRequest()
