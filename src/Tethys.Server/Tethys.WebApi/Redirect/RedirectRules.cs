@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
+using Tethys.WebApi.Models;
 
 namespace Tethys.WebApi
 {
@@ -16,9 +17,12 @@ namespace Tethys.WebApi
                 || RequestStartsWithSegment(request, Consts.WebSocketRoutePrefix))
                 return;
 
-            request.HttpContext.Items[Consts.OriginalRequestPath] = request.Path;
-            request.HttpContext.Items[Consts.OriginalRequestQuery] = request.QueryString;
-            request.HttpContext.Items[Consts.OriginalRequestHttpMethod] = request.Method;
+            request.HttpContext.Items[Consts.OriginalRequest] = new OriginalRequest
+            {
+                Path = request.Path,
+                QueryString = request.QueryString.ToString(),
+                HttpMethod = request.Method
+            };
 
             request.Path = new PathString(Consts.MockControllerRoute);
         }

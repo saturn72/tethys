@@ -64,7 +64,7 @@ namespace Tethys.WebApi.Controllers
             return httpCall.Response.ToHttpResponseMessage();
         }
 
-        [HttpPost(Consts.MockControllerRoute + "/push")]
+        [HttpPost("push")]
         public async Task<IActionResult> Push([FromBody]IEnumerable<PushNotification> notifications)
         {
             foreach (var notification in notifications)
@@ -96,12 +96,12 @@ namespace Tethys.WebApi.Controllers
             }
 
             var headerDictionary = Request.Headers.ToDictionary(s => s.Key, s => s.Value);
-            var httpContextItems = Request.HttpContext.Items;
+            var originalRequest = Request.HttpContext.Items[Consts.OriginalRequest] as OriginalRequest;
             return new Request
             {
-                HttpMethod = Enum.Parse<HttpMethod>(httpContextItems[Consts.OriginalRequestHttpMethod].ToString(), true),
-                Resource = httpContextItems[Consts.OriginalRequestPath].ToString(),
-                Query = httpContextItems[Consts.OriginalRequestQuery].ToString(),
+                HttpMethod = Enum.Parse<HttpMethod>(originalRequest.HttpMethod, true),
+                Resource = originalRequest.Path,
+                Query = originalRequest.QueryString,
                 Body = body,
                 Headers = headerDictionary as IDictionary<string, string>
             };

@@ -8,8 +8,6 @@
         public const string WebSocketRoutePrefix = "/ws";
         public const string MockControllerRoute = ApiBaseUrl + "/api/mock";
         public const string SetupControllerRoute = ApiBaseUrl + "/api/setup";
-        public const string OriginalRequestPath = "original-request-path";
-        public const string OriginalRequestQuery = "original-request-query";
-        public const string OriginalRequestHttpMethod = "original-request-http-method";
+        public const string OriginalRequest = "original-request";
     }
 }
