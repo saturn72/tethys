@@ -1,13 +1,15 @@
-﻿namespace Tethys.WebApi
+﻿using System.Collections.Generic;
+
+namespace Tethys.WebApi
 {
     public class TethysConfig
     {
-        public short HttpPort { get; set; }
+        public IEnumerable<ushort> HttpPorts { get; set; }
         public string WebSocketSuffix { get; set; }
         public static TethysConfig Default =>
             new TethysConfig
             {
-                HttpPort = 4880,
+                HttpPorts = new ushort[]{4880, 5645},
                 WebSocketSuffix = "ws"
             };
     }

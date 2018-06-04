@@ -18,9 +18,10 @@ namespace Tethys.WebApi
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args, TethysConfig config)
         {
+            var urls = config.HttpPorts.Select(hp => "http://localhost:" + hp).ToArray();
             return WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseUrls("http://localhost:" + config.HttpPort);
+                .UseUrls(urls);
         }
 
         private static bool ExtractArgs(IEnumerable<string> args, out TethysConfig tethysConfig)

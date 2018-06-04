@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Razor.Internal;
 
 namespace Tethys.WebApi
 {
@@ -21,15 +22,16 @@ namespace Tethys.WebApi
             };
             foreach (var c in clad)
             {
-                var argsListCount = argsList.Count;
-                for (var i = 0; i < argsListCount; i++)
+                for (var i = 0; i < argsList.Count; i++)
                 {
                     if (!argsList.ElementAt(i).ToLower().Equals(c.Key, StringComparison.InvariantCultureIgnoreCase))
                         continue;
                     c.Value = argsList[i + 1].Trim();
-                    argsList.RemoveAt(i);   //remove key
-                    argsList.RemoveAt(i); //remove value
-                    break;  //move to next element
+                    //remove "
+                    if (c.Value.StartsWith('\"')) c.Value = c.Value.Substring(1, c.Value.Length);
+                    if (c.Value.EndsWith('\"')) c.Value = c.Value.Substring(0, c.Value.Length-1);
+                    argsList.RemoveAt(i);   //remove key and 
+                    argsList.RemoveAt(i--); //remove value
                 }
             }
             return BuildTethysConfig(clad);
@@ -39,8 +41,8 @@ namespace Tethys.WebApi
         {
             var config = TethysConfig.Default;
             var httpPortData = commandLineArgsDatas.FirstOrDefault(c => c.Key.Equals(HttpPorts, StringComparison.InvariantCultureIgnoreCase));
-            if (httpPortData?.Value != null)
-                config.HttpPort = short.Parse(httpPortData.Value);
+            if (httpPortData!=null && !string.IsNullOrEmpty(httpPortData.Value) && !string.IsNullOrWhiteSpace(httpPortData.Value))
+                config.HttpPorts = httpPortData.Value.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(ushort.Parse);
 
             return config;
         }
