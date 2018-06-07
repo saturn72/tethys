@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,12 +18,16 @@ namespace Tethys.WebApi
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _tethysConfig = TethysConfig.FromConfiguration(configuration);
         }
 
         public IConfiguration Configuration { get; }
+
+        private readonly TethysConfig _tethysConfig;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -40,6 +45,7 @@ namespace Tethys.WebApi
                 if (File.Exists(xmlPath))
                     c.IncludeXmlComments(xmlPath);
             });
+
             var dbName = Configuration["liteDb:name"];
             services.AddTransient(sr => new UnitOfWorkLiteDb(dbName));
             services.AddTransient<IHttpCallRepository, HttpCallRepositoryLiteDb>();
@@ -58,12 +64,12 @@ namespace Tethys.WebApi
             //}
             var rewriteOptions = new RewriteOptions();
             rewriteOptions//.AddRewrite(@"^(?i)(?!)tethys/(.*)", "mock/$1", true)
-                .Add(RedirectRules.RedirectRequests);
+                .Add(rCtx =>RedirectRules.RedirectRequests(rCtx, _tethysConfig));
             app.UseRewriter(rewriteOptions);
 
-            app.UseCors(cp => cp.AllowAnyMethod()
+            app.UseCors(cp => cp.AllowAnyOrigin()
+                .AllowAnyMethod()
                 .AllowAnyHeader()
-                .AllowAnyOrigin()
                 .AllowCredentials());
 
             app.UseSwagger();
@@ -73,14 +79,16 @@ namespace Tethys.WebApi
                 c.SwaggerEndpoint(Consts.SwaggerEndPointPrefix + "/v1/swagger.json", "Tethys API");
             });
 
-            var wsSuffix = Configuration["tethysConfig:webSocketSuffix"];
-            app.UseSignalR(router =>
-            {
-                router.MapHub<MockHub>("/" + wsSuffix);
-            });
+            ConfigureSignalRHubs(app);
 
             //app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private void ConfigureSignalRHubs(IApplicationBuilder app)
+        {
+            foreach (var wss in _tethysConfig.WebSocketSuffix)
+                app.UseSignalR(router => router.MapHub<MockHub>(("/" + wss).Replace("//", "/")));
         }
     }
 }
