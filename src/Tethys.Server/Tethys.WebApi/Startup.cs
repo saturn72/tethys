@@ -12,7 +12,6 @@ using Swashbuckle.AspNetCore.Swagger;
 using Tethys.WebApi.DbModel.Repositories;
 using Tethys.WebApi.DbModel.Repositories.LiteDb;
 using Tethys.WebApi.Hubs;
-using Tethys.WebApi.Redirect;
 
 namespace Tethys.WebApi
 {
@@ -39,6 +38,9 @@ namespace Tethys.WebApi
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Tethys API", Version = "v1" });
+                c.DescribeAllEnumsAsStrings();
+                c.DescribeStringEnumsInCamelCase();
+                c.DescribeAllParametersInCamelCase();
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -64,7 +66,7 @@ namespace Tethys.WebApi
             //}
             var rewriteOptions = new RewriteOptions();
             rewriteOptions//.AddRewrite(@"^(?i)(?!)tethys/(.*)", "mock/$1", true)
-                .Add(rCtx =>RedirectRules.RedirectRequests(rCtx, _tethysConfig));
+                .Add(rCtx => RedirectRules.RedirectRequests(rCtx, _tethysConfig));
             app.UseRewriter(rewriteOptions);
 
             app.UseCors(cp => cp.AllowAnyOrigin()
@@ -87,8 +89,10 @@ namespace Tethys.WebApi
 
         private void ConfigureSignalRHubs(IApplicationBuilder app)
         {
-            foreach (var wss in _tethysConfig.WebSocketSuffix)
-                app.UseSignalR(router => router.MapHub<MockHub>(("/" + wss).Replace("//", "/")));
+            app.UseSignalR(router => router.MapHub<MockHub>(Consts.TethysWebSocketPath));
+
+            //foreach (var wss in _tethysConfig.WebSocketSuffix)
+            //    app.UseSignalR(router => router.MapHub<MockHub>(wss));
         }
     }
 }

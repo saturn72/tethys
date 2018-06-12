@@ -9,5 +9,10 @@ namespace Tethys.WebApi.Hubs
         {
             await Clients.All.SendAsync("ReceiveMessage", message);
         }
+
+        public override Task OnConnectedAsync()
+        {
+            return base.OnConnectedAsync();
+        }
     }
 }
