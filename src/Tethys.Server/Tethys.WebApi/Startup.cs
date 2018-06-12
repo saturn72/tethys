@@ -81,18 +81,8 @@ namespace Tethys.WebApi
                 c.SwaggerEndpoint(Consts.SwaggerEndPointPrefix + "/v1/swagger.json", "Tethys API");
             });
 
-            ConfigureSignalRHubs(app);
-
-            //app.UseHttpsRedirection();
-            app.UseMvc();
-        }
-
-        private void ConfigureSignalRHubs(IApplicationBuilder app)
-        {
             app.UseSignalR(router => router.MapHub<MockHub>(Consts.TethysWebSocketPath));
-
-            //foreach (var wss in _tethysConfig.WebSocketSuffix)
-            //    app.UseSignalR(router => router.MapHub<MockHub>(wss));
+            app.UseMvc();
         }
     }
 }
