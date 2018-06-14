@@ -20,7 +20,7 @@ namespace Tethys.Samples
         {
             const int userId = 1;
             var expUserDetails = "{\'first_name\":\"Roi\",\"last_name\":\"shabtai\"}";
-            object httpCall = new
+            var  httpCall = new HttpCall
             {
                 //Expected incoming request
                 Request = new
@@ -35,7 +35,7 @@ namespace Tethys.Samples
                     Body = expUserDetails,
                 }
             };
-            await MockHttpRequest(httpCall);
+            await MockHttpRequest(new[]{httpCall});
             //Start tests
             var indexUri = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
             WebDriver.Navigate().GoToUrl(indexUri.AbsoluteUri);
@@ -55,22 +55,25 @@ namespace Tethys.Samples
             //Mock next request
             const int userId = 1;
             var expectedUserDetails = "{userId:\'" + userId + "\',message:\'user id not found\'}";
-            object httpCall = new
+            var httpCalls = new[]
             {
-                //Expected incoming request
-                Request = new
+                new HttpCall
                 {
-                    Resource = "/api/users/" + userId,
-                    HttpMethod = "GET"
-                },
-                //what the server should return
-                Response = new
-                {
-                    HttpstatusCode = StatusCodes.Status404NotFound,
-                    Body = expectedUserDetails,
+                    //Expected incoming request
+                    Request = new
+                    {
+                        Resource = "/api/users/" + userId,
+                        HttpMethod = "GET"
+                    },
+                    //what the server should return
+                    Response = new
+                    {
+                        HttpstatusCode = StatusCodes.Status404NotFound,
+                        Body = expectedUserDetails,
+                    }
                 }
             };
-            await MockHttpRequest(httpCall);
+            await MockHttpRequest(httpCalls);
 
             //Start tests
             var applicationPath = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
@@ -95,22 +98,25 @@ namespace Tethys.Samples
         public async Task TimeoutExample()
         {
             const int userId = 1;
-            object httpCall = new
+            var httpCalls = new[]
             {
-                //Expected incoming request
-                Request = new
+                new HttpCall
                 {
-                    Resource = "/api/users/" + userId,
-                    HttpMethod = "GET"
-                },
-                //what the server should return
-                Response = new
-                {
-                    Delay = 3000,
-                    HttpstatusCode = StatusCodes.Status200OK,
+                    //Expected incoming request
+                    Request = new
+                    {
+                        Resource = "/api/users/" + userId,
+                        HttpMethod = "GET"
+                    },
+                    //what the server should return
+                    Response = new
+                    {
+                        Delay = 3000,
+                        HttpstatusCode = StatusCodes.Status200OK,
+                    }
                 }
             };
-            await MockHttpRequest(httpCall);
+            await MockHttpRequest(httpCalls);
 
             //Start tests
 
@@ -138,22 +144,25 @@ namespace Tethys.Samples
         {
             const int userId = 1;
             var expUserDetails = "{\'first_name\":\"Roi\",\"last_name\":\"shabtai\"}";
-            object httpCall = new
+            var httpCalls = new[]
             {
-                //Expected incoming request
-                Request = new
+                new HttpCall
                 {
-                    Resource = "/api/users/" + userId,
-                    HttpMethod = "GET"
-                },
-                //what the server should return
-                Response = new
-                {
-                    HttpstatusCode = StatusCodes.Status200OK,
-                    Body = expUserDetails,
+                    //Expected incoming request
+                    Request = new
+                    {
+                        Resource = "/api/users/" + userId,
+                        HttpMethod = "GET"
+                    },
+                    //what the server should return
+                    Response = new
+                    {
+                        HttpstatusCode = StatusCodes.Status200OK,
+                        Body = expUserDetails,
+                    }
                 }
             };
-            await MockHttpRequest(httpCall);
+            await MockHttpRequest(httpCalls);
             //Start tests
             var indexUri = new Uri(Environment.CurrentDirectory + @"/app-under-test/index.html");
             WebDriver.Navigate().GoToUrl(indexUri.AbsoluteUri);

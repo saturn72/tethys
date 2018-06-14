@@ -110,9 +110,9 @@ namespace Tethys.TestFramework
 
         #endregion
 
-        protected virtual async Task MockHttpRequest(object httpCall)
+        protected virtual async Task MockHttpRequest(IEnumerable<HttpCall> httpCalls)
         {
-            await SendPostRequestToTethys("mock/setup", new[]{httpCall});
+            await SendPostRequestToTethys("mock/setup", httpCalls);
         }
 
         protected void SendPushNotifications(IEnumerable<PushNotification> pushNotifications)
