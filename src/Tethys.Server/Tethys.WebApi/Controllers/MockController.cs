@@ -69,24 +69,36 @@ namespace Tethys.WebApi.Controllers
         [HttpPost("setup")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post([FromBody] HttpCall httpCall)
+        public async Task<IActionResult> Post([FromBody] IEnumerable<HttpCall> httpCalls)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new
                 {
                     message = "Bad or missing data",
                     errors = ModelState.Values.Select(x => x.Errors),
-                    data = httpCall
+                    data = httpCalls
                 });
 
             await Task.Run(() => _httpCallRepository.FlushUnhandled());
-            await Task.Run(() => _httpCallRepository.Insert(httpCall));
-            return new ObjectResult(httpCall) { StatusCode = StatusCodes.Status201Created };
+            await Task.Run(() =>
+            {
+                var enumerable = httpCalls as HttpCall[] ?? httpCalls.ToArray();
+
+                foreach (var hc in enumerable)
+                    hc.WasHandled = false;
+                _httpCallRepository.Insert(enumerable);
+            });
+            return new ObjectResult(httpCalls) { StatusCode = StatusCodes.Status201Created };
         }
 
         [HttpPost("push")]
         public IActionResult Push([FromBody]IEnumerable<PushNotification> notifications)
         {
+            if (notifications == null || !notifications.Any())
+                return new ObjectResult("No notifications sent to server")
+                {
+                    StatusCode = StatusCodes.Status406NotAcceptable
+                };
             Task.Run(() =>
             {
                 foreach (var notification in notifications)

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using LiteDB;
+using System.Linq;
 
 namespace Tethys.WebApi.DbModel.Repositories.LiteDb
 {
@@ -11,9 +11,18 @@ namespace Tethys.WebApi.DbModel.Repositories.LiteDb
             return unitOfWorkLiteDb.Query(spec.Criteria);
         }
 
+        public static void Insert<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb,
+            IEnumerable<TDomainModel> models)
+        {
+            unitOfWorkLiteDb.Command(db =>
+            {
+                var col = db.GetCollection<TDomainModel>();
+                col.InsertBulk(models);
+            });
+        }
+
         public static void Insert<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb, TDomainModel model)
         {
-
             unitOfWorkLiteDb.Command(db =>
             {
                 var col = db.GetCollection<TDomainModel>();

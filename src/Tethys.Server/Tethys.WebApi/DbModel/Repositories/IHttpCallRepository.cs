@@ -5,7 +5,7 @@ namespace Tethys.WebApi.DbModel.Repositories
 {
     public interface IHttpCallRepository
     {
-        void Insert(HttpCall httpCall);
+        void Insert(IEnumerable<HttpCall> httpCalls);
         IEnumerable<HttpCall> GetBy(ISpecification<HttpCall> spec);
         void Update(HttpCall httpCall);
         void FlushUnhandled();

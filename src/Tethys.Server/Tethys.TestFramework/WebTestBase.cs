@@ -112,20 +112,21 @@ namespace Tethys.TestFramework
 
         protected virtual async Task MockHttpRequest(object httpCall)
         {
-            await SendPostRequestToTethys(httpCall, "mock/setup");
+            await SendPostRequestToTethys("mock/setup", new[]{httpCall});
         }
 
         protected void SendPushNotifications(IEnumerable<PushNotification> pushNotifications)
         {
-            SendPostRequestToTethys(pushNotifications, "mock/push");
+            SendPostRequestToTethys("mock/push", pushNotifications);
         }
 
-        private async Task SendPostRequestToTethys(object httpCall, string resource)
+        private async Task SendPostRequestToTethys(string resource, object content)
         {
-            var content = JsonSerializer.SerializeToString(httpCall);
-            var contentBytes = Encoding.UTF8.GetBytes(content);
-            //send seup request to tethys 
-            var body = new ByteArrayContent(contentBytes);
+            var contentAsString = JsonSerializer.SerializeToString(content);
+            //var contentBytes = Encoding.UTF8.GetBytes(contentAsString);
+            ////send seup request to tethys 
+            //var body = new ByteArrayContent(contentBytes);
+            var body = new StringContent(contentAsString, Encoding.UTF8);
             body.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var setupHttpRequest =
