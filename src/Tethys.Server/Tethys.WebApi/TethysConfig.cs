@@ -7,14 +7,19 @@ namespace Tethys.WebApi
     public class TethysConfig
     {
         public IEnumerable<ushort> HttpPorts { get; set; }
+        public IEnumerable<ushort> HttpsPorts { get; set; }
         public IEnumerable<string> WebSocketSuffix { get; set; }
+        public string ConfigFile { get; set; }
 
         public static TethysConfig Default =>
             new TethysConfig
             {
                 HttpPorts = new ushort[] {4880},
-                WebSocketSuffix = new[] {"ws"}
+                HttpsPorts = new ushort[] { 4881 },
+                WebSocketSuffix = new[] {"ws"},
+                ConfigFile = "./appsettings.json"
             };
+
 
         public static TethysConfig FromConfiguration(IConfiguration configuration)
         {

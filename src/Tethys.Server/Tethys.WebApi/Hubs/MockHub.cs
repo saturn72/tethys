@@ -5,11 +5,6 @@ namespace Tethys.WebApi.Hubs
 {
     public class MockHub : Hub
     {
-        public async Task SendMessage(string eventName, string message)
-        {
-            await Clients.All.SendAsync("ReceiveMessage", message);
-        }
-
         public override Task OnConnectedAsync()
         {
             return base.OnConnectedAsync();
