@@ -7,7 +7,8 @@ namespace Tethys.WebApi.DbModel.Repositories
 {
     public static class HttpCallRepositoryExtensions
     {
-        private static readonly ISpecification<HttpCall> GetNotExecutedHttpCallsSpec = new SimpleSpecification<HttpCall>(hc => !hc.WasHandled && !hc.Flushed, new Expression<Func<HttpCall, object>>[]
+        private static readonly ISpecification<HttpCall> GetNotExecutedHttpCallsSpec = 
+            new SimpleSpecification<HttpCall>(hc => !hc.WasFullyHandled && !hc.Flushed, new Expression<Func<HttpCall, object>>[]
         {
             hc => hc.Request,
             hc => hc.Response,

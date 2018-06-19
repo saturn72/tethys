@@ -17,7 +17,7 @@ namespace Tethys.WebApi
                 HttpPorts = new ushort[] {4880},
                 HttpsPorts = new ushort[] { 4881 },
                 WebSocketSuffix = new[] {"ws"},
-                ConfigFile = "./appsettings.json"
+                ConfigFile = "appsettings.json"
             };
 
 

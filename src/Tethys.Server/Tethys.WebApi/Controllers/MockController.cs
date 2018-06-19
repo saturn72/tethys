@@ -18,13 +18,6 @@ namespace Tethys.WebApi.Controllers
     [Route(Consts.MockControllerRoute)]
     public class MockController : Controller
     {
-        #region Fields
-
-        private readonly IHttpCallRepository _httpCallRepository;
-        private readonly IHubContext<MockHub> _mockHub;
-
-        #endregion
-
         #region CTOR
 
         public MockController(IHttpCallRepository httpCallRepository, IHubContext<MockHub> mockHub)
@@ -32,6 +25,7 @@ namespace Tethys.WebApi.Controllers
             _httpCallRepository = httpCallRepository;
             _mockHub = mockHub;
         }
+
         #endregion
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -40,11 +34,10 @@ namespace Tethys.WebApi.Controllers
         {
             var actualRequest = await BuildActualRequest();
             var httpCall = await Task.FromResult(_httpCallRepository.GetNextHttpCall());
-            await ReportViaWebSocket(actualRequest, httpCall.Request);
 
             //TODO: send via web socket
             if (httpCall == null)
-                return new BadRequestObjectResult(new
+                return new NotFoundObjectResult(new
                 {
                     message = "No corrosponding HttpCall object",
                     requestDetails = new
@@ -56,7 +49,10 @@ namespace Tethys.WebApi.Controllers
                         body = actualRequest.Body
                     }
                 });
-            httpCall.WasHandled = true;
+            await ReportViaWebSocket(actualRequest, httpCall.Request);
+
+            httpCall.CallsCounter++;
+            httpCall.WasFullyHandled = httpCall.CallsCounter == httpCall.AllowedCallsNumber;
             httpCall.HandledOnUtc = DateTime.UtcNow;
 
             _httpCallRepository.Update(httpCall);
@@ -64,6 +60,14 @@ namespace Tethys.WebApi.Controllers
             //delay before response
             Thread.Sleep(httpCall.Response.Delay);
             return httpCall.Response.ToHttpResponseMessage();
+        }
+
+        [HttpPost("clear")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Post()
+        {
+            await Task.Run(() => _httpCallRepository.FlushUnhandled());
+            return Ok();
         }
 
         [HttpPost("setup")]
@@ -79,20 +83,25 @@ namespace Tethys.WebApi.Controllers
                     data = httpCalls
                 });
 
-            await Task.Run(() => _httpCallRepository.FlushUnhandled());
             await Task.Run(() =>
             {
                 var enumerable = httpCalls as HttpCall[] ?? httpCalls.ToArray();
 
                 foreach (var hc in enumerable)
-                    hc.WasHandled = false;
+                {
+                    hc.WasFullyHandled = false;
+                    hc.CreatedOnUtc = DateTime.UtcNow;
+                    hc.AllowedCallsNumber = Math.Max(1, hc.AllowedCallsNumber);
+                    hc.CallsCounter = 0;
+                }
+
                 _httpCallRepository.Insert(enumerable);
             });
-            return new ObjectResult(httpCalls) { StatusCode = StatusCodes.Status201Created };
+            return new ObjectResult(httpCalls) {StatusCode = StatusCodes.Status201Created};
         }
 
         [HttpPost("push")]
-        public IActionResult Push([FromBody]IEnumerable<PushNotification> notifications)
+        public IActionResult Push([FromBody] IEnumerable<PushNotification> notifications)
         {
             if (notifications == null || !notifications.Any())
                 return new ObjectResult("No notifications sent to server")
@@ -120,7 +129,7 @@ namespace Tethys.WebApi.Controllers
             sb.AppendLine(expectedRequest.ToReportFormat().Replace("\n", "\t\n"));
 
             sb.AppendLine("Start comparing incoming request");
-            await _mockHub.Clients.All.SendAsync("tethys-log",sb.ToString());
+            await _mockHub.Clients.All.SendAsync("tethys-log", sb.ToString());
         }
 
         private async Task<Request> BuildActualRequest()
@@ -142,5 +151,12 @@ namespace Tethys.WebApi.Controllers
                 Headers = headerDictionary as IDictionary<string, string>
             };
         }
+
+        #region Fields
+
+        private readonly IHttpCallRepository _httpCallRepository;
+        private readonly IHubContext<MockHub> _mockHub;
+
+        #endregion
     }
 }

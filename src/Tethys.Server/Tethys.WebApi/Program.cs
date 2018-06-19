@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore;
@@ -10,32 +9,33 @@ namespace Tethys.WebApi
 {
     public class Program
     {
+        public static IConfiguration Configuration { get; set; }
         public static int Main(string[] args)
         {
-            if (!GetTethysConfig(args, out var tethysConfig))
-                return -1;
+            var configFilePath = args.Length >= 2 ? args[1] : "appsettings.json";
+            var configDirectory = Path.GetDirectoryName(configFilePath);
+            if (configDirectory.Length == 0)
+                configDirectory = Directory.GetCurrentDirectory();
 
-            CreateWebHostBuilder(args, tethysConfig).Build().Run();
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(configDirectory)
+                .AddJsonFile(configFilePath)
+                .AddCommandLine(args)
+                .Build();
+
+            CreateWebHostBuilder(args).Build().Run();
             return 0;
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args, TethysConfig config)
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
+            var config = TethysConfig.FromConfiguration(Configuration);
             var urls = config.HttpPorts.Select(hp => "http://localhost:" + hp).ToArray();
 
             return WebHost.CreateDefaultBuilder(args)
+                .UseConfiguration(Configuration)
                 .UseStartup<Startup>()
                 .UseUrls(urls);
-        }
-
-        private static bool GetTethysConfig(IEnumerable<string> args, out TethysConfig tethysConfig)
-        {
-            var errors = new List<string>();
-            tethysConfig = CommandLineArgsParser.Load(args, errors);
-            if (!errors.Any()) return true;
-
-            Console.WriteLine("FAILED!!!\n\t" + string.Join("\n\t", errors.ToArray()));
-            return false;
         }
     }
 }

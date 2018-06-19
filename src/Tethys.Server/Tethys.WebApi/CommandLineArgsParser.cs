@@ -11,7 +11,7 @@ namespace Tethys.WebApi
         private const string HttpPorts = "--httpPort";
         private const string ConfigFile = "--config";
 
-        public static TethysConfig Load(IEnumerable<string> args, ICollection<string> errors)
+        public static IConfiguration Load(IEnumerable<string> args, ICollection<string> errors)
         {
             var argsList = args.ToList();
 
@@ -40,15 +40,20 @@ namespace Tethys.WebApi
             return BuildTethysConfig(clad);
         }
 
-        private static TethysConfig BuildTethysConfig(IEnumerable<CommandLineArgsData> commandLineArgsDatas)
+        private static IConfiguration BuildTethysConfig(IEnumerable<CommandLineArgsData> commandLineArgsDatas)
         {
             var tethysConfig = LoadValuesFromCommandLine(commandLineArgsDatas);
 
-            //Now overide using config
+            var configDirectory = Path.GetDirectoryName(tethysConfig.ConfigFile);
+            if (configDirectory.Length == 0)
+                configDirectory = Directory.GetCurrentDirectory();
+
+                //Now overide using config
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(configDirectory)
                 .AddJsonFile(tethysConfig.ConfigFile);
             var configuration = builder.Build();
+
             tethysConfig.HttpPorts = configuration.GetSection("tethysConfig:httpPorts")?.GetChildren()?
                                    .Select(hp => ushort.Parse(hp.Value)) ?? tethysConfig.HttpPorts;
 
@@ -58,7 +63,9 @@ namespace Tethys.WebApi
             tethysConfig.WebSocketSuffix = configuration.GetSection("tethysConfig:webSocketSuffix")?.GetChildren()?
                 .Select(ws => ws.Value) ?? tethysConfig.WebSocketSuffix;
 
-            return tethysConfig;
+            return configuration;
+            //return tethysConfig;
+
         }
 
         private static TethysConfig LoadValuesFromCommandLine(IEnumerable<CommandLineArgsData> commandLineArgsDatas)

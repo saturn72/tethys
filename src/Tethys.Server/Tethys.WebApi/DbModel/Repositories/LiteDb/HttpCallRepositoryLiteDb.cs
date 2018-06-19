@@ -37,7 +37,7 @@ namespace Tethys.WebApi.DbModel.Repositories.LiteDb
 
         public void FlushUnhandled()
         {
-            var notHandledOrFlushed = _liteDbUnitOfWork.Query<HttpCall>(hc => !hc.WasHandled && !hc.Flushed );
+            var notHandledOrFlushed = _liteDbUnitOfWork.Query<HttpCall>(hc => !hc.WasFullyHandled && !hc.Flushed );
             foreach (var nf in notHandledOrFlushed)
             {
                 nf.FlushedOnUtc = DateTime.UtcNow;

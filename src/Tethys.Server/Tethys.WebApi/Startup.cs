@@ -21,13 +21,21 @@ namespace Tethys.WebApi
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            _tethysConfig = TethysConfig.FromConfiguration(configuration);
+            var configFilePath = configuration["config"];
+
+            if (configFilePath == null) return;
+
+            var configDirectory = Path.GetDirectoryName(configFilePath);
+            if (configDirectory.Length == 0)
+                configDirectory = Directory.GetCurrentDirectory();
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(configDirectory)
+                .AddJsonFile(configFilePath)
+                .Build();
         }
 
         public IConfiguration Configuration { get; }
-
-        private readonly TethysConfig _tethysConfig;
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -70,9 +78,11 @@ namespace Tethys.WebApi
             //{
             //    app.UseHsts();
             //}
+            var tethysConfig = TethysConfig.FromConfiguration(Configuration);
+
             var rewriteOptions = new RewriteOptions();
             rewriteOptions//.AddRewrite(@"^(?i)(?!)tethys/(.*)", "mock/$1", true)
-                .Add(rCtx => RedirectRules.RedirectRequests(rCtx, _tethysConfig));
+                .Add(rCtx => RedirectRules.RedirectRequests(rCtx, tethysConfig));
             app.UseRewriter(rewriteOptions);
 
             app.UseCors(cp => cp.AllowAnyOrigin()
