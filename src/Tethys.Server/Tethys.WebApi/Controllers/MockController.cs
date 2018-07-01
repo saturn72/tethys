@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.SignalR;
 using Tethys.WebApi.DbModel.Repositories;
 using Tethys.WebApi.Hubs;
 using Tethys.WebApi.Models;
+using Tethys.WebApi.Services;
 
 namespace Tethys.WebApi.Controllers
 {
@@ -20,10 +21,11 @@ namespace Tethys.WebApi.Controllers
     {
         #region CTOR
 
-        public MockController(IHttpCallRepository httpCallRepository, IHubContext<MockHub> mockHub)
+        public MockController(IHttpCallRepository httpCallRepository, IHubContext<MockHub> mockHub, INotificationService notificationeService)
         {
             _httpCallRepository = httpCallRepository;
             _mockHub = mockHub;
+            _notificationeService = notificationeService;
         }
 
         #endregion
@@ -62,11 +64,16 @@ namespace Tethys.WebApi.Controllers
             return httpCall.Response.ToHttpResponseMessage();
         }
 
-        [HttpPost("clear")]
+        [HttpPost("reset")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Post()
         {
-            await Task.Run(() => _httpCallRepository.FlushUnhandled());
+            await Task.Run(() =>
+            {
+                _notificationeService.Stop();
+
+                _httpCallRepository.FlushUnhandled();
+            });
             return Ok();
         }
 
@@ -97,7 +104,7 @@ namespace Tethys.WebApi.Controllers
 
                 _httpCallRepository.Insert(enumerable);
             });
-            return new ObjectResult(httpCalls) {StatusCode = StatusCodes.Status201Created};
+            return new ObjectResult(httpCalls) { StatusCode = StatusCodes.Status201Created };
         }
 
         [HttpPost("push")]
@@ -108,14 +115,8 @@ namespace Tethys.WebApi.Controllers
                 {
                     StatusCode = StatusCodes.Status406NotAcceptable
                 };
-            Task.Run(() =>
-            {
-                foreach (var notification in notifications)
-                {
-                    Thread.Sleep(notification.Delay);
-                    _mockHub.Clients.All.SendAsync(notification.Key, notification.Body);
-                }
-            });
+
+            _notificationeService.Notify(notifications);
 
             return Accepted();
         }
@@ -156,6 +157,7 @@ namespace Tethys.WebApi.Controllers
 
         private readonly IHttpCallRepository _httpCallRepository;
         private readonly IHubContext<MockHub> _mockHub;
+        private readonly INotificationService _notificationeService;
 
         #endregion
     }
