@@ -5,16 +5,15 @@ namespace Tethys.WebApi.Models
 {
     public class PushNotification
     {
+        public long Id { get; set; }
         [Required] public string Key { get; set; }
         public int Delay { get; set; }
         [Required] public string Body { get; set; }
 
-        public int NotifyTimes { get; set; }
-        public int NotificationCounter { get; set; }
-
-        public long Id { get; set; }
-
+        public uint NotifyTimes { get; set; }
+        public uint NotifiedCounter { get; set; }
         public bool WasNotified { get; set; }
-        public DateTime? NotifiedOnUtc { get; set; }
+        public DateTime NotifiedOnUtc { get; set; }
+        public bool WasFullyHandled => this.NotifiedCounter == this.NotifyTimes;
     }
 }

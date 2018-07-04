@@ -6,7 +6,7 @@ namespace Tethys.WebApi.Services
 {
     public interface INotificationService
     {
-        Task Notify(IEnumerable<PushNotification> notifications);
+        Task NotifyAsync(IEnumerable<PushNotification> notifications);
         void Stop();
     }
 }

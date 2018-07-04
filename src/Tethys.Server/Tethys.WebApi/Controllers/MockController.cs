@@ -102,7 +102,7 @@ namespace Tethys.WebApi.Controllers
                     hc.CallsCounter = 0;
                 }
 
-                _httpCallRepository.Insert(enumerable);
+                _httpCallRepository.Create(enumerable);
             });
             return new ObjectResult(httpCalls) { StatusCode = StatusCodes.Status201Created };
         }
@@ -116,7 +116,7 @@ namespace Tethys.WebApi.Controllers
                     StatusCode = StatusCodes.Status406NotAcceptable
                 };
 
-            _notificationeService.Notify(notifications);
+            _notificationeService.NotifyAsync(notifications);
 
             return Accepted();
         }

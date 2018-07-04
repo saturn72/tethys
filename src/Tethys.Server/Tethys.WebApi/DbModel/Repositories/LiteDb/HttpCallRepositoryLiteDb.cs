@@ -21,9 +21,9 @@ namespace Tethys.WebApi.DbModel.Repositories.LiteDb
 
         #endregion
 
-        public void Insert(IEnumerable<HttpCall> httpCalls)
+        public void Create(IEnumerable<HttpCall> httpCalls)
         {
-            _liteDbUnitOfWork.Insert(httpCalls);
+            _liteDbUnitOfWork.Create(httpCalls);
         }
         public IEnumerable<HttpCall> GetBy(ISpecification<HttpCall> spec)
         {

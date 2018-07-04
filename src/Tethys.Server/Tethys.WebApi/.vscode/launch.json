@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/netcoreapp2.1/Tethys.WebApi.dll",
-            "args": [],
+            "args": ["--config \"E:\\dev\\Avoset\\PcTools\\Main\\workstation\\e2e\\framework\\tethys\\tethyssettings.json\""],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",

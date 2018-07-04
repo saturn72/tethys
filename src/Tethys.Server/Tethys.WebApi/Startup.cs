@@ -67,6 +67,7 @@ namespace Tethys.WebApi
             var dbName = Configuration["liteDb:name"];
             services.AddTransient(sr => new UnitOfWorkLiteDb(dbName));
             services.AddTransient<IHttpCallRepository, HttpCallRepositoryLiteDb>();
+            services.AddTransient<INotificationRepository, NotificationRepositoryLiteDb>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

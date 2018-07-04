@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tethys.Samples", "Tethys.Sa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tethys.WebApi", "Tethys.WebApi\Tethys.WebApi.csproj", "{CF3D10BE-3A30-4288-9658-9F21C02302D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tethys.WebApi.Tests", "Tethys.WebApi.Tests\Tethys.WebApi.Tests.csproj", "{61B91DAD-822B-4660-A8E4-F42EA58A0C1A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{CF3D10BE-3A30-4288-9658-9F21C02302D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF3D10BE-3A30-4288-9658-9F21C02302D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF3D10BE-3A30-4288-9658-9F21C02302D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61B91DAD-822B-4660-A8E4-F42EA58A0C1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61B91DAD-822B-4660-A8E4-F42EA58A0C1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61B91DAD-822B-4660-A8E4-F42EA58A0C1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61B91DAD-822B-4660-A8E4-F42EA58A0C1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

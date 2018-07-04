@@ -11,7 +11,7 @@ namespace Tethys.WebApi.DbModel.Repositories.LiteDb
             return unitOfWorkLiteDb.Query(spec.Criteria);
         }
 
-        public static void Insert<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb,
+        public static void Create<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb,
             IEnumerable<TDomainModel> models)
         {
             unitOfWorkLiteDb.Command(db =>
