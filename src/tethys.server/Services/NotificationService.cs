@@ -61,7 +61,7 @@ namespace Tethys.Server.Services
                 }
             }));
         }
-        public void Stop()
+        public virtual void Stop()
         {
             _notificationsCancelationTokenSource?.Cancel();
         }

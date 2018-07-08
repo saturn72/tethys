@@ -19,7 +19,9 @@ namespace Tethys.Server.Tests.Services
         public void NotificationService_Stop()
         {
             var ns = new NotificationServiceTestObject(null, null);
-            Should.Throw<NullReferenceException>(() => ns.WasCancelled());
+            ns.StopMethodWasCalled.ShouldBeFalse();
+            ns.Stop();
+            ns.StopMethodWasCalled.ShouldBeTrue();
         }
 
         [Theory]
@@ -76,6 +78,15 @@ namespace Tethys.Server.Tests.Services
         : base(publisher, notificationRepository)
         {
         }
-        public bool WasCancelled() => _notificationsCancelationTokenSource.IsCancellationRequested;
+
+        public override void Stop()
+        {
+            StopMethodWasCalled = true;
+            base.Stop();
+        }
+        public bool StopMethodWasCalled
+        {
+            get; private set;
+        }
     }
 }
