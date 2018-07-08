@@ -8,10 +8,8 @@ namespace Tethys.Server
 {
     public class RedirectRules
     {
-        public static void RedirectRequests(RewriteContext context, TethysConfig tethysConfig)
+        public static void RedirectRequests(HttpRequest request, TethysConfig tethysConfig)
         {
-            var request = context.HttpContext.Request;
-
             //if tethys requests - continue
             if (RequestStartsWithSegment(request, Consts.ApiBaseUrl)
                 || RequestStartsWithSegment(request, Consts.SwaggerEndPointPrefix)

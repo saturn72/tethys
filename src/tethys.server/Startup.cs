@@ -77,7 +77,7 @@ namespace Tethys.Server
 
             var rewriteOptions = new RewriteOptions();
             rewriteOptions //.AddRewrite(@"^(?i)(?!)tethys/(.*)", "mock/$1", true)
-                .Add(rCtx => RedirectRules.RedirectRequests(rCtx, tethysConfig));
+                .Add(rCtx => RedirectRules.RedirectRequests(rCtx.HttpContext.Request, tethysConfig));
             app.UseRewriter(rewriteOptions);
             app.UseCors(cp => cp.AllowAnyOrigin()
                  .AllowAnyMethod()

@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tethys.server", "Tethys.Server\tethys.server.csproj", "{AC71FFE9-1A79-48B6-A692-61733C601DD4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tethys.Server.Tests", "Tethys.Server.Tests\Tethys.Server.Tests.csproj", "{932F9A76-242F-4040-9ABF-2DAE64DF8B09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,17 @@ Global
 		{AC71FFE9-1A79-48B6-A692-61733C601DD4}.Release|x64.Build.0 = Release|Any CPU
 		{AC71FFE9-1A79-48B6-A692-61733C601DD4}.Release|x86.ActiveCfg = Release|Any CPU
 		{AC71FFE9-1A79-48B6-A692-61733C601DD4}.Release|x86.Build.0 = Release|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Debug|x64.Build.0 = Debug|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Debug|x86.Build.0 = Debug|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Release|x64.ActiveCfg = Release|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Release|x64.Build.0 = Release|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Release|x86.ActiveCfg = Release|Any CPU
+		{932F9A76-242F-4040-9ABF-2DAE64DF8B09}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
