@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
@@ -11,15 +12,13 @@ namespace Tethys.Server.Services
 {
     public class NotificationService : INotificationService
     {
-        private static CancellationTokenSource _notificationsCancelationTokenSource =
-            new CancellationTokenSource();
-
-        private readonly IHubContext<MockHub> _mockHub;
+        protected static CancellationTokenSource _notificationsCancelationTokenSource;
         private readonly INotificationRepository _notificationRepository;
+        private readonly INotificationPublisher _publisher;
 
-        public NotificationService(IHubContext<MockHub> mockHub, INotificationRepository notificationRepository)
+        public NotificationService(INotificationPublisher publisher, INotificationRepository notificationRepository)
         {
-            _mockHub = mockHub;
+            _publisher = publisher;
             _notificationRepository = notificationRepository;
         }
 
@@ -27,6 +26,9 @@ namespace Tethys.Server.Services
         {
             //stop previous notifications
             Stop();
+
+            if (notifications == null || !notifications.Any())
+                return;
 
             //setup database
             foreach (var n in notifications)
@@ -39,7 +41,7 @@ namespace Tethys.Server.Services
             //recreate cancelation token source
             _notificationsCancelationTokenSource = new CancellationTokenSource();
             var ct = _notificationsCancelationTokenSource.Token;
-            await Task.Run(() =>
+            await Task.Run((Action)(() =>
             {
                 foreach (var notification in notifications)
                 {
@@ -48,16 +50,16 @@ namespace Tethys.Server.Services
                         if (ct.IsCancellationRequested)
                             return;
 
-                        Thread.Sleep(notification.Delay);
+                        Thread.Sleep((int)notification.Delay);
                         if (ct.IsCancellationRequested)
                             return;
                         notification.NotifiedOnUtc = DateTime.UtcNow;
-                        _mockHub.Clients.All.SendAsync(notification.Key, notification.Body);
+                        _publisher.ToAll(notification.Key, notification.Body);
                         notification.NotifiedCounter++;
-                        Task.Run(() => _notificationRepository.Update(notification));
+                        _notificationRepository.Update(notification);
                     }
                 }
-            });
+            }));
         }
         public void Stop()
         {

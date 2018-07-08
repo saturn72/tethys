@@ -7,7 +7,7 @@ namespace Tethys.Server.Models
     {
         public long Id { get; set; }
         [Required] public string Key { get; set; }
-        public int Delay { get; set; }
+        public uint Delay { get; set; }
         [Required] public string Body { get; set; }
 
         public uint NotifyTimes { get; set; }
