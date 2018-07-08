@@ -21,11 +21,11 @@ namespace Tethys.Server.Controllers
     {
         #region CTOR
 
-        public MockController(IHttpCallRepository httpCallRepository, IHubContext<MockHub> mockHub, INotificationService notificationeService)
+        public MockController(IHttpCallRepository httpCallRepository, INotificationService notificationeService, INotificationPublisher notificationePublisher)
         {
             _httpCallRepository = httpCallRepository;
-            _mockHub = mockHub;
             _notificationeService = notificationeService;
+            _notificationPublisher = notificationePublisher;
         }
 
         #endregion
@@ -130,7 +130,7 @@ namespace Tethys.Server.Controllers
             sb.AppendLine(expectedRequest.ToReportFormat().Replace("\n", "\t\n"));
 
             sb.AppendLine("Start comparing incoming request");
-            await _mockHub.Clients.All.SendAsync("tethys-log", sb.ToString());
+            await _notificationPublisher.ToAll("tethys-log", sb.ToString());
         }
 
         private async Task<Request> BuildActualRequest()
@@ -156,8 +156,8 @@ namespace Tethys.Server.Controllers
         #region Fields
 
         private readonly IHttpCallRepository _httpCallRepository;
-        private readonly IHubContext<MockHub> _mockHub;
         private readonly INotificationService _notificationeService;
+        private readonly INotificationPublisher _notificationPublisher;
 
         #endregion
     }

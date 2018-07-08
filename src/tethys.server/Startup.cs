@@ -67,6 +67,8 @@ namespace Tethys.Server
             services.AddTransient<IHttpCallRepository, HttpCallRepositoryLiteDb>();
             services.AddTransient<INotificationRepository, NotificationRepositoryLiteDb>();
             services.AddTransient<INotificationService, NotificationService>();
+            services.AddTransient<INotificationPublisher, NotificationPublisher>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
