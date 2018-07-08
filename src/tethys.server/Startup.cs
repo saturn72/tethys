@@ -9,6 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using Tethys.Server.DbModel.Repositories;
+using Tethys.Server.DbModel.Repositories.LiteDb;
+using Tethys.Server.Services;
 
 namespace Tethys.Server
 {
@@ -24,7 +27,12 @@ namespace Tethys.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ContractResolver
+                        = new DefaultContractResolver();
+                });
             services.AddCors();
             services.AddSignalR();
 
@@ -40,6 +48,12 @@ namespace Tethys.Server
                 if (File.Exists(xmlPath))
                     c.IncludeXmlComments(xmlPath);
             });
+
+            var dbName = Configuration["liteDb:name"];
+            services.AddTransient(sr => new UnitOfWorkLiteDb(dbName));
+            services.AddTransient<IHttpCallRepository, HttpCallRepositoryLiteDb>();
+            services.AddTransient<INotificationRepository, NotificationRepositoryLiteDb>();
+            services.AddTransient<INotificationService, NotificationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
