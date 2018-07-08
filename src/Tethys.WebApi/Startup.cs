@@ -53,7 +53,7 @@ namespace Tethys.WebApi
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info {Title = "Tethys API", Version = "v1"});
+                c.SwaggerDoc("v1", new Info { Title = "Tethys API", Version = "v1" });
                 c.DescribeAllEnumsAsStrings();
                 c.DescribeStringEnumsInCamelCase();
                 c.DescribeAllParametersInCamelCase();
