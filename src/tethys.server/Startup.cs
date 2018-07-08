@@ -21,7 +21,7 @@ namespace Tethys.Server
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-                        Configuration = configuration;
+            Configuration = configuration;
             var configFilePath = configuration["config"];
 
             if (configFilePath == null) return;
@@ -51,7 +51,7 @@ namespace Tethys.Server
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info {Title = "Tethys API", Version = "v1"});
+                c.SwaggerDoc("v1", new Info { Title = "Tethys API", Version = "v1" });
                 c.DescribeAllEnumsAsStrings();
                 c.DescribeStringEnumsInCamelCase();
                 c.DescribeAllParametersInCamelCase();
@@ -62,7 +62,7 @@ namespace Tethys.Server
                     c.IncludeXmlComments(xmlPath);
             });
 
-            var dbName = Configuration["liteDb:name"];
+            var dbName = Configuration["tethysConfig:liteDb:name"];
             services.AddTransient(sr => new UnitOfWorkLiteDb(dbName));
             services.AddTransient<IHttpCallRepository, HttpCallRepositoryLiteDb>();
             services.AddTransient<INotificationRepository, NotificationRepositoryLiteDb>();
@@ -72,17 +72,17 @@ namespace Tethys.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())  app.UseDeveloperExceptionPage();
-              var tethysConfig = TethysConfig.FromConfiguration(Configuration);
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            var tethysConfig = TethysConfig.FromConfiguration(Configuration);
 
             var rewriteOptions = new RewriteOptions();
             rewriteOptions //.AddRewrite(@"^(?i)(?!)tethys/(.*)", "mock/$1", true)
                 .Add(rCtx => RedirectRules.RedirectRequests(rCtx, tethysConfig));
             app.UseRewriter(rewriteOptions);
-           app.UseCors(cp => cp.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
+            app.UseCors(cp => cp.AllowAnyOrigin()
+                 .AllowAnyMethod()
+                 .AllowAnyHeader()
+                 .AllowCredentials());
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
