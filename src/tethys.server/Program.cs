@@ -28,18 +28,6 @@ namespace Tethys.Server
             try
             {
                 Log.Information("Starting web host");
-
-                var configFilePath = args.Length >= 2 ? args[1] : "appsettings.json";
-                var configDirectory = Path.GetDirectoryName(configFilePath);
-                if (configDirectory.Length == 0)
-                    configDirectory = Directory.GetCurrentDirectory();
-
-                Configuration = new ConfigurationBuilder()
-                    .SetBasePath(configDirectory)
-                    .AddJsonFile(configFilePath)
-                    .AddCommandLine(args)
-                    .Build();
-
                 CreateWebHostBuilder(args).Build().Run();
                 return 0;
             }
@@ -57,14 +45,29 @@ namespace Tethys.Server
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
-            var config = TethysConfig.FromConfiguration(Configuration);
-            var urls = config.HttpPorts.Select(hp => "http://localhost:" + hp).ToArray();
+            BuildConfiguration(args);
+            var tethysConfig = TethysConfig.FromConfiguration(Configuration);
+            var urls = tethysConfig.HttpPorts.Select(hp => "http://localhost:" + hp).ToArray();
 
             return WebHost.CreateDefaultBuilder(args)
                 .UseConfiguration(Configuration)
                 .UseStartup<Startup>()
                 .UseSerilog()
                 .UseUrls(urls);
+        }
+
+        private static void BuildConfiguration(string[] args)
+        {
+            var configFilePath = args.Length >= 2 ? args[1] : "appsettings.json";
+            var configDirectory = Path.GetDirectoryName(configFilePath);
+            if (configDirectory.Length == 0)
+                configDirectory = Directory.GetCurrentDirectory();
+
+            Configuration = new ConfigurationBuilder()
+                .SetBasePath(configDirectory)
+                .AddJsonFile(configFilePath)
+                .AddCommandLine(args)
+                .Build();
         }
     }
 }
