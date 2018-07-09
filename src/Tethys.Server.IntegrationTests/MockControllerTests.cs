@@ -88,7 +88,7 @@ namespace Tethys.Server.IntegrationTests
             var request = BuildHttpRequestMessage(notifications, pushUri);
             var response = await Client.SendAsync(request);
             response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
-
+            WebSocketBuffer.Array[0].ShouldNotBe((byte)0);
             throw new System.NotImplementedException("listen to web socket evebnt");
         }
         #endregion
