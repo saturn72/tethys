@@ -5,6 +5,9 @@ using Shouldly;
 using System.Net;
 using Newtonsoft.Json;
 using System.Text;
+using System.Threading;
+using System.Linq;
+using Tethys.Server.Models;
 
 namespace Tethys.Server.IntegrationTests
 {
@@ -16,15 +19,25 @@ namespace Tethys.Server.IntegrationTests
         [Fact]
         public async Task PushSingleNotificationAsync()
         {
-            var notifications = new object[] {
-            new {
-                key = "notification-key",
-                body = "notification-body"
-            }
+            var notifications = new[] {
+                new PushNotification
+                {
+                    Delay = 1000,
+                    Key = "notification-key",
+                    Body = "notification-body"
+                }
             };
+
             var request = BuildHttpRequestMessage(notifications, pushUri);
             var response = await Client.SendAsync(request);
             response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+
+            Thread.Sleep(1100);
+            var pn = RecievedNotifications.First();
+            pn.Key.ShouldBe(notifications[0].Key);
+            pn.Body.ShouldBe(notifications[0].Body);
+
+
 
             throw new System.NotImplementedException("listen to web socket evebnt");
         }
@@ -88,7 +101,7 @@ namespace Tethys.Server.IntegrationTests
             var request = BuildHttpRequestMessage(notifications, pushUri);
             var response = await Client.SendAsync(request);
             response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
-            WebSocketBuffer.Array[0].ShouldNotBe((byte)0);
+            RecievedNotifications.Count().ShouldBe(notifications.Length);
             throw new System.NotImplementedException("listen to web socket evebnt");
         }
         #endregion

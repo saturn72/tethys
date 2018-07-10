@@ -9,5 +9,6 @@
         public const string TethysWebSocketPath = "/ws-tethys";
         public const string TethysWebSocketPathNegotiate = "/negotiate";
         public const string OriginalRequest = "original-request";
+        public const string PushNotificationLog = "pushNotificationLog";
     }
 }

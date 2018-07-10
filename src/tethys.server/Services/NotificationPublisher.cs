@@ -15,6 +15,7 @@ namespace Tethys.Server.Services
         public async Task ToAll(string notificationKey, string notificationBody)
         {
             await _mockHub.Clients.All.SendAsync(notificationKey, notificationBody);
+            await _mockHub.Clients.All.SendAsync(Consts.PushNotificationLog, notificationKey, notificationBody);
         }
     }
 }
