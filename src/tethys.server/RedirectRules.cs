@@ -23,21 +23,27 @@ namespace Tethys.Server
                 HttpMethod = request.Method
             };
 
-            request.Path = BuildRedirectPath(tethysConfig, request);
+            BuildRedirectLogic(tethysConfig, request);
         }
 
-        private static string BuildRedirectPath(TethysConfig tethysConfig, HttpRequest request)
+        private static void BuildRedirectLogic(TethysConfig tethysConfig, HttpRequest request)
         {
             var isWebSocketRequest = tethysConfig
                 .WebSocketSuffix
                 .Any(wss => RequestStartsWithSegment(request, wss));
 
             var path = isWebSocketRequest ? Consts.TethysWebSocketPath : Consts.MockControllerRoute;
-
-            if (isWebSocketRequest && request.Path.Value.EndsWith(Consts.TethysWebSocketPathNegotiate,
-                    StringComparison.InvariantCultureIgnoreCase))
-                path += Consts.TethysWebSocketPathNegotiate;
-            return path;
+            if (isWebSocketRequest)
+            {
+                if (request.Path.Value.EndsWith(Consts.TethysWebSocketPathNegotiate,
+                                   StringComparison.InvariantCultureIgnoreCase))
+                    path += Consts.TethysWebSocketPathNegotiate;
+            }
+            else
+            {
+                request.Method = HttpMethods.Get;
+            }
+            request.Path = path;
         }
 
         private static bool RequestStartsWithSegment(HttpRequest request, string segment)
