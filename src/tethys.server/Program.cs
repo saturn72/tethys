@@ -58,16 +58,20 @@ namespace Tethys.Server
 
         private static void BuildConfiguration(string[] args)
         {
-            var configFilePath = args.Length >= 2 ? args[1] : "appsettings.json";
+            var configFilePath = GetAppSettingsFile(args);
             var configDirectory = Path.GetDirectoryName(configFilePath);
-            if (configDirectory.Length == 0)
-                configDirectory = Directory.GetCurrentDirectory();
 
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(configDirectory)
                 .AddJsonFile(configFilePath)
                 .AddCommandLine(args)
                 .Build();
+        }
+
+        private static string GetAppSettingsFile(string[] args)
+        {
+            var f = args.Length >= 2 ? args[1] : "appsettings.json";
+            return Path.IsPathRooted(f) ? f : Path.Combine(Directory.GetCurrentDirectory(), f);
         }
     }
 }
