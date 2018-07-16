@@ -21,14 +21,9 @@ namespace Tethys.Server
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            Configuration = configuration;
-            var configFilePath = configuration["config"];
-
-            if (configFilePath == null) return;
+            var configFilePath = ConfigManager.GetConfigFile(configuration["config"] ?? "appsettings.json");
 
             var configDirectory = Path.GetDirectoryName(configFilePath);
-            if (configDirectory.Length == 0)
-                configDirectory = Directory.GetCurrentDirectory();
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(configDirectory)
                 .AddJsonFile(configFilePath)
