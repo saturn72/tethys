@@ -11,6 +11,11 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
             return unitOfWorkLiteDb.Query(spec.Criteria);
         }
 
+        public static IEnumerable<TDomainModel> GetAll<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb)
+        {
+            return unitOfWorkLiteDb.Query<TDomainModel>(db => true);
+        }
+
         public static void Create<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb,
             IEnumerable<TDomainModel> models)
         {
@@ -76,7 +81,7 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
 
 
 
-           
+
 
             private static void CopyAllProperties<TDomainModel>(TDomainModel source, */
     }

@@ -9,5 +9,6 @@ namespace Tethys.Server.DbModel.Repositories
         IEnumerable<HttpCall> GetBy(ISpecification<HttpCall> spec);
         void Update(HttpCall httpCall);
         void FlushUnhandled();
+        IEnumerable<HttpCall> GetAll();
     }
 }

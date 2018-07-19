@@ -37,13 +37,18 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
 
         public void FlushUnhandled()
         {
-            var notHandledOrFlushed = _liteDbUnitOfWork.Query<HttpCall>(hc => !hc.WasFullyHandled && !hc.Flushed );
+            var notHandledOrFlushed = _liteDbUnitOfWork.Query<HttpCall>(hc => !hc.WasFullyHandled && !hc.Flushed);
             foreach (var nf in notHandledOrFlushed)
             {
                 nf.FlushedOnUtc = DateTime.UtcNow;
                 nf.Flushed = true;
                 _liteDbUnitOfWork.Update(nf);
             }
+        }
+
+        public IEnumerable<HttpCall> GetAll()
+        {
+            return _liteDbUnitOfWork.GetAll<HttpCall>();
         }
     }
 }

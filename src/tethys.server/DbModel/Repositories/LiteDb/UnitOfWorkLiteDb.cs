@@ -22,7 +22,6 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
         }
 
         #endregion
-
         public void Command(Action<LiteDatabase> command)
         {
             using (var db = new LiteDatabase(_dbName))
