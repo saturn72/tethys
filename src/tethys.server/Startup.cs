@@ -12,6 +12,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Tethys.Server.DbModel.Repositories;
 using Tethys.Server.DbModel.Repositories.LiteDb;
 using Tethys.Server.Services;
+using Tethys.Server.Services.Notifications;
 using Tethys.Server.Hubs;
 using Tethys.Server.Middlewares;
 

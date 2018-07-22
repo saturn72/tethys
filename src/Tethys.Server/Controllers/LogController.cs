@@ -21,8 +21,8 @@ namespace Tethys.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var allHttpCalls = await _reqResCoupleService.GetAllAsync();
-            return Ok(allHttpCalls);
+            var allReqResCouples = await _reqResCoupleService.GetAllAsync();
+            return Ok(allReqResCouples);
         }
     }
 }

@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
+using Newtonsoft.Json;
 using Tethys.Server.Models;
 using Tethys.Server.Services;
+using Tethys.Server.Services.Notifications;
 
 namespace Tethys.Server.Middlewares
 {
@@ -18,14 +20,15 @@ namespace Tethys.Server.Middlewares
         #region Fields
         private readonly RequestDelegate _next;
         private readonly IRequestResponseCoupleService _requestResponseCoupleService;
+        private readonly INotificationPublisher _notificationPublisher;
 
         #endregion
         #region ctor
-        public RequestResponseLoggingMiddleware(RequestDelegate next,
-                                                IRequestResponseCoupleService requestResponseCoupleService)
+        public RequestResponseLoggingMiddleware(RequestDelegate next, IRequestResponseCoupleService requestResponseCoupleService, INotificationPublisher notificationPublisher)
         {
             _next = next;
             _requestResponseCoupleService = requestResponseCoupleService;
+            _notificationPublisher = notificationPublisher;
         }
         #endregion
 
@@ -57,6 +60,8 @@ namespace Tethys.Server.Middlewares
             }
 
             await _requestResponseCoupleService.Update(reqRes);
+            var json = JsonConvert.SerializeObject(reqRes);
+            _notificationPublisher.ToAll(TethysNotificationKeys.NewRequestResponseCouple, json);
         }
 
         private async Task<RequestResponseCouple> ExtractRequestAsync(HttpRequest request)

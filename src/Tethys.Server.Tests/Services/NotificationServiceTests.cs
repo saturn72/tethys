@@ -8,7 +8,7 @@ using Shouldly;
 using Tethys.Server.DbModel.Repositories;
 using Tethys.Server.Hubs;
 using Tethys.Server.Models;
-using Tethys.Server.Services;
+using Tethys.Server.Services.Notifications;
 using Xunit;
 
 namespace Tethys.Server.Tests.Services

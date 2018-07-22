@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Tethys.Server.Models;
 
-namespace Tethys.Server.Services
+namespace Tethys.Server.Services.Notifications
 {
     public interface INotificationService
     {

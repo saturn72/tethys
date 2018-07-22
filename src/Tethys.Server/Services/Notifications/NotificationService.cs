@@ -8,7 +8,7 @@ using Tethys.Server.DbModel.Repositories;
 using Tethys.Server.Hubs;
 using Tethys.Server.Models;
 
-namespace Tethys.Server.Services
+namespace Tethys.Server.Services.Notifications
 {
     public class NotificationService : INotificationService
     {

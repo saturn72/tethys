@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Tethys.Server.Hubs;
 
-namespace Tethys.Server.Services
+namespace Tethys.Server.Services.Notifications
 {
     public class NotificationPublisher : INotificationPublisher
     {
