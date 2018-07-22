@@ -145,7 +145,7 @@ namespace Tethys.Server.Controllers
             var originalRequest = Request.HttpContext.Items[Consts.OriginalRequest] as OriginalRequest;
             return new Request
             {
-                HttpMethod = Enum.Parse<HttpMethod>(originalRequest.HttpMethod, true),
+                HttpMethod = originalRequest.HttpMethod,
                 Resource = originalRequest.Path,
                 Query = originalRequest.QueryString,
                 Body = body,

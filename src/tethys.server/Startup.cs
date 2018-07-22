@@ -13,6 +13,7 @@ using Tethys.Server.DbModel.Repositories;
 using Tethys.Server.DbModel.Repositories.LiteDb;
 using Tethys.Server.Services;
 using Tethys.Server.Hubs;
+using Tethys.Server.Middlewares;
 
 namespace Tethys.Server
 {
@@ -59,12 +60,19 @@ namespace Tethys.Server
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<INotificationPublisher, NotificationPublisher>();
 
+            services.AddSingleton<IRequestResponseCoupleService, RequestResponseCoupleService>();
+            services.AddTransient<IRequestResponseCoupleRepository, RequestResponseCoupleRepositoryLiteDb>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+            //log incoming and outgoing traffic
+            app.UseRequestResponseLogging();
+
             var tethysConfig = TethysConfig.FromConfiguration(Configuration);
 
             var rewriteOptions = new RewriteOptions();

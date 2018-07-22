@@ -3,9 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Tethys.Server.Models
 {
-    public class PushNotification
+    public class PushNotification : DomainModelBase
     {
-        public long Id { get; set; }
         [Required] public string Key { get; set; }
         public uint Delay { get; set; }
         [Required] public string Body { get; set; }

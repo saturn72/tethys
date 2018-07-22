@@ -3,15 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Tethys.Server.Models
 {
-    public class HttpCall
+    public class HttpCall : DomainModelBase
     {
         [Required] public Request Request { get; set; }
         [Required] public Response Response { get; set; }
 
         public int AllowedCallsNumber { get; set; }
         public int CallsCounter { get; set; }
-
-        public long Id { get; set; }
 
         public bool WasFullyHandled { get; set; }
         public DateTime? HandledOnUtc { get; set; }

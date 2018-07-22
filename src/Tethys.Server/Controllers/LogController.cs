@@ -1,7 +1,7 @@
 
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Tethys.Server.DbModel.Repositories;
+using Tethys.Server.Services;
 
 namespace Tethys.Server.Controllers
 {
@@ -9,19 +9,19 @@ namespace Tethys.Server.Controllers
     public class LogController : Controller
     {
         #region fields
-        private readonly IHttpCallRepository _httpCallRepository;
+        private readonly IRequestResponseCoupleService _reqResCoupleService;
         #endregion
         #region ctor
-        public LogController(IHttpCallRepository httpCallRepository)
+        public LogController(IRequestResponseCoupleService reqResCoupeService)
         {
-            _httpCallRepository = httpCallRepository;
+            _reqResCoupleService = reqResCoupeService;
         }
         #endregion
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var allHttpCalls = await Task.Run(() => _httpCallRepository.GetAll());
+            var allHttpCalls = await _reqResCoupleService.GetAllAsync();
             return Ok(allHttpCalls);
         }
     }

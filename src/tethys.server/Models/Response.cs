@@ -1,6 +1,6 @@
 namespace Tethys.Server.Models
 {
-    public class Response
+    public class Response : DomainModelBase
     {
         public int HttpStatusCode { get; set; }
 
