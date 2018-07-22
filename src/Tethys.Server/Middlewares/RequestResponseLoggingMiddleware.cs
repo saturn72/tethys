@@ -61,7 +61,7 @@ namespace Tethys.Server.Middlewares
 
             await _requestResponseCoupleService.Update(reqRes);
             var json = JsonConvert.SerializeObject(reqRes);
-            _notificationPublisher.ToAll(TethysNotificationKeys.NewRequestResponseCouple, json);
+            await _notificationPublisher.ToAll(TethysNotificationKeys.NewRequestResponseCouple, json);
         }
 
         private async Task<RequestResponseCouple> ExtractRequestAsync(HttpRequest request)

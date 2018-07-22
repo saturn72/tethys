@@ -29,6 +29,23 @@
         </table>
     </div>
     <script src="index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+
+    <!--Reference the SignalR library. -->
+    <script src="./lib/dist/browser/signalr.min.js"></script>
+    <!--Add script to update the page and send messages.-->
+    <script type="text/javascript">
+        let connection = new signalR.HubConnectionBuilder()
+            .withUrl("http://localhost:4880/ws-tethys")
+            .build();
+        connection.on("NewRequestResponseCouple", (reqResCouple) => {
+            console.log("recieve new reqResCouple: " + JSON.stringify(reqResCouple));
+        });
+        connection.start().catch(err => console.error(err.toString()));
+
+    </script>
+
 </body>
 
 </html>

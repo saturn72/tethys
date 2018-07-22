@@ -1,4 +1,4 @@
-var link = 'http://localhost:4881/tethys/api/log';
+var link = 'http://localhost:4880/tethys/api/log';
 // bootstrap the demo
 new Vue({
     el: '#app',
