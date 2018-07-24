@@ -24,6 +24,11 @@ namespace Tethys.Server.Services
             await Task.Run(() => _reqResCoupleRepository.Create(requestResponseCouple));
         }
 
+        public async Task DeleteAllAsync()
+        {
+            await Task.Run(() => _reqResCoupleRepository.DeleteAllAsync());
+        }
+
         public async Task<IEnumerable<RequestResponseCouple>> GetAllAsync()
         {
             return await Task.Run(() => _reqResCoupleRepository.GetAll());

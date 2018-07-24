@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.SignalR;
 using Tethys.Server.DbModel.Repositories;
 using Tethys.Server.Hubs;
 using Tethys.Server.Models;
+using Tethys.Server.Services;
 using Tethys.Server.Services.Notifications;
 
 namespace Tethys.Server.Controllers
@@ -21,11 +22,14 @@ namespace Tethys.Server.Controllers
     {
         #region CTOR
 
-        public MockController(IHttpCallRepository httpCallRepository, INotificationService notificationeService, INotificationPublisher notificationePublisher)
+        public MockController(
+            IHttpCallRepository httpCallRepository, INotificationService notificationeService,
+            INotificationPublisher notificationePublisher, IRequestResponseCoupleService requestResponseCoupleService)
         {
             _httpCallRepository = httpCallRepository;
             _notificationeService = notificationeService;
             _notificationPublisher = notificationePublisher;
+            _reqRescoupleService = requestResponseCoupleService;
         }
 
         #endregion
@@ -68,11 +72,12 @@ namespace Tethys.Server.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Post()
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 _notificationeService.Stop();
 
                 _httpCallRepository.FlushUnhandled();
+                await _reqRescoupleService.DeleteAllAsync();
             });
             return Ok();
         }
@@ -158,6 +163,7 @@ namespace Tethys.Server.Controllers
         private readonly IHttpCallRepository _httpCallRepository;
         private readonly INotificationService _notificationeService;
         private readonly INotificationPublisher _notificationPublisher;
+        private readonly IRequestResponseCoupleService _reqRescoupleService;
 
         #endregion
     }

@@ -24,6 +24,11 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
             _liteDbUnitOfWork.Create(requestResponseCouple);
         }
 
+        public void DeleteAllAsync()
+        {
+            _liteDbUnitOfWork.Command(db => db.GetCollection<RequestResponseCouple>().Delete(x => true));
+        }
+
         public IEnumerable<RequestResponseCouple> GetAll()
         {
             return _liteDbUnitOfWork.GetAll<RequestResponseCouple>();

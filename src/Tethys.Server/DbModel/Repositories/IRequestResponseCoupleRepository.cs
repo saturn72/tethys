@@ -9,5 +9,6 @@ namespace Tethys.Server.DbModel.Repositories
         void Create(RequestResponseCouple requestResponseCouple);
         void Update(RequestResponseCouple requestResponseCouple);
         IEnumerable<RequestResponseCouple> GetAll();
+        void DeleteAllAsync();
     }
 }
