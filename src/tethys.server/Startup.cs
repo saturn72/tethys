@@ -15,6 +15,7 @@ using Tethys.Server.Services;
 using Tethys.Server.Services.Notifications;
 using Tethys.Server.Hubs;
 using Tethys.Server.Middlewares;
+using Microsoft.Extensions.FileProviders;
 
 namespace Tethys.Server
 {
@@ -43,7 +44,16 @@ namespace Tethys.Server
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Tethys API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info
+                {
+                    Title = "Tethys API",
+                    Version = "v1",
+                    Contact = new Contact
+                    {
+                        Name = "Click for dashboard",
+                        Url = "./../ui/index.html"
+                    },
+                });
                 c.DescribeAllEnumsAsStrings();
                 c.DescribeStringEnumsInCamelCase();
                 c.DescribeAllParametersInCamelCase();
@@ -73,6 +83,13 @@ namespace Tethys.Server
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
             //log incoming and outgoing traffic
             app.UseRequestResponseLogging();
+
+            var staticFileOptions = new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "UI")),
+                RequestPath = Consts.ApiBaseUrl + Consts.Ui
+            };
+            app.UseStaticFiles(staticFileOptions);
 
             var tethysConfig = TethysConfig.FromConfiguration(Configuration);
 
