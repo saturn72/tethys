@@ -83,14 +83,24 @@ namespace Tethys.Server
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
             //log incoming and outgoing traffic
             app.UseRequestResponseLogging();
+            var staticHtmlFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "UI");
 
-            var staticFileOptions = new StaticFileOptions
+            if (Directory.Exists(staticHtmlFilesPath))
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "UI")),
-                RequestPath = Consts.ApiBaseUrl + Consts.Ui
-            };
-            app.UseStaticFiles(staticFileOptions);
-
+                var staticFileOptions = new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(staticHtmlFilesPath),
+                    RequestPath = Consts.ApiBaseUrl + Consts.Ui
+                };
+                app.UseStaticFiles(staticFileOptions);
+            }
+            else
+            {
+                var tmpColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"{staticHtmlFilesPath} could not be found - static html content is not rendered");
+                Console.ForegroundColor = tmpColor;
+            }
             var tethysConfig = TethysConfig.FromConfiguration(Configuration);
 
             var rewriteOptions = new RewriteOptions();
