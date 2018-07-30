@@ -65,7 +65,7 @@ namespace Tethys.Server.Tests.Services
             //notification
             foreach (var ntf in notifications)
             {
-                np.Verify(n => n.ToAll(It.Is<string>(k => ntf.Key == k), It.Is<string>(b => ntf.Body == b)), Times.Exactly((int)ntf.NotifyTimes));
+                np.Verify(n => n.ToServerUnderTestClients(It.Is<string>(k => ntf.Key == k), It.Is<string>(b => ntf.Body == b)), Times.Exactly((int)ntf.NotifyTimes));
 
                 for (var i = 1; i <= ntf.NotifiedCounter; i++)
                     nRepo.Verify(n => n.Update(It.Is<PushNotification>(pn => pn.Key == ntf.Key)), Times.AtLeastOnce);

@@ -54,7 +54,7 @@ namespace Tethys.Server.Services.Notifications
                         if (ct.IsCancellationRequested)
                             return;
                         notification.NotifiedOnUtc = DateTime.UtcNow;
-                        _publisher.ToAll(notification.Key, notification.Body);
+                        _publisher.ToServerUnderTestClients(notification.Key, notification.Body);
                         notification.NotifiedCounter++;
                         _notificationRepository.Update(notification);
                     }

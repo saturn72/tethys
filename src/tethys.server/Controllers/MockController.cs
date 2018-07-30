@@ -135,7 +135,7 @@ namespace Tethys.Server.Controllers
             sb.AppendLine(expectedRequest.ToReportFormat().Replace("\n", "\t\n"));
 
             sb.AppendLine("Start comparing incoming request");
-            await _notificationPublisher.ToAll("tethys-log", sb.ToString());
+            await _notificationPublisher.ToServerUnderTestClients("tethys-log", sb.ToString());
         }
 
         private async Task<Request> BuildActualRequest()

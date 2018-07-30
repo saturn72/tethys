@@ -21,6 +21,7 @@ namespace Tethys.Server
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -34,6 +35,8 @@ namespace Tethys.Server
         }
 
         public IConfiguration Configuration { get; }
+        public TethysConfig TethysConfig { get; private set; }
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -41,6 +44,11 @@ namespace Tethys.Server
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddCors();
             services.AddSignalR(options => options.EnableDetailedErrors = true);
+
+            TethysConfig = TethysConfig.FromConfiguration(Configuration);
+            services.AddSingleton<TethysConfig>(sp => TethysConfig);
+
+            services.AddSingleton<TethysHub>();
 
             services.AddSwaggerGen(c =>
             {
@@ -82,7 +90,9 @@ namespace Tethys.Server
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
             //log incoming and outgoing traffic
-            app.UseRequestResponseLogging();
+
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
             var staticHtmlFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "UI");
 
             if (Directory.Exists(staticHtmlFilesPath))
@@ -101,11 +111,11 @@ namespace Tethys.Server
                 Console.WriteLine($"{staticHtmlFilesPath} could not be found - static html content is not rendered");
                 Console.ForegroundColor = tmpColor;
             }
-            var tethysConfig = TethysConfig.FromConfiguration(Configuration);
+
 
             var rewriteOptions = new RewriteOptions();
             rewriteOptions //.AddRewrite(@"^(?i)(?!)tethys/(.*)", "mock/$1", true)
-                .Add(rCtx => RedirectRules.RedirectRequests(rCtx.HttpContext.Request, tethysConfig));
+                .Add(rCtx => RedirectRules.RedirectRequests(rCtx.HttpContext.Request, TethysConfig));
             app.UseRewriter(rewriteOptions);
             app.UseCors(cp => cp.AllowAnyOrigin()
                  .AllowAnyMethod()
@@ -118,7 +128,14 @@ namespace Tethys.Server
                 c.RoutePrefix = "tethys/swagger";
                 c.SwaggerEndpoint(Consts.SwaggerEndPointPrefix + "/v1/swagger.json", "Tethys API");
             });
-            app.UseSignalR(router => router.MapHub<MockHub>(Consts.TethysWebSocketPath));
+
+            app.UseSignalR(router =>
+            {
+                router.MapHub<TethysHub>(Consts.TethysWebSocketPath);
+                //TODO: this is not eanough - clients are registered to the same group and would get un wanted notifications.
+                foreach (var wss in TethysConfig.WebSocketSuffix)
+                    router.MapHub<MockHub>(wss);
+            });
             app.UseMvc();
         }
     }

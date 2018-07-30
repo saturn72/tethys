@@ -7,15 +7,22 @@ namespace Tethys.Server.Services.Notifications
     public class NotificationPublisher : INotificationPublisher
     {
         private readonly IHubContext<MockHub> _mockHub;
+        private readonly IHubContext<TethysHub> _tethysHub;
 
-        public NotificationPublisher(IHubContext<MockHub> mockHub)
+        public NotificationPublisher(IHubContext<MockHub> mockHub, IHubContext<TethysHub> tethysHub)
         {
             _mockHub = mockHub;
+            _tethysHub = tethysHub;
         }
-        public async Task ToAll(string notificationKey, string notificationBody)
+        public async Task ToServerUnderTestClients(string notificationKey, string notificationBody)
         {
             await _mockHub.Clients.All.SendAsync(notificationKey, notificationBody);
-            await _mockHub.Clients.All.SendAsync(Consts.PushNotificationLog, notificationKey, notificationBody);
+            await ToLogClients(notificationKey, notificationBody);
+        }
+
+        public async Task ToLogClients(string notificationKey, string notificationBody)
+        {
+            await _tethysHub.Clients.All.SendAsync(Consts.PushNotificationLog, notificationKey, notificationBody);
         }
     }
 }

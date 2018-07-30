@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
@@ -11,9 +12,7 @@ namespace Tethys.Server
         public static void RedirectRequests(HttpRequest request, TethysConfig tethysConfig)
         {
             //if tethys requests - continue
-            if (RequestStartsWithSegment(request, Consts.ApiBaseUrl)
-                || RequestStartsWithSegment(request, Consts.SwaggerEndPointPrefix)
-                || RequestStartsWithSegment(request, Consts.TethysWebSocketPath))
+            if (!ShouldInterceptRequestByPath(request, tethysConfig.WebSocketSuffix))
                 return;
 
             request.HttpContext.Items[Consts.OriginalRequest] = new OriginalRequest
@@ -46,11 +45,20 @@ namespace Tethys.Server
             request.Path = path;
         }
 
+        internal static bool ShouldInterceptRequestByPath(HttpRequest request, IEnumerable<string> webSocketSuffixes)
+        {
+            return !(RequestStartsWithSegment(request, Consts.ApiBaseUrl)
+                 || RequestStartsWithSegment(request, Consts.SwaggerEndPointPrefix)
+                 || RequestStartsWithSegment(request, Consts.TethysWebSocketPath)
+                 || webSocketSuffixes.Any(wss => RequestStartsWithSegment(request, wss))
+                 );
+        }
+
         private static bool RequestStartsWithSegment(HttpRequest request, string segment)
         {
             try
             {
-                return request.Path.StartsWithSegments(new PathString(segment));
+                return request.Path.StartsWithSegments(new PathString(segment), StringComparison.CurrentCultureIgnoreCase);
             }
             catch (Exception)
             {

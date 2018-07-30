@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,21 +22,31 @@ namespace Tethys.Server.Middlewares
         private readonly RequestDelegate _next;
         private readonly IRequestResponseCoupleService _requestResponseCoupleService;
         private readonly INotificationPublisher _notificationPublisher;
+        private IEnumerable<string> _webSocketSuffix;
 
         #endregion
         #region ctor
-        public RequestResponseLoggingMiddleware(RequestDelegate next, IRequestResponseCoupleService requestResponseCoupleService, INotificationPublisher notificationPublisher)
+        public RequestResponseLoggingMiddleware(RequestDelegate next, IRequestResponseCoupleService requestResponseCoupleService,
+        INotificationPublisher notificationPublisher, TethysConfig tethysConfig)
         {
             _next = next;
             _requestResponseCoupleService = requestResponseCoupleService;
             _notificationPublisher = notificationPublisher;
+            _webSocketSuffix = tethysConfig.WebSocketSuffix;
         }
         #endregion
 
         public async Task Invoke(HttpContext context)
         {
-            var request = context.Request;
+            if (RedirectRules.ShouldInterceptRequestByPath(context.Request, _webSocketSuffix))
+                await LogRequestResponse(context);
+            else
+                await _next(context);
+        }
 
+        private async Task LogRequestResponse(HttpContext context)
+        {
+            var request = context.Request;
             var reqRes = await ExtractRequestAsync(request);
             await _requestResponseCoupleService.Create(reqRes);
 
@@ -61,7 +72,7 @@ namespace Tethys.Server.Middlewares
 
             await _requestResponseCoupleService.Update(reqRes);
             var json = JsonConvert.SerializeObject(reqRes);
-            await _notificationPublisher.ToAll(TethysNotificationKeys.NewRequestResponseCouple, json);
+            _notificationPublisher.ToServerUnderTestClients(TethysNotificationKeys.NewRequestResponseCouple, json);
         }
 
         private async Task<RequestResponseCouple> ExtractRequestAsync(HttpRequest request)
@@ -85,13 +96,6 @@ namespace Tethys.Server.Middlewares
                     //Headers = req.Headers
                 }
             };
-        }
-    }
-    public static class RequestResponseLoggingMiddlewareExtensions
-    {
-        public static IApplicationBuilder UseRequestResponseLogging(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<RequestResponseLoggingMiddleware>();
         }
     }
 }
