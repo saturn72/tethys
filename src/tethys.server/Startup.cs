@@ -21,7 +21,8 @@ namespace Tethys.Server
 {
     public class Startup
     {
-
+        private static readonly string _staticHtmlFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "UI");
+        private static bool _hasStaticFiles = Directory.Exists(_staticHtmlFilesPath);
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -59,7 +60,7 @@ namespace Tethys.Server
                     Contact = new Contact
                     {
                         Name = "Click for dashboard",
-                        Url = "./../ui/index.html"
+                        Url = _hasStaticFiles ? "./../ui/index.html" : "Not html files found. Verify you run tethys from it's base directory"
                     },
                 });
                 c.DescribeAllEnumsAsStrings();
@@ -93,13 +94,12 @@ namespace Tethys.Server
 
             app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
-            var staticHtmlFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "UI");
 
-            if (Directory.Exists(staticHtmlFilesPath))
+            if (_hasStaticFiles)
             {
                 var staticFileOptions = new StaticFileOptions
                 {
-                    FileProvider = new PhysicalFileProvider(staticHtmlFilesPath),
+                    FileProvider = new PhysicalFileProvider(_staticHtmlFilesPath),
                     RequestPath = Consts.ApiBaseUrl + Consts.Ui
                 };
                 app.UseStaticFiles(staticFileOptions);
@@ -108,7 +108,7 @@ namespace Tethys.Server
             {
                 var tmpColor = Console.ForegroundColor;
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"{staticHtmlFilesPath} could not be found - static html content is not rendered");
+                Console.WriteLine($"{_staticHtmlFilesPath} could not be found - static html content is not rendered");
                 Console.ForegroundColor = tmpColor;
             }
 

@@ -12,7 +12,7 @@ ECHO Create Zip
 IF "%fileName%"=="" SET fileName=%version%
 IF "%fileName%"=="" SET fileName=tethys_%runtime%
 SET %fileName%=%fileName%.zip
-SET source=%CD%\bin\release\netcoreapp2.1\%runtime%\publish
+SET source=%CD%\bin\release\netcoreapp2.1\%runtime%\publish\*
 SET destDir=%CD%\bin\release\versions\
 
 ECHO Create versions directory, if not exists
