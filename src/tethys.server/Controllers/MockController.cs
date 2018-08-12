@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
-using Microsoft.AspNetCore.SignalR;
-using Tethys.Server.DbModel.Repositories;
-using Tethys.Server.Hubs;
 using Tethys.Server.Models;
 using Tethys.Server.Services;
+using Tethys.Server.Services.HttpCalls;
 using Tethys.Server.Services.Notifications;
 
 namespace Tethys.Server.Controllers
@@ -23,13 +18,13 @@ namespace Tethys.Server.Controllers
         #region CTOR
 
         public MockController(
-            IHttpCallRepository httpCallRepository, INotificationService notificationeService,
-            INotificationPublisher notificationePublisher, IRequestResponseCoupleService requestResponseCoupleService)
+            IHttpCallService httpCallService, INotificationService notificationeService,
+             IRequestResponseCoupleService requestResponseCoupleService, IFileUploadManager fileuploadManager)
         {
-            _httpCallRepository = httpCallRepository;
+            _httpCallService = httpCallService;
             _notificationeService = notificationeService;
-            _notificationPublisher = notificationePublisher;
             _reqRescoupleService = requestResponseCoupleService;
+            _fileuploadManager = fileuploadManager;
         }
 
         #endregion
@@ -38,34 +33,55 @@ namespace Tethys.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var actualRequest = await BuildActualRequest();
-            var httpCall = await Task.FromResult(_httpCallRepository.GetNextHttpCall());
+            var httpCall = await _httpCallService.GetNextHttpCall(Request);
 
             //TODO: send via web socket
             if (httpCall == null)
+            {
+                var originalRequest = Request.HttpContext.Items[Consts.OriginalRequest] as OriginalRequest;
                 return new NotFoundObjectResult(new
                 {
                     message = "No corrosponding HttpCall object",
                     requestDetails = new
                     {
-                        headers = actualRequest.Headers,
-                        httpMethod = actualRequest.HttpMethod,
-                        path = actualRequest.Resource,
-                        query = actualRequest.Query,
-                        body = actualRequest.Body
+                        headers = originalRequest.Headers,
+                        httpMethod = originalRequest.HttpMethod,
+                        path = originalRequest.Path,
+                        query = originalRequest.QueryString,
+                        body = originalRequest.Body
                     }
                 });
-            await ReportViaWebSocket(actualRequest, httpCall.Request);
-
-            httpCall.CallsCounter++;
-            httpCall.WasFullyHandled = httpCall.CallsCounter == httpCall.AllowedCallsNumber;
-            httpCall.HandledOnUtc = DateTime.UtcNow;
-
-            _httpCallRepository.Update(httpCall);
-
+            }
             //delay before response
             Thread.Sleep(httpCall.Response.Delay);
             return httpCall.Response.ToHttpResponseMessage();
+        }
+
+        [HttpPost(Consts.MockUploadRoute)]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        public async Task<IActionResult> Upload()
+        {
+            var files = Request.Form.Files;
+            if (files.Count == 0 || files.All(f => f.Length == 0))
+                return BadRequest("Missing or empty file(s) content");
+
+            var streams = getFilesAsStreamAsync();
+            await _fileuploadManager.LoadSequenceFromStream(streams);
+
+            return Accepted();
+
+            IEnumerable<Stream> getFilesAsStreamAsync()
+            {
+                var res = new List<Stream>();
+
+                foreach (var f in files)
+                {
+                    if (f.Length <= 0)
+                        continue;
+                    res.Add(f.OpenReadStream());
+                }
+                return res;
+            }
         }
 
         [HttpPost("reset")]
@@ -76,7 +92,7 @@ namespace Tethys.Server.Controllers
             {
                 _notificationeService.Stop();
 
-                _httpCallRepository.FlushUnhandled();
+                _httpCallService.Register();
                 await _reqRescoupleService.DeleteAllAsync();
             });
             return Ok();
@@ -95,20 +111,8 @@ namespace Tethys.Server.Controllers
                     data = httpCalls
                 });
 
-            await Task.Run(() =>
-            {
-                var enumerable = httpCalls as HttpCall[] ?? httpCalls.ToArray();
+            await _httpCallService.Register(httpCalls);
 
-                foreach (var hc in enumerable)
-                {
-                    hc.WasFullyHandled = false;
-                    hc.CreatedOnUtc = DateTime.UtcNow;
-                    hc.AllowedCallsNumber = Math.Max(1, hc.AllowedCallsNumber);
-                    hc.CallsCounter = 0;
-                }
-
-                _httpCallRepository.Create(enumerable);
-            });
             return new ObjectResult(httpCalls) { StatusCode = StatusCodes.Status201Created };
         }
 
@@ -126,44 +130,14 @@ namespace Tethys.Server.Controllers
             return Accepted();
         }
 
-        private async Task ReportViaWebSocket(Request actualRequest, Request expectedRequest)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine("Incoming Http Request:");
-            sb.AppendLine(actualRequest.ToReportFormat().Replace("\n", "\t\n"));
-            sb.AppendLine("Expected Http Request:");
-            sb.AppendLine(expectedRequest.ToReportFormat().Replace("\n", "\t\n"));
 
-            sb.AppendLine("Start comparing incoming request");
-            await _notificationPublisher.ToServerUnderTestClients("tethys-log", sb.ToString());
-        }
-
-        private async Task<Request> BuildActualRequest()
-        {
-            string body;
-            using (var reader = new StreamReader(Request.Body))
-            {
-                body = await reader.ReadToEndAsync();
-            }
-
-            var headerDictionary = Request.Headers.ToDictionary(s => s.Key, s => s.Value);
-            var originalRequest = Request.HttpContext.Items[Consts.OriginalRequest] as OriginalRequest;
-            return new Request
-            {
-                HttpMethod = originalRequest.HttpMethod,
-                Resource = originalRequest.Path,
-                Query = originalRequest.QueryString,
-                Body = body,
-                Headers = headerDictionary as IDictionary<string, string>
-            };
-        }
 
         #region Fields
 
-        private readonly IHttpCallRepository _httpCallRepository;
         private readonly INotificationService _notificationeService;
-        private readonly INotificationPublisher _notificationPublisher;
         private readonly IRequestResponseCoupleService _reqRescoupleService;
+        private readonly IFileUploadManager _fileuploadManager;
+        private readonly IHttpCallService _httpCallService;
 
         #endregion
     }

@@ -2,9 +2,9 @@
 using System.Text;
 using Tethys.Server.Models;
 
-namespace Tethys.Server.Controllers
+namespace Tethys.Server.Services
 {
-    public static class RequestExtensions
+    public static class HttpCallExtensions
     {
         private const string LineFormat = "[{0}]";
         public static string ToReportFormat(this Request request)

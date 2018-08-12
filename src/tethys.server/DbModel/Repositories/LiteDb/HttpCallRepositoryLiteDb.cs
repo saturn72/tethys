@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Tethys.Server.Models;
+using Tethys.Server.Services;
+using Tethys.Server.Services.HttpCalls;
 
 namespace Tethys.Server.DbModel.Repositories.LiteDb
 {

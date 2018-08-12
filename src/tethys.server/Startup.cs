@@ -16,6 +16,8 @@ using Tethys.Server.Services.Notifications;
 using Tethys.Server.Hubs;
 using Tethys.Server.Middlewares;
 using Microsoft.Extensions.FileProviders;
+using Tethys.Server.Swagger;
+using Tethys.Server.Services.HttpCalls;
 
 namespace Tethys.Server
 {
@@ -66,6 +68,8 @@ namespace Tethys.Server
                 c.DescribeAllEnumsAsStrings();
                 c.DescribeStringEnumsInCamelCase();
                 c.DescribeAllParametersInCamelCase();
+                c.OperationFilter<FileUploadOperation>();
+
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -75,15 +79,15 @@ namespace Tethys.Server
 
             var dbName = Configuration["tethysConfig:liteDb:name"];
             services.AddTransient(sr => new UnitOfWorkLiteDb(dbName));
+            services.AddTransient<IHttpCallService, HttpCallService>();
             services.AddTransient<IHttpCallRepository, HttpCallRepositoryLiteDb>();
             services.AddTransient<INotificationRepository, NotificationRepositoryLiteDb>();
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<INotificationPublisher, NotificationPublisher>();
+            services.AddSingleton<IFileUploadManager, FileUploadManager>();
 
             services.AddSingleton<IRequestResponseCoupleService, RequestResponseCoupleService>();
             services.AddTransient<IRequestResponseCoupleRepository, RequestResponseCoupleRepositoryLiteDb>();
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Tethys.Server.DbModel
+namespace Tethys.Server.Services
 {
     public class SimpleSpecification<TDomainModel> : SpecificationBase<TDomainModel>
     {

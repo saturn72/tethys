@@ -19,7 +19,9 @@ namespace Tethys.Server
             {
                 Path = request.Path,
                 QueryString = request.QueryString.ToString(),
-                HttpMethod = request.Method
+                HttpMethod = request.Method,
+                Headers = request.Headers.ToDictionary(s => s.Key, s => s.Value.ToString()),
+                Body = "Not parsed yet. see: RedirectRules"
             };
 
             BuildRedirectLogic(tethysConfig, request);

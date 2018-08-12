@@ -3,11 +3,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using Tethys.Server.Models;
 
-namespace Tethys.Server.DbModel.Repositories
+namespace Tethys.Server.Services.HttpCalls
 {
     public static class HttpCallRepositoryExtensions
     {
-        private static readonly ISpecification<HttpCall> GetNotExecutedHttpCallsSpec = 
+        private static readonly ISpecification<HttpCall> GetNotExecutedHttpCallsSpec =
             new SimpleSpecification<HttpCall>(hc => !hc.WasFullyHandled && !hc.Flushed, new Expression<Func<HttpCall, object>>[]
         {
             hc => hc.Request,
@@ -16,7 +16,7 @@ namespace Tethys.Server.DbModel.Repositories
 
         public static HttpCall GetNextHttpCall(this IHttpCallRepository httpCallRepository)
         {
-            return httpCallRepository.GetBy(GetNotExecutedHttpCallsSpec).OrderBy(hc=>hc.Id).FirstOrDefault();
+            return httpCallRepository.GetBy(GetNotExecutedHttpCallsSpec).OrderBy(hc => hc.Id).FirstOrDefault();
         }
     }
 }

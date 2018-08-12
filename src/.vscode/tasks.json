@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "Tethys.Samples/Tethys.Samples.csproj"
+                "Tethys.Server/Tethys.Server.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

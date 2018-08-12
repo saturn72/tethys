@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Tethys.Server.Models;
 
-namespace Tethys.Server.DbModel.Repositories
+namespace Tethys.Server.Services.HttpCalls
 {
     public interface IHttpCallRepository
     {

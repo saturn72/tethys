@@ -1,0 +1,39 @@
+{
+    "httpCalls": [
+        {
+            "request": {
+                "resource": "some-resource",
+                "query": "dome-query",
+                "httpMethod": "some-http-method",
+                "body": {
+                    "key": "this is my body"
+                }
+            },
+            "response": {
+                "httpStatusCode": 404,
+                "body": "this is reponse body"
+            },
+            "allowedCallsNumber": 10
+        }
+    ],
+    "pushNotification": [
+        {
+            "key": "notification-key-1",
+            "body": "notification-body-1",
+            "delay": 30,
+            "notifyTimes": 50
+        },
+        {
+            "key": "notification-key-2",
+            "body": "notification-body-2",
+            "delay": 10,
+            "notifyTimes": 5
+        },
+        {
+            "key": "notification-key-3",
+            "body": "notification-body-3",
+            "delay": 500,
+            "notifyTimes": 5000
+        }
+    ]
+}
