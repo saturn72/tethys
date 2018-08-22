@@ -29,6 +29,10 @@ namespace Tethys.Server.Controllers
 
         #endregion
 
+        /// <summary>
+        /// Gets next http-call in sequence
+        /// </summary>
+        /// <returns></returns>
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -57,6 +61,10 @@ namespace Tethys.Server.Controllers
             return httpCall.Response.ToHttpResponseMessage();
         }
 
+        /// <summary>
+        /// Uploads files contains http-call sequence to server
+        /// </summary>
+        /// <returns>StatusCodes.Status202Accepted</returns>
         [HttpPost(Consts.MockUploadRoute)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         public async Task<IActionResult> Upload()
@@ -84,9 +92,14 @@ namespace Tethys.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Resets server's calls.
+        /// Note: this command deletes all http-calls and stops push notifications
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("reset")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> Reset()
         {
             await Task.Run(async () =>
             {
@@ -98,10 +111,15 @@ namespace Tethys.Server.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// setup array of http-calls
+        /// </summary>
+        /// <param name="httpCalls"></param>
+        /// <returns></returns>
         [HttpPost("setup")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post([FromBody] IEnumerable<HttpCall> httpCalls)
+        public async Task<IActionResult> Setup([FromBody] IEnumerable<HttpCall> httpCalls)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new
@@ -116,6 +134,12 @@ namespace Tethys.Server.Controllers
             return new ObjectResult(httpCalls) { StatusCode = StatusCodes.Status201Created };
         }
 
+
+        /// <summary>
+        /// Defines array of push notifications to be pushed from server
+        /// </summary>
+        /// <param name="notifications"></param>
+        /// <returns></returns>
         [HttpPost("push")]
         public IActionResult Push([FromBody] IEnumerable<PushNotification> notifications)
         {

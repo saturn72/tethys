@@ -18,8 +18,12 @@ namespace Tethys.Server.Controllers
         }
         #endregion
 
+        /// <summary>
+        /// Gets all log records
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAll()
         {
             var allReqResCouples = await _reqResCoupleService.GetAllAsync();
             return Ok(allReqResCouples);
