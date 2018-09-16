@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -93,7 +94,7 @@ namespace Tethys.Server.Middlewares
                     Query = request.QueryString.ToString(),
                     HttpMethod = request.Method,
                     Body = requestBody,
-                    //Headers = req.Headers
+                    // Headers = request.Headers.ToDictionary(k => k.Key, v => v.Value.Select(s => s).AsEnumerable())
                 }
             };
         }

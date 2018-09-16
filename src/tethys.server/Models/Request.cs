@@ -9,6 +9,6 @@ namespace Tethys.Server.Models
         public string Query { get; set; }
         public string HttpMethod { get; set; }
         public string Body { get; set; }
-        public IDictionary<string, string> Headers { get; set; }
+        public IDictionary<string, IEnumerable<string>> Headers { get; set; }
     }
 }
