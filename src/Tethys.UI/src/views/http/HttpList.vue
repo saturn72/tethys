@@ -6,10 +6,10 @@
             <label>Total HTTP Calls: <span class="badge badge-info">{{ items.length }}</span></label>
            <b-button-group size="sm" style="float:right">
               <b-button variant="css3" class="btn-brand" @click="refresh"><i class="fa fa-refresh"></i><span>Refresh</span></b-button>
-              <b-button variant="secondary" class="btn-brand" @click="unhideAll"><i class="fa fa-eye"></i><span>Unhide All</span></b-button>
+              <b-button variant="secondary" :disabled="hasHiddens" class="btn-brand" @click="unhideAll"><i class="fa fa-eye"></i><span>Unhide All</span></b-button>
               <b-button variant="warning" class="btn-brand" @click="resetAllCalls"><i class="fa fa-trash"></i><span>Reset All Calls</span></b-button>
             </b-button-group>
-            <b-table :hover=true :striped=true :small=true :fixed=true responsive="sm" :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage">
+            <b-table :hover=true :striped=true :small=true :fixed=true responsive="sm" :items="itemsToDisplay" :fields="fields" :current-page="currentPage" :per-page="perPage">
               <template slot="commands" slot-scope="row">
                 <b-button-group size="sm">
                   <b-button variant="primary" @click="exportRequest(row.item.id)">Export To Json</b-button>
@@ -31,7 +31,6 @@ export default {
   data: () => {
     return {
       items: [],
-      hiddens: [],
       fields: [
         { key: "id" },
         { key: "resource" },
@@ -45,6 +44,14 @@ export default {
       perPage: 10,
       totalRows: 0
     };
+  },
+  computed: {
+    hasHiddens: function() {
+      return this.items.some(itm => !itm.hidden);
+    },
+    itemsToDisplay: function() {
+      return this.items.filter(itm => !itm.hidden);
+    }
   },
   methods: {
     exportRequest(id) {
@@ -67,7 +74,8 @@ export default {
                 httpMethod: req.httpMethod || missingValue,
                 body: req.body || missingValue,
                 headers: req.headers || missingValue,
-                id: d.id
+                id: d.id,
+                hidden: false
               };
             }))
         )
@@ -78,33 +86,22 @@ export default {
         method: "DELETE",
         cache: "default"
       })
-        // .then(stream => stream.json())
         .then(data => {
           this.items = [];
-          this.hiddens = [];
         })
         .catch(err => console.error(err));
     },
     refresh() {
-      this.hiddens = [];
       this.fetchEndpoints();
     },
     hide(id) {
       var elemToHide = this.items.find(x => x.id === id);
-      var idx = this.items.indexOf(elemToHide);
-      if (idx < this.items.length && idx >= 0) {
-        this.hiddens.push(elemToHide);
-        this.items.splice(idx, 1);
+      if (elemToHide) {
+        elemToHide.hidden = true;
       }
     },
     unhideAll() {
-      if (this.hiddens.length === 0) {
-        return;
-      }
-      this.items = this.items.concat(this.hiddens);
-      this.hiddens = [];
-      var _ = require("lodash");
-      this.items = _.orderBy(this.items, ["id"], ["desc"]);
+      this.items.forEach(itm => (itm.hidden = false));
     },
     getRowCount(items) {
       return items.length;
