@@ -86,6 +86,7 @@ namespace Tethys.Server.Middlewares
             var requestBody = Encoding.UTF8.GetString(buffer);
             reqBody.Seek(0, SeekOrigin.Begin);
             request.Body = reqBody;
+
             return new RequestResponseCouple
             {
                 Request = new Request
@@ -94,7 +95,7 @@ namespace Tethys.Server.Middlewares
                     Query = request.QueryString.ToString(),
                     HttpMethod = request.Method,
                     Body = requestBody,
-                    // Headers = request.Headers.ToDictionary(k => k.Key, v => v.Value.Select(s => s).AsEnumerable())
+                    Headers = request.Headers.ToDictionary(s => s.Key, s => s.Value.AsEnumerable())
                 }
             };
         }

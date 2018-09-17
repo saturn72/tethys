@@ -97,7 +97,7 @@ namespace Tethys.Server.Controllers
         /// Note: this command deletes all http-calls and stops push notifications
         /// </summary>
         /// <returns></returns>
-        [HttpPost("reset")]
+        [HttpDelete("reset")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Reset()
         {
@@ -108,7 +108,7 @@ namespace Tethys.Server.Controllers
                 _httpCallService.Register();
                 await _reqRescoupleService.DeleteAllAsync();
             });
-            return Ok();
+            return NoContent();
         }
 
         /// <summary>

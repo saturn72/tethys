@@ -70,8 +70,6 @@ namespace Tethys.Server.Services.HttpCalls
             {
                 body = await reader.ReadToEndAsync();
             }
-
-            var headerDictionary = request.Headers.ToDictionary(s => s.Key, s => s.Value);
             var originalRequest = request.HttpContext.Items[Consts.OriginalRequest] as OriginalRequest;
             return new Request
             {
@@ -79,7 +77,7 @@ namespace Tethys.Server.Services.HttpCalls
                 Resource = originalRequest.Path,
                 Query = originalRequest.QueryString,
                 Body = body,
-                Headers = headerDictionary as IDictionary<string, string>
+                Headers = request.Headers.ToDictionary(s => s.Key, s => s.Value.AsEnumerable())
             };
         }
 
