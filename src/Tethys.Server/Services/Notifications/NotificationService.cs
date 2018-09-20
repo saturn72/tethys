@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
+using ServiceStack;
+using ServiceStack.Text;
 using Tethys.Server.DbModel.Repositories;
 using Tethys.Server.Hubs;
 using Tethys.Server.Models;
@@ -54,7 +56,9 @@ namespace Tethys.Server.Services.Notifications
                         if (ct.IsCancellationRequested)
                             return;
                         notification.NotifiedOnUtc = DateTime.UtcNow;
-                        _publisher.ToServerUnderTestClients(notification.Key, notification.Body);
+                        var body = JsonObject.Parse(notification.Body);
+
+                        _publisher.ToServerUnderTestClients(notification.Key, body);
                         notification.NotifiedCounter++;
                         _notificationRepository.Update(notification);
                     }

@@ -14,6 +14,7 @@
                 <b-button-group size="sm">
                   <b-button variant="primary" @click="exportRequest(row.item.id)">Export To Json</b-button>
                   <b-button variant="secondary" class="btn-brand" @click="hide(row.item.id)"><i class="fa fa-eye-slash"></i><span>Hide</span></b-button>
+                  <b-button variant="success" class="btn-brand" @click="lock(row.item.id)"><i class="fa fa-lock"></i><span>Lock</span></b-button>
                 </b-button-group>
               </template>
             </b-table>
@@ -46,6 +47,7 @@ export default {
     };
   },
   computed: {
+    isLocked:
     hasHiddens: function() {
       return this.items.some(itm => !itm.hidden);
     },
@@ -75,7 +77,8 @@ export default {
                 body: req.body || missingValue,
                 headers: req.headers || missingValue,
                 id: d.id,
-                hidden: false
+                hidden: false,
+                lock: false
               };
             }))
         )
@@ -93,6 +96,12 @@ export default {
     },
     refresh() {
       this.fetchEndpoints();
+    },
+    lock(id) {
+      var elemToLock = this.items.find(x => x.id === id);
+      if (elemToLock) {
+        elemToHide.lock = true;
+      }
     },
     hide(id) {
       var elemToHide = this.items.find(x => x.id === id);

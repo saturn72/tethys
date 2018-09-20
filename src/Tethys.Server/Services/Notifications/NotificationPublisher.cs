@@ -14,13 +14,13 @@ namespace Tethys.Server.Services.Notifications
             _mockHub = mockHub;
             _tethysHub = tethysHub;
         }
-        public async Task ToServerUnderTestClients(string notificationKey, string notificationBody)
+        public async Task ToServerUnderTestClients(string notificationKey, object notificationBody)
         {
             await _mockHub.Clients.All.SendAsync(notificationKey, notificationBody);
             await ToLogClients(notificationKey, notificationBody);
         }
 
-        public async Task ToLogClients(string notificationKey, string notificationBody)
+        public async Task ToLogClients(string notificationKey, object notificationBody)
         {
             await _tethysHub.Clients.All.SendAsync(Consts.PushNotificationLog, notificationKey, notificationBody);
         }

@@ -4,7 +4,7 @@ namespace Tethys.Server.Services.Notifications
 {
     public interface INotificationPublisher
     {
-        Task ToServerUnderTestClients(string notificationKey, string notificationBody);
-        Task ToLogClients(string notificationKey, string notificationBody);
+        Task ToServerUnderTestClients(string notificationKey, object notificationBody);
+        Task ToLogClients(string notificationKey, object notificationBody);
     }
 }

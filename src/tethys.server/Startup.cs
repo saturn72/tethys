@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Tethys.Server.DbModel.Repositories;
 using Tethys.Server.DbModel.Repositories.LiteDb;

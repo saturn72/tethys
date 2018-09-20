@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Xunit;
 using Shouldly;
 using System.Net;
-using Newtonsoft.Json;
 using System.Text;
 using System.Threading;
 using System.Linq;

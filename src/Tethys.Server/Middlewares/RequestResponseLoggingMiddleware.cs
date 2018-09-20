@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
-using Newtonsoft.Json;
 using Tethys.Server.Models;
 using Tethys.Server.Services;
 using Tethys.Server.Services.Notifications;
@@ -72,8 +71,7 @@ namespace Tethys.Server.Middlewares
             }
 
             await _requestResponseCoupleService.Update(reqRes);
-            var json = JsonConvert.SerializeObject(reqRes);
-            _notificationPublisher.ToServerUnderTestClients(TethysNotificationKeys.NewRequestResponseCouple, json);
+            _notificationPublisher.ToServerUnderTestClients(TethysNotificationKeys.NewRequestResponseCouple, reqRes);
         }
 
         private async Task<RequestResponseCouple> ExtractRequestAsync(HttpRequest request)
