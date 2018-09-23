@@ -1,5 +1,14 @@
 <template>
   <div class="animated fadeIn">
+     <b-modal 
+     id="error-modal"
+     ref="modalError"
+     title="Error"
+     header-bg-variant="warning"
+     v-model="error.show" 
+     >
+     <span v-html="error.body"></span>
+  </b-modal>
     <b-row>
       <b-col md="6" class="my-1">
         <b-form-group horizontal label="Filter" class="mb-0">
@@ -18,7 +27,7 @@
               <b-button variant="css3" class="btn-brand" @click="reload"><i class="fa fa-refresh"></i><span>Reload</span></b-button>
               <b-button variant="secondary" v-bind:disabled="hasHiddens" class="btn-brand" @click="unhideAll"><i class="fa fa-eye"></i><span>Unhide All</span></b-button>
               <b-button variant="success" v-bind:disabled="hasLocked" class="btn-brand" @click="unlockAll"><i class="fa fa-unlock"></i><span>Unlock All</span></b-button>
-              <b-button variant="warning" class="btn-brand" @click="resetAllCalls"><i class="fa fa-trash"></i><span>Reset All Calls</span></b-button>
+              <b-button variant="warning" v-bind:disabled="items.length > 0" class="btn-brand" @click="resetAllCalls"><i class="fa fa-trash"></i><span>Reset All Calls</span></b-button>
             </b-button-group>
             <b-table 
               :hover=true 
@@ -33,7 +42,7 @@
               :filter="filter"
               
               >
-              <template slot="commands" slot-scope="row">
+              <template slot="actions" slot-scope="row">
                 <b-button-group size="sm">
                   <b-button variant="primary" @click="exportRequest(row.item.id)">Export To Json</b-button>
                   <b-button variant="secondary" class="btn-brand" :disabled="isLocked(row.item.id)" @click="hide(row.item.id)"><i class="fa fa-eye-slash"></i><span>Hide</span></b-button>
@@ -54,6 +63,10 @@ export default {
   name: "HttpList",
   data: () => {
     return {
+      error: {
+        show: false,
+        body: ""
+      },
       filter: null,
       items: [],
       fields: [
@@ -63,7 +76,7 @@ export default {
         { key: "httpMethod" },
         { key: "body" },
         { key: "headers" },
-        { key: "commands" }
+        { key: "actions" }
       ],
       currentPage: 1,
       perPage: 10
@@ -84,6 +97,22 @@ export default {
     }
   },
   methods: {
+    showModal(message) {
+      console.log("update error");
+      this.$refs.modalError.message = "this is my messagte";
+      this.error.body = "<p class='my-4'>" + message + "</p>";
+      this.error.show = true;
+      console.log(message);
+      // <p class="my-4">Hello from modal!</p>
+      // var modal = this.$refs.modalError;
+      // modal.headerBgVariant = "warning";
+      // modal.title = "Error";
+      // // $(this)
+      // //   .find(".modal-body input")
+      // //   .val("You are about to remove this entry. Are you sure?");
+      // modal.bodyTextVariant = "thisis tesxt";
+      // modal.show();
+    },
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.itemsToDisplay = filteredItems;
@@ -93,7 +122,8 @@ export default {
       console.log(id + " should be exported");
     },
     fetchEndpoints() {
-      fetch(baseUrl + "tethys/api/log", {
+      var fetchUrl = baseUrl + "tethys/api/log";
+      fetch(fetchUrl, {
         method: "GET",
         cache: "default"
       })
@@ -115,17 +145,26 @@ export default {
               };
             }))
         )
-        .catch(err => console.error(err));
+        .catch(err =>
+          this.showModal(
+            "failed to fetch from url: " + fetchUrl + "\nMore details: " + err
+          )
+        );
     },
     resetAllCalls() {
-      fetch(baseUrl + "tethys/api/mock/reset", {
+      var fetchUrl = baseUrl + "tethys/api/mock/reset";
+      fetch(fetchUrl, {
         method: "DELETE",
         cache: "default"
       })
         .then(data => {
           this.items = [];
         })
-        .catch(err => console.error(err));
+        .catch(err =>
+          this.showModal(
+            "failed to fetch from url: " + fetchUrl + "\nMore details: " + err
+          )
+        );
     },
     reload() {
       this.fetchEndpoints();
@@ -148,14 +187,6 @@ export default {
     unhideAll() {
       this.items.forEach(itm => (itm.hidden = false));
     }
-    // onFiltered(filteredItems) {
-    //   console.log(filteredItems);
-    //   var lockedItems = this.items.filter(itm => itm.locked);
-
-    //   filteredItems = lockedItems.concat(filteredItems);
-
-    //   this.currentPage = 1;
-    // }
   },
   mounted() {
     this.fetchEndpoints();
