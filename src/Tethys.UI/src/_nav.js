@@ -18,8 +18,8 @@ export default {
       }
     },
     {
-      name: 'Http',
-      url: '/http/list',
+      name: 'Http Requests',
+      url: '/httprequest/list',
       icon: 'icon-drop'
     },
   ]

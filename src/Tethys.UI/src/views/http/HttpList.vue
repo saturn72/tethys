@@ -1,14 +1,14 @@
 <template>
   <div class="animated fadeIn">
      <b-modal 
-     id="error-modal"
-     ref="modalError"
-     title="Error"
-     header-bg-variant="warning"
-     v-model="error.show" 
-     >
-     <span v-html="error.body"></span>
-  </b-modal>
+      id="error-modal"
+      ref="modalError"
+      title="Error"
+      header-bg-variant="warning"
+      v-model="error.show" 
+      >
+      <span v-html="error.body"></span>
+    </b-modal>
     <b-row>
       <b-col md="6" class="my-1">
         <b-form-group horizontal label="Filter" class="mb-0">
@@ -27,7 +27,7 @@
               <b-button variant="css3" class="btn-brand" @click="reload"><i class="fa fa-refresh"></i><span>Reload</span></b-button>
               <b-button variant="secondary" v-bind:disabled="hasHiddens" class="btn-brand" @click="unhideAll"><i class="fa fa-eye"></i><span>Unhide All</span></b-button>
               <b-button variant="success" v-bind:disabled="hasLocked" class="btn-brand" @click="unlockAll"><i class="fa fa-unlock"></i><span>Unlock All</span></b-button>
-              <b-button variant="warning" v-bind:disabled="items.length >= 0" class="btn-brand" @click="resetAllCalls"><i class="fa fa-trash"></i><span>Reset All Calls</span></b-button>
+              <b-button variant="warning" v-bind:disabled="!hasItems" class="btn-brand" @click="resetAllCalls"><i class="fa fa-trash"></i><span>Reset All Calls</span></b-button>
             </b-button-group>
             <b-table 
               :hover=true 
@@ -44,13 +44,15 @@
               >
               <template slot="actions" slot-scope="row">
                 <b-button-group size="sm">
-                  <b-button variant="primary" @click="exportRequest(row.item.id)">Export To Json</b-button>
+                   <router-link :to="{ name: 'Export', params: { id: row.item.id }}">                  
+                    <b-button variant="primary" class="btn-brand"><i class="fa fa-download"></i><span>Export To Json</span></b-button>
+                  </router-link>
                   <b-button variant="secondary" class="btn-brand" :disabled="isLocked(row.item.id)" @click="hide(row.item.id)"><i class="fa fa-eye-slash"></i><span>Hide</span></b-button>
                   <b-button variant="success" class="btn-brand" @click="toggleLock(row.item.id)"><i v-bind:class="[isLocked(row.item.id) ? 'fa fa-unlock': 'fa fa-lock']"></i><span>Lock</span></b-button>
                 </b-button-group>
               </template>
             </b-table>
-            <nav>
+            <nav v-if="hasItems">
               <b-pagination :total-rows="itemsToDisplay.length" :per-page="perPage" v-model="currentPage" prev-text="Prev" next-text="Next" hide-goto-end-buttons/>
             </nav>
          </b-card>
@@ -83,6 +85,9 @@ export default {
     };
   },
   computed: {
+    hasItems: function() {
+      return this.items.length > 0;
+    },
     totalRows: function() {
       return this.itemsToDisplay.length;
     },
@@ -106,10 +111,7 @@ export default {
       this.itemsToDisplay = filteredItems;
       this.currentPage = 1;
     },
-    exportRequest(id) {
-      console.log(id + " should be exported");
-    },
-    fetchEndpoints() {
+    fetchHttpRequests() {
       var fetchUrl = baseUrl + "tethys/api/log";
       fetch(fetchUrl, {
         method: "GET",
@@ -155,7 +157,7 @@ export default {
         );
     },
     reload() {
-      this.fetchEndpoints();
+      this.fetchHttpRequests();
     },
     toggleLock(id) {
       var elemToLock = this.items.find(x => x.id === id);
@@ -177,7 +179,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchEndpoints();
+    this.fetchHttpRequests();
   }
 };
 const baseUrl = "http://localhost:4880/";

@@ -28,5 +28,15 @@ namespace Tethys.Server.Controllers
             var allReqResCouples = await _reqResCoupleService.GetAllAsync();
             return Ok(allReqResCouples);
         }
+        /// <summary>
+        /// Gets all log records
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetById(long id)
+        {
+            var requestResponseCouple = await _reqResCoupleService.GetById(id);
+            return Ok(requestResponseCouple);
+        }
     }
 }

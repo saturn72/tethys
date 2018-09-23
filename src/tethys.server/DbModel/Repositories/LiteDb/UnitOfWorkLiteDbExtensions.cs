@@ -20,6 +20,12 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
             return unitOfWorkLiteDb.Query<TDomainModel>(db => true);
         }
 
+        public static TDomainModel GetById<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb, long id)
+        where TDomainModel : DomainModelBase
+        {
+            return unitOfWorkLiteDb.GetById<TDomainModel>(id);
+        }
+
         public static void Create<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb,
             IEnumerable<TDomainModel> models)
       where TDomainModel : DomainModelBase

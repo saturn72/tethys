@@ -25,6 +25,7 @@
     "css-vars-ponyfill": "^1.9.0",
     "flag-icon-css": "^3.0.0",
     "font-awesome": "^4.7.0",
+    "jsoneditor": "^5.24.6",
     "perfect-scrollbar": "^1.4.0",
     "simple-line-icons": "^2.4.1",
     "vue": "^2.5.17",

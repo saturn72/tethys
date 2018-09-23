@@ -34,6 +34,11 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
             return _liteDbUnitOfWork.GetAll<RequestResponseCouple>();
         }
 
+        public RequestResponseCouple GetById(long id)
+        {
+            return _liteDbUnitOfWork.GetById<RequestResponseCouple>(id);
+        }
+
         public void Update(RequestResponseCouple requestResponseCouple)
         {
             _liteDbUnitOfWork.Update(requestResponseCouple);

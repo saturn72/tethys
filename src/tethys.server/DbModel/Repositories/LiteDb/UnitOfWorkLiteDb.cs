@@ -40,5 +40,12 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
                 return db.GetCollection<TQueryResult>().Find(criteria);
             }
         }
+        public TQueryResult GetById<TQueryResult>(long id)
+        {
+            using (var db = new LiteDatabase(_dbName))
+            {
+                return db.GetCollection<TQueryResult>().FindById(id);
+            }
+        }
     }
 }

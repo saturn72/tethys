@@ -34,6 +34,11 @@ namespace Tethys.Server.Services
             return await Task.Run(() => _reqResCoupleRepository.GetAll());
         }
 
+        public async Task<RequestResponseCouple> GetById(long id)
+        {
+            return await Task.Run(() => _reqResCoupleRepository.GetById(id));
+        }
+
         public async Task Update(RequestResponseCouple requestResponseCouple)
         {
             await Task.Run(() => _reqResCoupleRepository.Update(requestResponseCouple));

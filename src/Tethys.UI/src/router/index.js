@@ -11,6 +11,9 @@ const Dashboard = () =>
 
 const HttpList = () =>
   import('@/views/http/HttpList')
+const HttpRequestExport = () =>
+  import('@/views/http/HttpRequestExport')
+
 
 Vue.use(Router)
 
@@ -31,18 +34,24 @@ export default new Router({
         component: Dashboard
       },
       {
-        path: 'http',
-        name: 'http',
+        path: 'httprequest',
+        name: 'Http Request',
         component: {
           render(c) {
             return c('router-view')
           }
         },
         children: [{
-          path: 'list',
-          name: 'List',
-          component: HttpList
-        }]
+            path: 'list',
+            name: 'List',
+            component: HttpList
+          },
+          {
+            path: 'export/:id',
+            name: 'Export',
+            component: HttpRequestExport
+          }
+        ]
       }
     ]
   }]

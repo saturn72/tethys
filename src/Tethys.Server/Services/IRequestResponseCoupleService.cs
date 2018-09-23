@@ -9,6 +9,7 @@ namespace Tethys.Server.Services
         Task Create(RequestResponseCouple requestResponseCouple);
         Task Update(RequestResponseCouple requestResponseCouple);
         Task<IEnumerable<RequestResponseCouple>> GetAllAsync();
+        Task<RequestResponseCouple> GetById(long id);
         Task DeleteAllAsync();
     }
 }
