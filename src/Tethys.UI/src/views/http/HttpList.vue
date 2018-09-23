@@ -27,7 +27,7 @@
               <b-button variant="css3" class="btn-brand" @click="reload"><i class="fa fa-refresh"></i><span>Reload</span></b-button>
               <b-button variant="secondary" v-bind:disabled="hasHiddens" class="btn-brand" @click="unhideAll"><i class="fa fa-eye"></i><span>Unhide All</span></b-button>
               <b-button variant="success" v-bind:disabled="hasLocked" class="btn-brand" @click="unlockAll"><i class="fa fa-unlock"></i><span>Unlock All</span></b-button>
-              <b-button variant="warning" v-bind:disabled="items.length > 0" class="btn-brand" @click="resetAllCalls"><i class="fa fa-trash"></i><span>Reset All Calls</span></b-button>
+              <b-button variant="warning" v-bind:disabled="items.length >= 0" class="btn-brand" @click="resetAllCalls"><i class="fa fa-trash"></i><span>Reset All Calls</span></b-button>
             </b-button-group>
             <b-table 
               :hover=true 
@@ -98,20 +98,8 @@ export default {
   },
   methods: {
     showModal(message) {
-      console.log("update error");
-      this.$refs.modalError.message = "this is my messagte";
       this.error.body = "<p class='my-4'>" + message + "</p>";
       this.error.show = true;
-      console.log(message);
-      // <p class="my-4">Hello from modal!</p>
-      // var modal = this.$refs.modalError;
-      // modal.headerBgVariant = "warning";
-      // modal.title = "Error";
-      // // $(this)
-      // //   .find(".modal-body input")
-      // //   .val("You are about to remove this entry. Are you sure?");
-      // modal.bodyTextVariant = "thisis tesxt";
-      // modal.show();
     },
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
