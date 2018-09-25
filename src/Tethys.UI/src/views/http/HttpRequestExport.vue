@@ -36,7 +36,15 @@
                         <b-button class="btn-brand" @click="resetRequestField('resource')"><i class="fa fa-refresh"></i></b-button>
                       </b-input-group>
 
-                      <b-input-group class="mb-3" v-show="requestHasBody">
+                      <b-input-group class="mb-3">
+                        <b-input-group-prepend>
+                          <b-input-group-text>HTTP Method</b-input-group-text>
+                        </b-input-group-prepend>
+                          <b-form-select v-model="requestToDisplay.httpMethod" :options="httpMethodOptions" required >
+                        </b-form-select>
+                          <b-button class="btn-brand" @click="resetRequestField('httpMethod')"><i class="fa fa-refresh"></i></b-button>
+                        </b-input-group>
+                      <b-input-group class="mb-3">
                         <b-input-group-prepend>
                           <b-input-group-text>Body</b-input-group-text>
                         </b-input-group-prepend>
@@ -56,11 +64,11 @@
                           <b-input-group-prepend>
                             <b-input-group-text>Status Code</b-input-group-text>
                           </b-input-group-prepend>
-                           <b-form-select v-model="responseToDisplay.statusCode" :options="httpStatusCodeOptions" required >
+                           <b-form-select v-model="responseToDisplay.httpStatusCode" :options="httpStatusCodeOptions" required >
                           </b-form-select>
-                          <b-button class="btn-brand" @click="resetResponseField('statusCode')"><i class="fa fa-refresh"></i></b-button>
+                          <b-button class="btn-brand" @click="resetResponseField('httpStatusCode')"><i class="fa fa-refresh"></i></b-button>
                         </b-input-group>
-
+                       
                         <b-input-group class="mb-3">
                           <b-input-group-prepend>
                             <b-input-group-text>Body</b-input-group-text>
@@ -120,14 +128,13 @@ export default {
         };
       });
     },
-    requestHasBody: function() {
-      return this.dataToDisplay.request.body;
-    },
-    serverRequest: function() {
-      return this.serverData.request;
-    },
-    serverResponse: function() {
-      return this.serverData.response;
+    httpMethodOptions: function() {
+      return HttpMethods.map(hm => {
+        return {
+          text: hm,
+          value: hm
+        };
+      });
     }
   },
   methods: {
@@ -137,18 +144,22 @@ export default {
     },
     resetRequestField(field) {
       if (field === "body") {
-        this.requestJsonEditor.setText(this.serverRequest.body);
+        this.requestJsonEditor.setText(this.serverData.request.body);
       }
-      this.dataToDisplay.request[field] = this.serverRequest[field];
+      this.dataToDisplay.request[field] = this.serverData.request[field];
     },
     resetResponseField(field) {
       if (field === "body") {
-        this.responseJsonEditor.setText(this.serverResponse.body);
+        this.responseJsonEditor.setText(this.serverData.response.body);
       }
-      this.dataToDisplay.response[field] = this.serverResponse[field];
+      var value = this.serverData.response[field];
+      console.log("restore to: " + field + ":" + value);
+      this.dataToDisplay.response[field] = value;
     },
     onSubmit() {
+      this.dataToDisplay.request.body = this.requestJsonEditor.getText();
       this.dataToDisplay.response.body = this.responseJsonEditor.getText();
+
       var content = JSON.stringify(this.dataToDisplay);
       var file = new File([content], "req-res.json", {
         type: "text/plain;charset=utf-8"
@@ -156,10 +167,12 @@ export default {
       saveAs(file);
     },
     onReset() {
-      this.dataToDisplay.request = Object.assign({}, this.httpRequest);
-      if (this.requestHasBody) {
-        this.requestJsonEditor.setText(this.requestToDisplay.body);
-      }
+      this.dataToDisplay = Object.assign({}, this.serverData);
+      this.dataToDisplay.request = Object.assign({}, this.serverData.request);
+      this.dataToDisplay.response = Object.assign({}, this.serverData.response);
+
+      this.requestJsonEditor.setText(this.serverData.request.body);
+      this.responseJsonEditor.setText(this.serverData.response.body);
     },
     fetchHttpRequest() {
       var fetchUrl = baseUrl + "tethys/api/log/" + this.serverData.id;
@@ -175,7 +188,6 @@ export default {
         })
         .then(data => {
           this.serverData = data;
-          this.httpRequest = data.request;
           this.onReset();
         })
         .catch(err =>
@@ -465,5 +477,23 @@ const HttpStatusCodes = [
     name: "Network Authentication Required",
     code: 511
   }
+];
+
+const HttpMethods = [
+  "GET",
+  "POST",
+  "PUT",
+  "PATCH",
+  "DELETE",
+  "COPY",
+  "HEAD",
+  "OPTIONS",
+  "LINK",
+  "UNLINK",
+  "PURGE",
+  "LOCK",
+  "UNLOCK",
+  "PROPFIND",
+  "VIEW"
 ];
 </script>
