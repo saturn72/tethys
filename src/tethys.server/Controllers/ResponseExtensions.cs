@@ -3,14 +3,18 @@ using Tethys.Server.Models;
 
 namespace Tethys.Server.Controllers
 {
-    public static class ResponseExtensions {
+    public static class ResponseExtensions
+    {
 
-        public static IActionResult ToHttpResponseMessage(this Response response)
+        public static IActionResult ToActionResult(this Response response)
         {
-            return string.IsNullOrEmpty(response.Body) ||
-                   string.IsNullOrWhiteSpace(response.Body)
-                ? new StatusCodeResult(response.HttpStatusCode) as IActionResult
-                : new ObjectResult(response.Body) {StatusCode = response.HttpStatusCode};
+            var hasBody = string.IsNullOrEmpty(response.Body) ||
+                   string.IsNullOrWhiteSpace(response.Body);
+            var actionResult = hasBody
+                ? new StatusCodeResult(response.StatusCode) as IActionResult
+                : new ObjectResult(response.Body) { StatusCode = response.StatusCode };
+
+            return actionResult;
         }
     }
 }

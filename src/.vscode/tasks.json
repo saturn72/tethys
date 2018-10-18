@@ -1,15 +1,28 @@
 {
     "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "Tethys.Server/Tethys.Server.csproj"
-            ],
-            "problemMatcher": "$msCompile"
-        }
-    ]
+    "tasks": [{
+        "label": "clean_and_build",
+        "dependsOn": [
+            "clean",
+            "build"
+        ]
+    }, {
+        "label": "build",
+        "command": "dotnet",
+        "type": "process",
+        "args": [
+            "build",
+            "Tethys.Server/Tethys.Server.csproj"
+        ],
+        "problemMatcher": "$msCompile"
+    }, {
+        "label": "clean",
+        "command": "dotnet",
+        "type": "process",
+        "args": [
+            "clean",
+            "Tethys.Server/Tethys.Server.csproj"
+        ],
+        "problemMatcher": "$msCompile"
+    }]
 }

@@ -9,7 +9,7 @@
             "name": ".NET Core Launch (console)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "clean_and_build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "bin/Debug/netcoreapp2.1/Tethys.Server.dll",
             "args": [

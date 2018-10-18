@@ -50,7 +50,7 @@ namespace Tethys.Server.Services.HttpCalls
                 {
                     hc.WasFullyHandled = false;
                     hc.CreatedOnUtc = DateTime.UtcNow;
-                    hc.AllowedCallsNumber = Math.Max(1, hc.AllowedCallsNumber);
+                    hc.AllowedCallsNumber = hc.AllowedCallsNumber == 0 ? 1024 : hc.AllowedCallsNumber;
                     hc.CallsCounter = 0;
                 }
 
@@ -77,7 +77,7 @@ namespace Tethys.Server.Services.HttpCalls
                 Resource = originalRequest.Path,
                 Query = originalRequest.QueryString,
                 Body = body,
-                Headers = request.Headers.ToDictionary(s => s.Key, s => s.Value.AsEnumerable())
+                Headers = request.Headers.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable())
             };
         }
 

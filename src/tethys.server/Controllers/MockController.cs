@@ -58,7 +58,14 @@ namespace Tethys.Server.Controllers
             }
             //delay before response
             Thread.Sleep(httpCall.Response.Delay);
-            return httpCall.Response.ToHttpResponseMessage();
+            var res = httpCall.Response.ToActionResult();
+
+            var headers = httpCall.Response.Headers;
+            if (headers != null && headers.Any())
+                foreach (var h in headers)
+                    Request.HttpContext.Response.Headers[h.Key] = h.Value;
+
+            return res;
         }
 
         /// <summary>

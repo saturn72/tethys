@@ -42,6 +42,13 @@
               :filter="filter"
               
               >
+               <template slot="headers" slot-scope="row">
+                 <ul>
+                   <li v-for="(h, index) in headersToDisplay(row.item.headers)" :key="index">
+                     { "{{ h.key }}" : {{ h.value }} }
+                   </li>
+                  </ul>
+              </template>
               <template slot="actions" slot-scope="row">
                 <b-button-group size="sm">
                    <router-link :to="{ name: 'Export', params: { id: row.item.id }}">                  
@@ -102,6 +109,11 @@ export default {
     }
   },
   methods: {
+    headersToDisplay: function(headers) {
+      return Object.keys(headers).map(k => {
+        return { key: k, value: headers[k] || "" };
+      });
+    },
     showModal(message) {
       this.error.body = "<p class='my-4'>" + message + "</p>";
       this.error.show = true;

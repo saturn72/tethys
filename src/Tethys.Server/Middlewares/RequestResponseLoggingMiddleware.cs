@@ -39,12 +39,12 @@ namespace Tethys.Server.Middlewares
         public async Task Invoke(HttpContext context)
         {
             if (RedirectRules.ShouldInterceptRequestByPath(context.Request, _webSocketSuffix))
-                await LogRequestResponse(context);
+                await LogRequestResponseAndTriggerNext(context);
             else
                 await _next(context);
         }
 
-        private async Task LogRequestResponse(HttpContext context)
+        private async Task LogRequestResponseAndTriggerNext(HttpContext context)
         {
             var request = context.Request;
             var reqRes = await ExtractRequestAsync(request);
@@ -64,7 +64,7 @@ namespace Tethys.Server.Middlewares
                 response.Body.Seek(0, SeekOrigin.Begin);
                 reqRes.Response = new Response
                 {
-                    HttpStatusCode = response.StatusCode,
+                    StatusCode = response.StatusCode,
                     Body = responseBody
                 };
                 await resMS.CopyToAsync(originalResponseBodyReference);
@@ -93,7 +93,7 @@ namespace Tethys.Server.Middlewares
                     Query = request.QueryString.ToString(),
                     HttpMethod = request.Method,
                     Body = requestBody,
-                    Headers = request.Headers.ToDictionary(s => s.Key, s => s.Value.AsEnumerable())
+                    Headers = request.Headers.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable())
                 }
             };
         }

@@ -22,6 +22,9 @@ namespace Tethys.Server
 {
     public class Startup
     {
+        #region consts
+        private const string CorsPolicy = "CorsPolicy";
+        #endregion
         private static readonly string _staticHtmlFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "UI");
         private static bool _hasStaticFiles = Directory.Exists(_staticHtmlFilesPath);
         public Startup(IConfiguration configuration)
@@ -44,7 +47,14 @@ namespace Tethys.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddCors();
+            services.AddCors(options => options.AddPolicy(CorsPolicy, builder =>
+        {
+            builder
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithOrigins("*")
+                .AllowCredentials();
+        }));
             services.AddSignalR(options => options.EnableDetailedErrors = true);
 
             TethysConfig = TethysConfig.FromConfiguration(Configuration);
@@ -120,10 +130,7 @@ namespace Tethys.Server
             rewriteOptions //.AddRewrite(@"^(?i)(?!)tethys/(.*)", "mock/$1", true)
                 .Add(rCtx => RedirectRules.RedirectRequests(rCtx.HttpContext.Request, TethysConfig));
             app.UseRewriter(rewriteOptions);
-            app.UseCors(cp => cp.AllowAnyOrigin()
-                 .AllowAnyMethod()
-                 .AllowAnyHeader()
-                 .AllowCredentials());
+            app.UseCors(CorsPolicy);
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
