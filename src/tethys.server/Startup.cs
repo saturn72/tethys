@@ -52,7 +52,7 @@ namespace Tethys.Server
             builder
                 .AllowAnyMethod()
                 .AllowAnyHeader()
-                .WithOrigins("*")
+                .AllowAnyOrigin()
                 .AllowCredentials();
         }));
             services.AddSignalR(options => options.EnableDetailedErrors = true);
