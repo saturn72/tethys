@@ -37,12 +37,12 @@ namespace Tethys.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var httpCall = await _httpCallService.GetNextHttpCall(Request);
+            var originalRequest = Request.HttpContext.Items[Consts.OriginalRequest] as Request;
+            var httpCall = await _httpCallService.GetNextHttpCall(originalRequest);
 
             //TODO: send via web socket
             if (httpCall == null)
             {
-                var originalRequest = Request.HttpContext.Items[Consts.OriginalRequest] as OriginalRequest;
                 return new NotFoundObjectResult(new
                 {
                     message = "No corrosponding HttpCall object",
@@ -50,8 +50,8 @@ namespace Tethys.Server.Controllers
                     {
                         headers = originalRequest.Headers,
                         httpMethod = originalRequest.HttpMethod,
-                        path = originalRequest.Path,
-                        query = originalRequest.QueryString,
+                        path = originalRequest.Resource,
+                        query = originalRequest.Query,
                         body = originalRequest.Body
                     }
                 });
@@ -104,7 +104,7 @@ namespace Tethys.Server.Controllers
         /// Note: this command deletes all http-calls and stops push notifications
         /// </summary>
         /// <returns></returns>
-        [HttpDelete("reset")]
+        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Reset()
         {
@@ -112,7 +112,7 @@ namespace Tethys.Server.Controllers
             {
                 _notificationeService.Stop();
 
-                _httpCallService.Register();
+                _httpCallService.Reset();
                 await _reqRescoupleService.DeleteAllAsync();
             });
             return NoContent();

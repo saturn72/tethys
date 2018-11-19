@@ -8,12 +8,6 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
 {
     public static class UnitOfWorkLiteDbExtensions
     {
-
-        public static IEnumerable<TQueryResult> Query<TQueryResult>(this UnitOfWorkLiteDb unitOfWorkLiteDb, ISpecification<TQueryResult> spec)
-        {
-            return unitOfWorkLiteDb.Query(spec.Criteria);
-        }
-
         public static IEnumerable<TDomainModel> GetAll<TDomainModel>(this UnitOfWorkLiteDb unitOfWorkLiteDb)
        where TDomainModel : DomainModelBase
         {

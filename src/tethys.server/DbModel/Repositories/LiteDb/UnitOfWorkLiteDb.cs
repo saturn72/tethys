@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using LiteDB;
@@ -33,12 +34,16 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
             }
         }
 
-        public IEnumerable<TQueryResult> Query<TQueryResult>(Expression<Func<TQueryResult, bool>> criteria)
+        public IEnumerable<TQueryResult> Query<TQueryResult>(Func<TQueryResult, bool> filter)
         {
+            IEnumerable<TQueryResult> results;
             using (var db = new LiteDatabase(_dbName))
             {
-                return db.GetCollection<TQueryResult>().Find(criteria);
+                var col = db.GetCollection<TQueryResult>();
+                results = col.FindAll();
             }
+
+            return results.Where(filter);
         }
         public TQueryResult GetById<TQueryResult>(long id)
         {

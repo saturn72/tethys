@@ -1,5 +1,5 @@
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Primitives;
 
 namespace Tethys.Server.Models
 {
@@ -8,7 +8,7 @@ namespace Tethys.Server.Models
         public string Resource { get; set; }
         public string Query { get; set; }
         public string HttpMethod { get; set; }
-        public string Body { get; set; }
-        public IDictionary<string, IEnumerable<string>> Headers { get; set; }
+        public Dictionary<string, string> Headers { get; set; }
+        public object Body { get; set; }
     }
 }

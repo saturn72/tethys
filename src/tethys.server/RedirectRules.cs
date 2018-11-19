@@ -15,10 +15,10 @@ namespace Tethys.Server
             if (!ShouldInterceptRequestByPath(request, tethysConfig.WebSocketSuffix))
                 return;
 
-            request.HttpContext.Items[Consts.OriginalRequest] = new OriginalRequest
+            request.HttpContext.Items[Consts.OriginalRequest] = new Request
             {
-                Path = request.Path,
-                QueryString = request.QueryString.ToString(),
+                Resource = request.Path,
+                Query = request.QueryString.ToString(),
                 HttpMethod = request.Method,
                 Headers = request.Headers.ToDictionary(s => s.Key, s => s.Value.ToString()),
                 Body = "Not parsed yet. see: RedirectRules"

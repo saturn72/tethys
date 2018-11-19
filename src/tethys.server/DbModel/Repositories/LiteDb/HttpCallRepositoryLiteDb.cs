@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using Tethys.Server.Models;
 using Tethys.Server.Services;
 using Tethys.Server.Services.HttpCalls;
@@ -27,10 +28,6 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
         {
             _liteDbUnitOfWork.Create(httpCalls);
         }
-        public IEnumerable<HttpCall> GetBy(ISpecification<HttpCall> spec)
-        {
-            return _liteDbUnitOfWork.Query(spec);
-        }
 
         public void Update(HttpCall httpCall)
         {
@@ -48,9 +45,9 @@ namespace Tethys.Server.DbModel.Repositories.LiteDb
             }
         }
 
-        public IEnumerable<HttpCall> GetAll()
+        public IEnumerable<HttpCall> GetAll(Func<HttpCall, bool> filter = null)
         {
-            return _liteDbUnitOfWork.GetAll<HttpCall>();
+            return filter == null ? _liteDbUnitOfWork.GetAll<HttpCall>() : _liteDbUnitOfWork.Query<HttpCall>(filter);
         }
     }
 }

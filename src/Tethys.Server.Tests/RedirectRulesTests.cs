@@ -48,9 +48,9 @@ namespace Tethys.Server.Tests
             RedirectRules.RedirectRequests(req.Object, tc);
 
             httpContextItems.Keys.Count.ShouldBe(1);
-            var or = httpContextItems[Consts.OriginalRequest].ShouldBeOfType<OriginalRequest>();
-            or.Path.ShouldBe(p);
-            or.QueryString.ShouldBe(qs);
+            var or = httpContextItems[Consts.OriginalRequest].ShouldBeOfType<Request>();
+            or.Resource.ShouldBe(p);
+            or.Query.ShouldBe(qs);
             or.HttpMethod.ShouldBe(method);
 
             req.VerifySet(h => h.Path = Consts.MockControllerRoute, Times.Once);
@@ -83,8 +83,8 @@ namespace Tethys.Server.Tests
             RedirectRules.RedirectRequests(req.Object, tc);
 
             httpContextItems.Keys.Count.ShouldBe(1);
-            var or = httpContextItems[Consts.OriginalRequest].ShouldBeOfType<OriginalRequest>();
-            or.QueryString.ShouldBe(qs);
+            var or = httpContextItems[Consts.OriginalRequest].ShouldBeOfType<Request>();
+            or.Query.ShouldBe(qs);
             or.HttpMethod.ShouldBe(method);
 
             var expPath = isNegotiation

@@ -93,7 +93,7 @@ namespace Tethys.Server.Middlewares
                     Query = request.QueryString.ToString(),
                     HttpMethod = request.Method,
                     Body = requestBody,
-                    Headers = request.Headers.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable())
+                    Headers = request.Headers.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Aggregate((x, y) => x + ";" + y))
                 }
             };
         }

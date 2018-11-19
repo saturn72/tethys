@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Tethys.Server.Controllers;
 using Tethys.Server.DbModel.Repositories;
 using Tethys.Server.Models;
@@ -22,15 +20,22 @@ namespace Tethys.Server.Services.HttpCalls
             _notificationPublisher = notificationPublisher;
             _httpCallRepository = httpCallRepository;
         }
-        public async Task<HttpCall> GetNextHttpCall(HttpRequest request)
+        public async Task<HttpCall> GetNextHttpCall(Request request)
         {
-            var originalRequest = WrapOriginalRequest(request);
-            var httpCall = _httpCallRepository.GetNextHttpCall();
+            var filter = new Func<HttpCall, bool>(hc =>
+            {
+                var res = !hc.Flushed &&
+            !hc.WasFullyHandled &&
+            hc.Request.HttpMethod.Split('|').Any(hm => hm.Trim().Equals(request.HttpMethod, StringComparison.InvariantCultureIgnoreCase)) &&
+            hc.Request.Resource.Equals(request.Resource, StringComparison.InvariantCultureIgnoreCase);
+
+                return res;
+            });
+
+            var httpCall = _httpCallRepository.GetAll(filter).FirstOrDefault();
             if (httpCall == null)
                 return null;
-
             // await ReportViaWebSocket(httpCall.Request, httpCall.Request);
-
             httpCall.CallsCounter++;
             httpCall.WasFullyHandled = httpCall.CallsCounter == httpCall.AllowedCallsNumber;
             httpCall.HandledOnUtc = DateTime.UtcNow;
@@ -58,41 +63,10 @@ namespace Tethys.Server.Services.HttpCalls
             });
         }
 
-        public void Register()
+        public void Reset()
         {
             _httpCallRepository.FlushUnhandled();
         }
-        #region Utilities
-        private async Task<Request> WrapOriginalRequest(HttpRequest request)
-        {
-            string body;
-            using (var reader = new StreamReader(request.Body))
-            {
-                body = await reader.ReadToEndAsync();
-            }
-            var originalRequest = request.HttpContext.Items[Consts.OriginalRequest] as OriginalRequest;
-            return new Request
-            {
-                HttpMethod = originalRequest.HttpMethod,
-                Resource = originalRequest.Path,
-                Query = originalRequest.QueryString,
-                Body = body,
-                Headers = request.Headers.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable())
-            };
-        }
 
-        // private async Task ReportViaWebSocket(OriginalRequest originalRequest, Request expectedRequest)
-        // {
-        //     // var sb = new StringBuilder();
-        //     // sb.AppendLine("Incoming Http Request:");
-        //     // sb.AppendLine(originalRequest.ToReportFormat().Replace("\n", "\t\n"));
-        //     // sb.AppendLine("Expected Http Request:");
-        //     // sb.AppendLine(expectedRequest.ToReportFormat().Replace("\n", "\t\n"));
-
-        //     // sb.AppendLine("Start comparing incoming request");
-        //     // await _notificationPublisher.ToServerUnderTestClients("tethys-log", sb.ToString());
-        // }
-
-        #endregion
     }
 }

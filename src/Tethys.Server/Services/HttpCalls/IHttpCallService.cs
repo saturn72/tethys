@@ -8,7 +8,7 @@ namespace Tethys.Server.Services.HttpCalls
     public interface IHttpCallService
     {
         Task Register(IEnumerable<HttpCall> httpCalls);
-        Task<HttpCall> GetNextHttpCall(HttpRequest request);
-        void Register();
+        Task<HttpCall> GetNextHttpCall(Request request);
+        void Reset();
     }
 }
