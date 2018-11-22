@@ -43,7 +43,7 @@ namespace Tethys.Server.Controllers
             //TODO: send via web socket
             if (httpCall == null)
             {
-                return new NotFoundObjectResult(new
+                var resBody = new
                 {
                     message = "No corrosponding HttpCall object",
                     requestDetails = new
@@ -54,8 +54,10 @@ namespace Tethys.Server.Controllers
                         query = originalRequest.Query,
                         body = originalRequest.Body
                     }
-                });
+                };
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, resBody);
             }
+
             //delay before response
             Thread.Sleep(httpCall.Response.Delay);
             var res = httpCall.Response.ToActionResult();
