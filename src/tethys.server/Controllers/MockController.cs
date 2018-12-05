@@ -138,7 +138,7 @@ namespace Tethys.Server.Controllers
                     data = httpCalls
                 });
 
-            await _httpCallService.Register(httpCalls);
+            await _httpCallService.AddHttpCalls(httpCalls);
 
             return new ObjectResult(httpCalls) { StatusCode = StatusCodes.Status201Created };
         }

@@ -25,9 +25,9 @@ namespace Tethys.Server.Services.HttpCalls
             var filter = new Func<HttpCall, bool>(hc =>
             {
                 var res = !hc.Flushed &&
-            !hc.WasFullyHandled &&
-            hc.Request.HttpMethod.Split('|').Any(hm => hm.Trim().Equals(request.HttpMethod, StringComparison.InvariantCultureIgnoreCase)) &&
-            hc.Request.Resource.Equals(request.Resource, StringComparison.InvariantCultureIgnoreCase);
+                !hc.WasFullyHandled &&
+                hc.Request.HttpMethod.Split('|').Any(hm => hm.Trim().Equals(request.HttpMethod, StringComparison.InvariantCultureIgnoreCase)) &&
+                hc.Request.Resource.Equals(request.Resource, StringComparison.InvariantCultureIgnoreCase);
 
                 return res;
             });
@@ -44,7 +44,7 @@ namespace Tethys.Server.Services.HttpCalls
             return httpCall;
         }
 
-        public async Task Register(IEnumerable<HttpCall> httpCalls)
+        public async Task AddHttpCalls(IEnumerable<HttpCall> httpCalls)
         {
             if (httpCalls == null || !httpCalls.Any())
                 return;
