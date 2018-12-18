@@ -121,6 +121,7 @@ namespace Tethys.Server.Controllers
         /// </summary>
         /// <param name="httpCalls"></param>
         /// <returns></returns>
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] IEnumerable<HttpCall> httpCalls)
