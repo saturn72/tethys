@@ -6,7 +6,8 @@
         public const string Ui = "/ui";
         public const string ApiBaseUrl = "/tethys";
         public const string SwaggerEndPointPrefix = "/swagger";
-        public const string MockControllerRoute = ApiBaseUrl + "/api/mock";
+        public const string HttpCallControllerRoute = ApiBaseUrl + "/api/httpcall";
+        public const string NotificationControllerRoute = ApiBaseUrl + "/api/notification";
         public const string MockUploadRoute = "upload";
         public const string LogControllerRoute = ApiBaseUrl + "/api/log";
         public const string TethysWebSocketPath = "/ws-tethys";

@@ -12,17 +12,15 @@ using Tethys.Server.Services.Notifications;
 
 namespace Tethys.Server.Controllers
 {
-    [Route(Consts.MockControllerRoute)]
-    public class MockController : Controller
+    [Route(Consts.HttpCallControllerRoute)]
+    public class HttpCallController : Controller
     {
         #region CTOR
 
-        public MockController(
-            IHttpCallService httpCallService, INotificationService notificationeService,
-             IRequestResponseCoupleService requestResponseCoupleService, IFileUploadManager fileuploadManager)
+        public HttpCallController(
+            IHttpCallService httpCallService, IRequestResponseCoupleService requestResponseCoupleService, IFileUploadManager fileuploadManager)
         {
             _httpCallService = httpCallService;
-            _notificationeService = notificationeService;
             _reqRescoupleService = requestResponseCoupleService;
             _fileuploadManager = fileuploadManager;
         }
@@ -103,17 +101,15 @@ namespace Tethys.Server.Controllers
 
         /// <summary>
         /// Resets server's calls.
-        /// Note: this command deletes all http-calls and stops push notifications
+        /// Note: this command deletes all http-calls
         /// </summary>
         /// <returns></returns>
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Reset()
+        public async Task<IActionResult> DeleteAll()
         {
             await Task.Run(async () =>
             {
-                _notificationeService.Stop();
-
                 _httpCallService.Reset();
                 await _reqRescoupleService.DeleteAllAsync();
             });
@@ -125,10 +121,9 @@ namespace Tethys.Server.Controllers
         /// </summary>
         /// <param name="httpCalls"></param>
         /// <returns></returns>
-        [HttpPost("setup")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Setup([FromBody] IEnumerable<HttpCall> httpCalls)
+        public async Task<IActionResult> Create([FromBody] IEnumerable<HttpCall> httpCalls)
         {
             if (!ModelState.IsValid)
                 return BadRequest(new
@@ -142,32 +137,8 @@ namespace Tethys.Server.Controllers
 
             return new ObjectResult(httpCalls) { StatusCode = StatusCodes.Status201Created };
         }
-
-
-        /// <summary>
-        /// Defines array of push notifications to be pushed from server
-        /// </summary>
-        /// <param name="notifications"></param>
-        /// <returns></returns>
-        [HttpPost("push")]
-        public IActionResult Push([FromBody] IEnumerable<PushNotification> notifications)
-        {
-            if (notifications == null || !notifications.Any())
-                return new ObjectResult("No notifications sent to server")
-                {
-                    StatusCode = StatusCodes.Status406NotAcceptable
-                };
-
-            _notificationeService.NotifyAsync(notifications);
-
-            return Accepted();
-        }
-
-
-
         #region Fields
 
-        private readonly INotificationService _notificationeService;
         private readonly IRequestResponseCoupleService _reqRescoupleService;
         private readonly IFileUploadManager _fileuploadManager;
         private readonly IHttpCallService _httpCallService;

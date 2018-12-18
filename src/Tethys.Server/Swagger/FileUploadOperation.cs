@@ -9,7 +9,7 @@ namespace Tethys.Server.Swagger
     internal class FileUploadOperation : IOperationFilter
     {
         static readonly IEnumerable<string> fileUploadOperationIds = new[] {
-        Consts.MockControllerRoute.Replace("/", "") + "uploadpost"};
+        Consts.HttpCallControllerRoute.Replace("/", "") + "uploadpost"};
         public void Apply(Operation operation, OperationFilterContext context)
         {
             if (!fileUploadOperationIds.Contains(operation.OperationId, StringComparer.InvariantCultureIgnoreCase))

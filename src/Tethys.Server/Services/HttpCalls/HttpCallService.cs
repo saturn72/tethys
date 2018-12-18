@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Tethys.Server.Controllers;
 using Tethys.Server.DbModel.Repositories;
@@ -27,12 +28,13 @@ namespace Tethys.Server.Services.HttpCalls
                 var res = !hc.Flushed &&
                 !hc.WasFullyHandled &&
                 hc.Request.HttpMethod.Split('|').Any(hm => hm.Trim().Equals(request.HttpMethod, StringComparison.InvariantCultureIgnoreCase)) &&
-                hc.Request.Resource.Equals(request.Resource, StringComparison.InvariantCultureIgnoreCase);
+                Regex.IsMatch(request.Resource, hc.Request.Resource, RegexOptions.IgnoreCase);
 
                 return res;
             });
 
-            var httpCall = _httpCallRepository.GetAll(filter).FirstOrDefault();
+            var filteredHC = _httpCallRepository.GetAll(filter);
+            var httpCall = filteredHC.FirstOrDefault();
             if (httpCall == null)
                 return null;
             // await ReportViaWebSocket(httpCall.Request, httpCall.Request);

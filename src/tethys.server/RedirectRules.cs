@@ -33,7 +33,7 @@ namespace Tethys.Server
                 .WebSocketSuffix
                 .Any(wss => RequestStartsWithSegment(request, wss));
 
-            var path = isWebSocketRequest ? Consts.TethysWebSocketPath : Consts.MockControllerRoute;
+            var path = isWebSocketRequest ? Consts.TethysWebSocketPath : Consts.HttpCallControllerRoute;
             if (isWebSocketRequest)
             {
                 if (request.Path.Value.EndsWith(Consts.TethysWebSocketPathNegotiate,
