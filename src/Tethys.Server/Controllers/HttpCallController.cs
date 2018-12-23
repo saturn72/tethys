@@ -64,7 +64,6 @@ namespace Tethys.Server.Controllers
             if (headers != null && headers.Any())
                 foreach (var h in headers)
                     Request.HttpContext.Response.Headers[h.Key] = h.Value;
-
             return res;
         }
 
