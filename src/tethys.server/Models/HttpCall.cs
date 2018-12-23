@@ -5,6 +5,8 @@ namespace Tethys.Server.Models
 {
     public class HttpCall : DomainModelBase
     {
+        [Required]
+        public string BucketId { get; set; }
         [Required] public Request Request { get; set; }
         [Required] public Response Response { get; set; }
 

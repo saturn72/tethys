@@ -53,7 +53,7 @@ namespace Tethys.Server.Tests
             or.Query.ShouldBe(qs);
             or.HttpMethod.ShouldBe(method);
 
-            req.VerifySet(h => h.Path = Consts.MockControllerRoute, Times.Once);
+            req.VerifySet(h => h.Path = Consts.HttpCallControllerRoute, Times.Once);
         }
 
         [Theory]

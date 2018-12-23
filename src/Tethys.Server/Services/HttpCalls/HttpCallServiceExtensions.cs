@@ -11,7 +11,7 @@ namespace Tethys.Server.Services.HttpCalls
         public static async Task<HttpCall> GetNextHttpCall(this IHttpCallService httpCallService, HttpRequest httpRequest)
         {
             var request = await WrapOriginalRequest(httpRequest);
-            return await httpCallService.GetNextHttpCall(request);
+            return await httpCallService.GetHttpCall(request);
 
         }
         private static async Task<Request> WrapOriginalRequest(HttpRequest request)

@@ -21,7 +21,7 @@ namespace Tethys.Server.Services.HttpCalls
             _notificationPublisher = notificationPublisher;
             _httpCallRepository = httpCallRepository;
         }
-        public async Task<HttpCall> GetNextHttpCall(Request request)
+        public async Task<HttpCall> GetHttpCall(Request request)
         {
             var filter = new Func<HttpCall, bool>(hc =>
             {
@@ -42,7 +42,7 @@ namespace Tethys.Server.Services.HttpCalls
             httpCall.WasFullyHandled = httpCall.CallsCounter == httpCall.AllowedCallsNumber;
             httpCall.HandledOnUtc = DateTime.UtcNow;
 
-            _httpCallRepository.Update(httpCall);
+            Task.Run(() => _httpCallRepository.Update(httpCall));
             return httpCall;
         }
 
