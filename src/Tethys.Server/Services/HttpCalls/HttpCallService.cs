@@ -75,16 +75,15 @@ namespace Tethys.Server.Services.HttpCalls
             });
 
 
-            if (httpCalls.All(hc => hc.Id > 0))
-                return new ServiceOperationResult
-                {
-                    Status = ServiceOperationStatus.Success,
-                };
+            var status = httpCalls.All(hc => hc.Id > 0) ? ServiceOperationStatus.Success : ServiceOperationStatus.Fail;
+            var msgBase = $" httpcalls from collection named: {nameof(httpCalls)} creation failed";
+            var msg = status == ServiceOperationStatus.Fail ?
+            (httpCalls.All(hc => hc.Id == 0) ? "All" : "Some") + msgBase :
+            null;
 
-            var msg = (httpCalls.All(hc => hc.Id == 0) ? "All" : "Some") + $" httpcalls from collection named: {nameof(httpCalls)} creation failed";
             return new ServiceOperationResult
             {
-                Status = ServiceOperationStatus.Fail,
+                Status = status,
                 Message = msg
             };
         }
