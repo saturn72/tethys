@@ -6,7 +6,7 @@ namespace Tethys.Server.Services
 {
     public interface IRequestResponseCoupleService
     {
-        Task Create(RequestResponseCouple requestResponseCouple);
+        Task<ServiceOperationResult> Create(RequestResponseCouple requestResponseCouple);
         Task Update(RequestResponseCouple requestResponseCouple);
         Task<IEnumerable<RequestResponseCouple>> GetAllAsync();
         Task<RequestResponseCouple> GetById(long id);

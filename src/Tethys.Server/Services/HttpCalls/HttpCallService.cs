@@ -46,10 +46,20 @@ namespace Tethys.Server.Services.HttpCalls
             return httpCall;
         }
 
-        public async Task AddHttpCalls(IEnumerable<HttpCall> httpCalls)
+        public async Task<ServiceOperationResult> AddHttpCalls(IEnumerable<HttpCall> httpCalls)
         {
             if (httpCalls == null || !httpCalls.Any())
-                return;
+                return new ServiceOperationResult
+                {
+                    Status = ServiceOperationStatus.Fail,
+                    Message = $"Fail to create httpCalls - null or empty collection was sent: {nameof(httpCalls)}"
+                };
+            if (httpCalls.Any(hc => !hc.BucketId.HasValue()))
+                return new ServiceOperationResult
+                {
+                    Status = ServiceOperationStatus.Fail,
+                    Message = "Missing bucketId for some or all of httpcalls"
+                };
 
             await Task.Run(() =>
             {
@@ -63,6 +73,20 @@ namespace Tethys.Server.Services.HttpCalls
 
                 _httpCallRepository.Create(httpCalls);
             });
+
+
+            if (httpCalls.All(hc => hc.Id > 0))
+                return new ServiceOperationResult
+                {
+                    Status = ServiceOperationStatus.Success,
+                };
+
+            var msg = (httpCalls.All(hc => hc.Id == 0) ? "All" : "Some") + $" httpcalls from collection named: {nameof(httpCalls)} creation failed";
+            return new ServiceOperationResult
+            {
+                Status = ServiceOperationStatus.Fail,
+                Message = msg
+            };
         }
 
         public void Reset()

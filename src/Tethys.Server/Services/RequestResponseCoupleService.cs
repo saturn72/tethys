@@ -19,9 +19,13 @@ namespace Tethys.Server.Services
         }
 
         #endregion
-        public async Task Create(RequestResponseCouple requestResponseCouple)
+        public async Task<ServiceOperationResult> Create(RequestResponseCouple requestResponseCouple)
         {
             await Task.Run(() => _reqResCoupleRepository.Create(requestResponseCouple));
+            return new ServiceOperationResult
+            {
+                Status = requestResponseCouple.Id > 0 ? ServiceOperationStatus.Success : ServiceOperationStatus.Fail
+            };
         }
 
         public async Task DeleteAllAsync()

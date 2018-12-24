@@ -7,6 +7,7 @@ using Xunit;
 using Shouldly;
 using System.Threading.Tasks;
 using System;
+using Tethys.Server.Services;
 
 namespace Tethys.Server.Tests.Services
 {
@@ -38,13 +39,66 @@ namespace Tethys.Server.Tests.Services
         {
             var hcRepo = new Mock<IHttpCallRepository>();
             var hcSrv = new HttpCallService(null, hcRepo.Object);
-            await hcSrv.AddHttpCalls(httpCalls);
+            var res = await hcSrv.AddHttpCalls(httpCalls);
+
+            res.Status.ShouldBe(ServiceOperationStatus.Fail);
+            res.Message.HasValue().ShouldBeTrue();
             hcRepo.Verify(r => r.Create(It.IsAny<IEnumerable<HttpCall>>()), Times.Never());
         }
 
         [Fact]
-        public async Task HttpCallService_AddHttpCall_WritesToDatabse()
+        public async Task HttpCallService_AddHttpCall_DeclineOnMissingBucketId()
         {
+            var httpCalls = new[]{
+                new HttpCall{},
+            };
+
+            var hcRepo = new Mock<IHttpCallRepository>();
+            var hcSrv = new HttpCallService(null, hcRepo.Object);
+            var res = await hcSrv.AddHttpCalls(httpCalls);
+
+            res.Status.ShouldBe(ServiceOperationStatus.Fail);
+            res.Message.HasValue().ShouldBeTrue();
+            hcRepo.Verify(r => r.Create(It.IsAny<IEnumerable<HttpCall>>()), Times.Never());
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task HttpCallService_AddHttpCall_FailToWriteToDatabase(bool partialFailure)
+        {
+            var cf = partialFailure ? 1 : 2;
+            var dbId = 100;
+            var bucketPrefix = "some-bucket-id-";
+            var startTime = DateTime.UtcNow;
+            var httpCalls = new[]{
+                new HttpCall{BucketId = bucketPrefix + 1 },
+                new HttpCall{BucketId = bucketPrefix + 2},
+                new HttpCall{BucketId =bucketPrefix + 3},
+                new HttpCall{BucketId = bucketPrefix + 4},
+            };
+
+            var hcRepo = new Mock<IHttpCallRepository>();
+            hcRepo.Setup(h => h.Create(It.IsAny<IEnumerable<HttpCall>>())).Callback(() =>
+            {
+                foreach (var h in httpCalls)
+                {
+                    h.Id = dbId * (cf % 2);
+                    cf += cf;
+                }
+            });
+
+            var hcSrv = new HttpCallService(null, hcRepo.Object);
+            var res = await hcSrv.AddHttpCalls(httpCalls);
+            res.Status.ShouldBe(ServiceOperationStatus.Fail);
+            res.Message.ShouldContain(partialFailure ? "Some" : "All", Case.Insensitive);
+            hcRepo.Verify(r => r.Create(It.IsAny<IEnumerable<HttpCall>>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task HttpCallService_AddHttpCall_SuccessfulyWritesToDatabase()
+        {
+            var dbId = 100;
             var bucketPrefix = "some-bucket-id-";
             var startTime = DateTime.UtcNow;
             var httpCalls = new[]{
@@ -55,12 +109,21 @@ namespace Tethys.Server.Tests.Services
             };
 
             var hcRepo = new Mock<IHttpCallRepository>();
+            hcRepo.Setup(h => h.Create(It.IsAny<IEnumerable<HttpCall>>())).Callback(() =>
+            {
+                foreach (var h in httpCalls)
+                    h.Id = dbId;
+            });
+
             var hcSrv = new HttpCallService(null, hcRepo.Object);
-            await hcSrv.AddHttpCalls(httpCalls);
+            var res = await hcSrv.AddHttpCalls(httpCalls);
+            res.Status.ShouldBe(ServiceOperationStatus.Success);
+
             hcRepo.Verify(r => r.Create(It.IsAny<IEnumerable<HttpCall>>()), Times.Once());
 
             foreach (var hc in httpCalls)
             {
+                hc.Id.ShouldBe(dbId);
                 hc.BucketId.ShouldStartWith(bucketPrefix);
                 hc.BucketId.Length.ShouldBeGreaterThan(bucketPrefix.Length);
                 hc.WasFullyHandled.ShouldBeFalse();
