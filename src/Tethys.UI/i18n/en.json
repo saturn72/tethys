@@ -1,4 +1,5 @@
 {
+  "App.nav.httpCalls": "My Http Calls",
   "App.core.description": "A flexible, scalable, opinionated boilerplate for production-ready PWAs with focus on performance, development speed, and best practices",
   "App.nav.components": "Components",
   "App.nav.counter": "Counter",

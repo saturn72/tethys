@@ -1,21 +1,23 @@
-import Vue                               from 'vue';
+import Vue from 'vue';
 import VueRouter, { Route, RouteRecord } from 'vue-router';
-import Meta                              from 'vue-meta';
-import { AppRoutes }                     from './app/routes';
-import { HomeRoutes }                    from './home/routes';
-import { CounterRoutes }                 from './counter/routes';
-import { ComponentsRoutes }              from './components/routes';
+import Meta from 'vue-meta';
+import { AppRoutes } from './app/routes';
+import { HomeRoutes } from './home/routes';
+import { HttpCallRoutes } from './httpCalls/routes';
+import { CounterRoutes } from './counter/routes';
+import { ComponentsRoutes } from './components/routes';
 
 Vue.use(VueRouter);
 Vue.use(Meta);
 
 export const router: VueRouter = new VueRouter(
   {
-    mode:   'history',
-    base:   __dirname,
+    mode: 'history',
+    base: __dirname,
     routes: [
       ...AppRoutes,
       ...HomeRoutes,
+      ...HttpCallRoutes,
       ...CounterRoutes,
       ...ComponentsRoutes,
     ],
