@@ -21,11 +21,15 @@ namespace Tethys.Server.Services.HttpCalls
             _notificationPublisher = notificationPublisher;
             _httpCallRepository = httpCallRepository;
         }
-        public async Task<HttpCall> GetHttpCalls(Request request)
+        public async Task<HttpCall> GetHttpCallByRequest(Request request)
         {
+            if (request == null || !request.BucketId.HasValue())
+                return null;
+
             var filter = new Func<HttpCall, bool>(hc =>
             {
                 var res = !hc.Flushed &&
+                hc.BucketId.Equals(request.BucketId, StringComparison.InvariantCultureIgnoreCase) &&
                 !hc.WasFullyHandled &&
                 hc.Request.HttpMethod.Split('|').Any(hm => hm.Trim().Equals(request.HttpMethod, StringComparison.InvariantCultureIgnoreCase)) &&
                 Regex.IsMatch(request.Resource, hc.Request.Resource, RegexOptions.IgnoreCase);
@@ -33,23 +37,24 @@ namespace Tethys.Server.Services.HttpCalls
                 return res;
             });
 
-            var httpCalls = _httpCallRepository.GetAll(filter);
+            var httpCalls = await Task.Run(() => _httpCallRepository.GetAll(filter));
             if (httpCalls.IsNullOrEmpty())
                 return null;
 
-            throw new NotImplementedException("Ssss");
-            //  // await ReportViaWebSocket(httpCall.Request, httpCall.Request);
-            // httpCalls.CallsCounter++;
-            // httpCalls.WasFullyHandled = httpCalls.CallsCounter == httpCalls.AllowedCallsNumber;
-            // httpCalls.HandledOnUtc = DateTime.UtcNow;
+            var lastHttpCall = httpCalls.OrderByDescending(h => h.Id).First();
+            // await ReportViaWebSocket(httpCall.Request, httpCall.Request);
+            lastHttpCall.CallsCounter++;
+            lastHttpCall.WasFullyHandled = lastHttpCall.CallsCounter == lastHttpCall.AllowedCallsNumber;
+            lastHttpCall.HandledOnUtc = DateTime.UtcNow;
+            lastHttpCall.UpdatedOnUtc = DateTime.UtcNow;
 
-            // Task.Run(() => _httpCallRepository.Update(httpCalls));
-            // return httpCalls;
+            await Task.Run(() => _httpCallRepository.Update(lastHttpCall));
+            return lastHttpCall;
         }
 
         public async Task<ServiceOperationResult> AddHttpCalls(IEnumerable<HttpCall> httpCalls)
         {
-            if (httpCalls == null || !httpCalls.Any())
+            if (httpCalls.IsNullOrEmpty())
                 return new ServiceOperationResult
                 {
                     Status = ServiceOperationStatus.Fail,
@@ -68,6 +73,7 @@ namespace Tethys.Server.Services.HttpCalls
                 {
                     hc.WasFullyHandled = false;
                     hc.CreatedOnUtc = DateTime.UtcNow;
+                    hc.UpdatedOnUtc = DateTime.UtcNow;
                     hc.AllowedCallsNumber = hc.AllowedCallsNumber == 0 ? 1024 : hc.AllowedCallsNumber;
                     hc.CallsCounter = 0;
                 }

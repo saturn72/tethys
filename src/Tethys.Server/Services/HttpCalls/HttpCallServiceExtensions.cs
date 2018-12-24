@@ -8,10 +8,10 @@ namespace Tethys.Server.Services.HttpCalls
 {
     public static class HttpCallServiceExtensions
     {
-        public static async Task<HttpCall> GetNextHttpCall(this IHttpCallService httpCallService, HttpRequest httpRequest)
+        public static async Task<HttpCall> GetHttpCall(this IHttpCallService httpCallService, HttpRequest httpRequest)
         {
             var request = await WrapOriginalRequest(httpRequest);
-            return await httpCallService.GetHttpCalls(request);
+            return await httpCallService.GetHttpCallByRequest(request);
 
         }
         private static async Task<Request> WrapOriginalRequest(HttpRequest request)

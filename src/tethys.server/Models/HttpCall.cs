@@ -19,5 +19,6 @@ namespace Tethys.Server.Models
         public bool Flushed { get; set; }
         public DateTime? FlushedOnUtc { get; set; }
         public DateTime CreatedOnUtc { get; set; }
+        public DateTime UpdatedOnUtc { get; set; }
     }
 }

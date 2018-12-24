@@ -129,6 +129,8 @@ namespace Tethys.Server.Tests.Services
                 hc.WasFullyHandled.ShouldBeFalse();
                 hc.CreatedOnUtc.ShouldBeGreaterThanOrEqualTo(startTime);
                 hc.CreatedOnUtc.ShouldBeLessThanOrEqualTo(DateTime.UtcNow);
+                hc.UpdatedOnUtc.ShouldBeGreaterThanOrEqualTo(startTime);
+                hc.UpdatedOnUtc.ShouldBeLessThanOrEqualTo(DateTime.UtcNow);
                 hc.AllowedCallsNumber.ShouldBe(1024);
                 hc.CallsCounter.ShouldBe(0);
             }
@@ -136,39 +138,64 @@ namespace Tethys.Server.Tests.Services
         #endregion
 
         #region GetHttpCalls
-        [Fact]
-        public async Task HttpCallService_GetHttpCalls()
+
+        public static IEnumerable<object[]> EmptyRequests =>
+        new[]{
+            new object[]{null},
+            new object[]{new Request{}}
+        };
+
+        [Theory]
+        [MemberData(nameof(EmptyRequests))]
+        public async Task HttpCallService_GetHttpCallByRequest_ReturnNullOnBadRequest(Request request)
         {
-            var dbId = 100;
-            var bucketPrefix = "some-bucket-id-";
+            var hcSrv = new HttpCallService(null, null);
+            var res = await hcSrv.GetHttpCallByRequest(request);
+            res.ShouldBeNull();
+        }
+
+        [Fact]
+        public async Task HttpCallService_GetHttpCallByRequest_ReturnsNull()
+        {
+            var req = new Request { BucketId = "some-bucket-id" };
+            var hcRepo = new Mock<IHttpCallRepository>();
+            hcRepo.Setup(h => h.GetAll(It.IsAny<Func<HttpCall, bool>>())).Returns(null as IEnumerable<HttpCall>);
+            var hcSrv = new HttpCallService(null, hcRepo.Object);
+            var res = await hcSrv.GetHttpCallByRequest(req);
+
+            res.ShouldBeNull();
+
+        }
+
+        [Fact]
+        public async Task HttpCallService_GetHttpCallByRequest_ReturnsHttpCall()
+        {
             var startTime = DateTime.UtcNow;
-            var httpCalls = new[]{
-                new HttpCall{BucketId = bucketPrefix + 1, WasFullyHandled = true, CallsCounter = 100 },
-                new HttpCall{BucketId = bucketPrefix + 2, WasFullyHandled = true, CallsCounter = 100},
-                new HttpCall{BucketId =bucketPrefix + 3, WasFullyHandled = true, CallsCounter = 100},
-                new HttpCall{BucketId = bucketPrefix + 4, WasFullyHandled = true, CallsCounter = 100},
+
+            var selectedHttpCall = new HttpCall { Id = 4 };
+            var data = new[]{
+                new HttpCall{Id = 1},
+                new HttpCall{Id = 2},
+                new HttpCall{Id = 3},
+                selectedHttpCall,
             };
 
+            var req = new Request { BucketId = "some-bucket-id" };
             var hcRepo = new Mock<IHttpCallRepository>();
-
+            hcRepo.Setup(h => h.GetAll(It.IsAny<Func<HttpCall, bool>>())).Returns(data);
             var hcSrv = new HttpCallService(null, hcRepo.Object);
-            var res = await hcSrv.AddHttpCalls(httpCalls);
-            res.Status.ShouldBe(ServiceOperationStatus.Success);
+            var res = await hcSrv.GetHttpCallByRequest(req);
 
-            hcRepo.Verify(r => r.Create(It.IsAny<IEnumerable<HttpCall>>()), Times.Once());
+            res.ShouldBe(selectedHttpCall);
 
-            foreach (var hc in httpCalls)
-            {
-                hc.Id.ShouldBe(dbId);
-                hc.BucketId.ShouldStartWith(bucketPrefix);
-                hc.BucketId.Length.ShouldBeGreaterThan(bucketPrefix.Length);
-                hc.WasFullyHandled.ShouldBeFalse();
-                hc.CreatedOnUtc.ShouldBeGreaterThanOrEqualTo(startTime);
-                hc.CreatedOnUtc.ShouldBeLessThanOrEqualTo(DateTime.UtcNow);
-                hc.AllowedCallsNumber.ShouldBe(1024);
-                hc.CallsCounter.ShouldBe(0);
-            }
-            throw new NotImplementedException("dadada");
+            hcRepo.Verify(h => h.Update(It.Is<HttpCall>(c => c == selectedHttpCall)), Times.Once);
+
+            res.CallsCounter.ShouldBe(1);
+            res.WasFullyHandled.ShouldBeFalse();
+            res.HandledOnUtc.Value.ShouldBeGreaterThanOrEqualTo(startTime);
+            res.HandledOnUtc.Value.ShouldBeLessThanOrEqualTo(DateTime.UtcNow);
+            res.UpdatedOnUtc.ShouldBeGreaterThanOrEqualTo(startTime);
+            res.UpdatedOnUtc.ShouldBeLessThanOrEqualTo(DateTime.UtcNow);
         }
 
         #endregion

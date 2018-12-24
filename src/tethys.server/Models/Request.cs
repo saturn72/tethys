@@ -10,5 +10,6 @@ namespace Tethys.Server.Models
         public string HttpMethod { get; set; }
         public Dictionary<string, string> Headers { get; set; }
         public object Body { get; set; }
+        public string BucketId { get; set; }
     }
 }
