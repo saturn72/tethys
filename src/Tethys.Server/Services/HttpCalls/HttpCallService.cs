@@ -21,7 +21,7 @@ namespace Tethys.Server.Services.HttpCalls
             _notificationPublisher = notificationPublisher;
             _httpCallRepository = httpCallRepository;
         }
-        public async Task<HttpCall> GetHttpCall(Request request)
+        public async Task<HttpCall> GetHttpCalls(Request request)
         {
             var filter = new Func<HttpCall, bool>(hc =>
             {
@@ -33,17 +33,18 @@ namespace Tethys.Server.Services.HttpCalls
                 return res;
             });
 
-            var filteredHC = _httpCallRepository.GetAll(filter);
-            var httpCall = filteredHC.FirstOrDefault();
-            if (httpCall == null)
+            var httpCalls = _httpCallRepository.GetAll(filter);
+            if (httpCalls.IsNullOrEmpty())
                 return null;
-            // await ReportViaWebSocket(httpCall.Request, httpCall.Request);
-            httpCall.CallsCounter++;
-            httpCall.WasFullyHandled = httpCall.CallsCounter == httpCall.AllowedCallsNumber;
-            httpCall.HandledOnUtc = DateTime.UtcNow;
 
-            Task.Run(() => _httpCallRepository.Update(httpCall));
-            return httpCall;
+            throw new NotImplementedException("Ssss");
+            //  // await ReportViaWebSocket(httpCall.Request, httpCall.Request);
+            // httpCalls.CallsCounter++;
+            // httpCalls.WasFullyHandled = httpCalls.CallsCounter == httpCalls.AllowedCallsNumber;
+            // httpCalls.HandledOnUtc = DateTime.UtcNow;
+
+            // Task.Run(() => _httpCallRepository.Update(httpCalls));
+            // return httpCalls;
         }
 
         public async Task<ServiceOperationResult> AddHttpCalls(IEnumerable<HttpCall> httpCalls)

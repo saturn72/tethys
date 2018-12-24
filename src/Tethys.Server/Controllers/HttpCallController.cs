@@ -36,7 +36,7 @@ namespace Tethys.Server.Controllers
         public async Task<IActionResult> Get()
         {
             var originalRequest = Request.HttpContext.Items[Consts.OriginalRequest] as Request;
-            var httpCall = await _httpCallService.GetHttpCall(originalRequest);
+            var httpCall = await _httpCallService.GetHttpCalls(originalRequest);
 
             //TODO: send via web socket
             if (httpCall == null)

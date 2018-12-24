@@ -133,7 +133,43 @@ namespace Tethys.Server.Tests.Services
                 hc.CallsCounter.ShouldBe(0);
             }
         }
+        #endregion
 
+        #region GetHttpCalls
+        [Fact]
+        public async Task HttpCallService_GetHttpCalls()
+        {
+            var dbId = 100;
+            var bucketPrefix = "some-bucket-id-";
+            var startTime = DateTime.UtcNow;
+            var httpCalls = new[]{
+                new HttpCall{BucketId = bucketPrefix + 1, WasFullyHandled = true, CallsCounter = 100 },
+                new HttpCall{BucketId = bucketPrefix + 2, WasFullyHandled = true, CallsCounter = 100},
+                new HttpCall{BucketId =bucketPrefix + 3, WasFullyHandled = true, CallsCounter = 100},
+                new HttpCall{BucketId = bucketPrefix + 4, WasFullyHandled = true, CallsCounter = 100},
+            };
+
+            var hcRepo = new Mock<IHttpCallRepository>();
+
+            var hcSrv = new HttpCallService(null, hcRepo.Object);
+            var res = await hcSrv.AddHttpCalls(httpCalls);
+            res.Status.ShouldBe(ServiceOperationStatus.Success);
+
+            hcRepo.Verify(r => r.Create(It.IsAny<IEnumerable<HttpCall>>()), Times.Once());
+
+            foreach (var hc in httpCalls)
+            {
+                hc.Id.ShouldBe(dbId);
+                hc.BucketId.ShouldStartWith(bucketPrefix);
+                hc.BucketId.Length.ShouldBeGreaterThan(bucketPrefix.Length);
+                hc.WasFullyHandled.ShouldBeFalse();
+                hc.CreatedOnUtc.ShouldBeGreaterThanOrEqualTo(startTime);
+                hc.CreatedOnUtc.ShouldBeLessThanOrEqualTo(DateTime.UtcNow);
+                hc.AllowedCallsNumber.ShouldBe(1024);
+                hc.CallsCounter.ShouldBe(0);
+            }
+            throw new NotImplementedException("dadada");
+        }
 
         #endregion
     }
