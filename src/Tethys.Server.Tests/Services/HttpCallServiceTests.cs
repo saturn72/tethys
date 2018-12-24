@@ -90,7 +90,7 @@ namespace Tethys.Server.Tests.Services
 
             var hcSrv = new HttpCallService(null, hcRepo.Object);
             var res = await hcSrv.AddHttpCalls(httpCalls);
-            res.Status.ShouldBe(ServiceOperationStatus.Fail);
+            res.Status.ShouldBe(partialFailure ? ServiceOperationStatus.Partially : ServiceOperationStatus.Fail);
             res.Message.ShouldContain(partialFailure ? "Some" : "All", Case.Insensitive);
             hcRepo.Verify(r => r.Create(It.IsAny<IEnumerable<HttpCall>>()), Times.Once());
         }

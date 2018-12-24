@@ -4,6 +4,7 @@ namespace Tethys.Server.Services
     {
         NotSet,
         Fail,
+        Partially,
         Success
     }
 }
