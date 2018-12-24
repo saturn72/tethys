@@ -1,195 +1,91 @@
-# CoreUI Vue - Free Bootstrap Admin Template [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=CoreUI%20-%20Free%20Vue%20Admin%20Template%20&url=http://coreui.io/vue/&hashtags=bootstrap,admin,template,dashboard,panel,free,angular,react,vue)
+# vue-starter <sup>![version badge](https://v.egoist.moe/gh/devCrossNet/vue-starter.svg)</sup> [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=flat)](https://twitter.com/intent/tweet?text=Vue-Starter%20an%20enterprise%20ready%20boilerplate%20for%20isomorphic,%20progressive%20web%20apps%20with%20Vue.JS&url=https://github.com/devCrossNet/vue-starter&via=_jwerner_&hashtags=VueStarter,VueJS,SEO,Enterprise) <a href="https://slack-vue-starter.herokuapp.com/" target="_blank"><img src="https://home-assistant.io/images/supported_brands/slack.png" height="20px" /></a>
 
-### Check out our Vue Admin Templates and support CoreUI Development
+> A flexible, scalable, opinionated boilerplate for production-ready PWAs with focus on performance, development speed, and best practices
 
-[![Bootstrap Admin Templates Bundle](https://genesisui.com/img/bundle2.png)](https://genesisui.com/bundle.html?support=1)
+> 一个灵活的、可扩展的、自定的，已经准备好用于生产的渐进式网络应用样板，聚焦于性能、开发速度和最佳实践
 
-[Check out Bootstrap Admin Templates Bundle](https://genesisui.com/bundle.html?support=1)
+[![Build Status](https://travis-ci.org/devCrossNet/vue-starter.svg?branch=master)](https://travis-ci.org/devCrossNet/vue-starter)
+[![codecov](https://codecov.io/gh/devCrossNet/vue-starter/branch/master/graph/badge.svg)](https://codecov.io/gh/devCrossNet/vue-starter)
+[![Maintainability](https://api.codeclimate.com/v1/badges/2ff891c2cf949a6a818a/maintainability)](https://codeclimate.com/github/devCrossNet/vue-starter/maintainability)
+[![Dependencies](https://img.shields.io/david/devCrossNet/vue-starter.svg)](https://david-dm.org/devCrossNet/vue-starter)
+[![DevDependencies](https://img.shields.io/david/dev/devCrossNet/vue-starter.svg)](https://david-dm.org/devCrossNet/vue-starter?type=dev)
+[![GitHub issue last update](https://img.shields.io/github/issues/detail/last-update/devCrossNet/vue-starter/979.svg)]()
 
-This is Vue.js version of our Bootstrap 4 admin template [CoreUI](https://github.com/coreui/coreui-free-bootstrap-admin-template).
+[**Show your support by giving a :star:**](https://github.com/devCrossNet/vue-starter/stargazers) 
 
-Please help us on [Product Hunt](https://www.producthunt.com/posts/coreui-open-source-bootstrap-4-admin-template-with-angular-2-react-js-vue-js-support) & [Designer News](https://www.designernews.co/stories/81127). Thanks in advance!
+# Documentation
 
-Why I decided to create CoreUI? Please read this article: [Jack of all trades, master of none. Why Boostrap Admin Templates suck.](https://medium.com/@lukaszholeczek/jack-of-all-trades-master-of-none-5ea53ef8a1f#.7eqx1bcd8)
+**[https://vue-starter.herokuapp.com/docs](https://vue-starter.herokuapp.com/docs)** (sometimes not available because of the heroku free-plan)
 
-CoreUI is an Open Source Vue & Bootstrap Admin Template. But CoreUI is not just another Admin Template. It goes way beyond hitherto admin templates thanks to transparent code and file structure. And if that's not enough, let’s just add that CoreUI consists bunch of unique features and over 1000 high quality icons.
+**[https://vue-starter.herokuapp.com/docs/zh-cn](https://vue-starter.herokuapp.com/docs/zh-cn)** (欢迎改善中文文档(๑• . •๑))
 
-CoreUI is based on Bootstrap 4 and offers 6 versions: [HTML5 AJAX](https://github.com/coreui/coreui-free-bootstrap-admin-template-ajax), [HTML5 Static](https://github.com/coreui/coreui-free-bootstrap-admin-template), [AngularJS](https://github.com/mrholek/CoreUI-AngularJS), [Angular 2+](https://github.com/coreui/coreui-free-angular-admin-template), [React.js](https://github.com/coreui/coreui-free-react-admin-template) & [Vue.js](https://github.com/coreui/coreui-free-vue-admin-template).
+## Run documentation on your local machine
 
-CoreUI is meant to be the UX game changer. Pure & transparent code is devoid of redundant components, so the app is light enough to offer ultimate user experience. This means mobile devices also, where the navigation is just as easy and intuitive as on a desktop or laptop. The CoreUI Layout API lets you customize your project for almost any device – be it Mobile, Web or WebApp – CoreUI covers them all!
+1. Complete the [Getting started](#getting-started) guide
+2. Install [vuepress](https://vuepress.vuejs.org/) `npm i -g vuepress`
+3. run `vuepress dev docs`
 
-[![CoreUI Vue Free Bootstrap Admin Template](http://coreui.io/assets/img/coreui.png "CoreUI Vue Free Bootstrap Admin Template")](http://coreui.io)
+# Live demo
 
-**NOTE:** Please remember to **STAR** this project and **FOLLOW** [my Github](https://github.com/coreui) to keep you update with this template.
+Please visit the **[vue-starter app on heroku!](https://vue-starter.herokuapp.com/)** (sometimes not available because of the heroku free-plan)
 
-## Demo
+![vue-starter](https://user-images.githubusercontent.com/1667598/40796069-2721bc8e-6504-11e8-880c-d973fd37b73e.gif)
+### Lighthouse Score
+<img width="721" alt="screen shot 2018-04-30 at 09 09 45" src="https://user-images.githubusercontent.com/1667598/39417746-99f967f0-4c56-11e8-865c-9db54012060a.png">
 
-A fully functional demo is available at [CoreUI](http://coreui.io/)
+# Getting started
 
-## Table of Contents
+1. Install node 8 or higher
+2. Install npm 5 or higher
+3. clone the repository `git clone https://github.com/devCrossNet/vue-starter`
+4. change directory `cd vue-starter`
+5. Install dependencies: `npm install`
+6. Run `npm run dev`
 
-* [Versions](#versions)
-* [CoreUI Pro](#coreui-pro)
-* [Admin Templates built on top of CoreUI Pro](#admin-templates-built-on-top-of-coreui-pro)
-* [Installation](#installation)
-* [Usage](#usage)
-* [What's included](#whats-included)
-* [Documentation](#documentation)
-* [Contributing](#contributing)
-* [Versioning](#versioning)
-* [Creators](#creators)
-* [Community](#community)
-* [Community Projects](#community-projects)
-* [License](#license)
-* [Support CoreUI Development](#support-coreui-development)
+# Sponsors
 
-## Versions
+If you like what we're doing here, you can help us by funding the work on specific issues that you choose by using IssueHunt.io!
 
-CoreUI is built on top of Bootstrap 4 and supports popular frameworks.
+This gives you the power to prioritize our work and support project contributors. Moreover, it'll guarantee the project will be updated and maintained in the long run.
 
-* [CoreUI Free Bootstrap Admin Template](https://github.com/coreui/coreui-free-bootstrap-admin-template)
-* [CoreUI Free Bootstrap Admin Template (Ajax)](https://github.com/coreui/coreui-free-bootstrap-admin-template-ajax)
-* [CoreUI Free Angular 2+ Admin Template](https://github.com/coreui/coreui-free-angular-admin-template)
-* 🚧 [CoreUI Free .NET Core 2 Admin Template](https://github.com/mrholek/CoreUI-NET) (Available Soon)
-* [CoreUI Free React.js Admin Template](https://github.com/coreui/coreui-free-react-admin-template)
-* 🚧 [CoreUI Free Vue.js Admin Template](https://github.com/coreui/coreui-free-vue-admin-template)
+[![issuehunt-image](https://github.com/BoostIO/issuehunt-materials/blob/master/issuehunt-badge@2x.png?raw=true)](https://issuehunt.io/repos/111245305)
 
-## CoreUI Pro
+<a href="https://careers.bcgdv.com/locations/berlin" title="BCG Digital Ventures">
+  <img src="https://user-images.githubusercontent.com/1667598/38944976-89d5c03c-4335-11e8-92f4-910049c2166a.jpeg" alt="BCG Digital Ventures" />
+</a>
 
-* 💪  [CoreUI Pro Bootstrap Admin Template](https://coreui.io/pro/)
-* 💪  [CoreUI Pro Bootstrap Admin Template (Ajax)](https://coreui.io/pro/)
-* 💪  [CoreUI Pro Angular Admin Template](https://coreui.io/pro/angular)
-* 💪  [CoreUI Pro React Admin Template](https://coreui.io/pro/react)
-* 💪  [CoreUI Pro Vue Admin Template](https://coreui.io/pro/vue)
+# Contribute
 
-## Admin Templates built on top of CoreUI Pro
+Contributions are always welcome! Please read the [contribution guidelines](https://github.com/devCrossNet/vue-starter/blob/master/.github/CONTRIBUTING.md) first.
 
-| CoreUI Pro | Prime | Root | Alba | Leaf |
-| --- | --- | --- | --- | --- |
-| [![CoreUI Pro Admin Template](https://coreui.io/assets/img/example-coureui.jpg)](https://coreui.io/pro/) | [![Prime Admin Template](https://genesisui.com/assets/img/templates/prime1280.jpg)](https://genesisui.com/admin-templates/bootstrap/prime/?support=1) | [![Root Admin Template](https://genesisui.com/assets/img/templates/root1280.jpg)](https://genesisui.com/admin-templates/bootstrap/root/?support=1) | [![Alba Admin Template](https://genesisui.com/assets/img/templates/alba1280.jpg)](https://genesisui.com/admin-templates/bootstrap/alba/?support=1) | [![Leaf Admin Template](https://genesisui.com/assets/img/templates/leaf1280.jpg)](https://genesisui.com/admin-templates/bootstrap/leaf/?support=1)
+欢迎贡献! 请阅读 [贡献指南](https://github.com/devCrossNet/vue-starter/blob/master/.github/CONTRIBUTING.md) 先ο(=•ω＜=)ρ⌒☆.
 
-## Installation
+## Contributors
 
-### Clone repo
+Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
 
-``` bash
-# clone the repo
-$ git clone https://github.com/coreui/coreui-free-vue-admin-template.git CoreUI-Vue
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars1.githubusercontent.com/u/1667598?v=4" width="64px;"/><br /><sub><b>Johannes Werner</b></sub>](https://twitter.com/_jwerner_)<br />[💻](https://github.com/devCrossNet/vue-starter/commits?author=devCrossNet "Code") [🐛](https://github.com/devCrossNet/vue-starter/issues?q=author%3AdevCrossNet "Bug reports") [📖](https://github.com/devCrossNet/vue-starter/commits?author=devCrossNet "Documentation") [🎨](#design-devCrossNet "Design") [💡](#example-devCrossNet "Examples") [🔧](#tool-devCrossNet "Tools") | [<img src="https://avatars2.githubusercontent.com/u/112532?v=4" width="64px;"/><br /><sub><b>xMartin</b></sub>](http://xmartin.de/)<br />[💻](https://github.com/devCrossNet/vue-starter/commits?author=xMartin "Code") [🐛](https://github.com/devCrossNet/vue-starter/issues?q=author%3AxMartin "Bug reports") [📖](https://github.com/devCrossNet/vue-starter/commits?author=xMartin "Documentation") [💡](#example-xMartin "Examples") | [<img src="https://avatars2.githubusercontent.com/u/2235499?s=460&v=4" width="64px;"/><br /><sub><b>Konstantin Kulinicenko</b></sub>](https://github.com/40818419)<br />[💻](https://github.com/devCrossNet/vue-starter/commits?author=40818419 "Code") [🐛](https://github.com/devCrossNet/vue-starter/issues?q=author%3A40818419 "Bug reports") [📖](https://github.com/devCrossNet/vue-starter/commits?author=40818419 "Documentation") [💡](#example-40818419 "Examples") | [<img src="https://avatars0.githubusercontent.com/u/31165554?v=4" width="64px;"/><br /><sub><b>Silver·湫澲</b></sub>](http://saigao.fun)<br />[📖](https://github.com/devCrossNet/vue-starter/commits?author=SilverLeaves "Documentation") [🌍](#translation-SilverLeaves "Translation") | [<img src="https://avatars2.githubusercontent.com/u/17932287?v=4" width="64px;"/><br /><sub><b>Stavros Liaskos</b></sub>](https://stavrosliaskos.com/)<br />[🐛](https://github.com/devCrossNet/vue-starter/issues?q=author%3Astavros-liaskos "Bug reports") | [<img src="https://avatars3.githubusercontent.com/u/1898225?v=4" width="64px;"/><br /><sub><b>Marcelo Boeira</b></sub>](https://marceloboeira.com)<br />[🌍](#translation-marceloboeira "Translation") | [<img src="https://avatars3.githubusercontent.com/u/3583774?v=4" width="64px;"/><br /><sub><b>Rick Mann</b></sub>](http://teamteatime.net/)<br />[💻](https://github.com/devCrossNet/vue-starter/commits?author=Riari "Code") |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| [<img src="https://avatars0.githubusercontent.com/u/43061?v=4" width="64px;"/><br /><sub><b>Ryan McGuire</b></sub>](http://www.EnigmaCurry.com)<br />[💻](https://github.com/devCrossNet/vue-starter/commits?author=EnigmaCurry "Code") | [<img src="https://avatars3.githubusercontent.com/u/28268680?v=4" width="64px;"/><br /><sub><b>Jay McDoniel</b></sub>](https://github.com/jmcdo29)<br />[💻](https://github.com/devCrossNet/vue-starter/commits?author=jmcdo29 "Code") | [<img src="https://avatars3.githubusercontent.com/u/497957?v=4" width="64px;"/><br /><sub><b>Hugo Magalhães</b></sub>](http://hugomagalhaes.com)<br />[🌍](#translation-hugomn "Translation") | [<img src="https://avatars3.githubusercontent.com/u/7151993?v=4" width="64px;"/><br /><sub><b>glederer</b></sub>](https://github.com/glederer)<br />[🌍](#translation-glederer "Translation") |
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
-# go into app's directory
-$ cd CoreUI-Vue
+This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!
 
-# install app's dependencies
-$ npm install
-```
 
-## Usage
+# Reference resources
 
-``` bash
-# serve with hot reload at localhost:8080
-npm run serve
+- [React Boilerplate](https://github.com/react-boilerplate/react-boilerplate)
+- [vue-ssr-starter-kit](https://github.com/doabit/vue-ssr-starter-kit)
+- [Angular](https://github.com/angular/angular)
+- [vue-enterprise-boilerplate](https://github.com/chrisvfritz/vue-enterprise-boilerplate)
 
-# build for production with minification
-npm run build
+# Contact
 
-# run linter
-npm run lint
+- [Slack](https://slack-vue-starter.herokuapp.com/)
+- [Twitter](https://twitter.com/_jwerner_)
 
-# run unit tests
-npm run test:unit
+# License
 
-# run e2e tests
-npm run test:e2e
-
-```
-
-For a detailed explanation on how things work, check out the [Vue CLI Guide](https://cli.vuejs.org/guide/).
-
-## What's included
-
-Within the download you'll find the following directories and files:
-
-```
-CoreUI-Vue/
-├── public/              # pure static assets (directly copied)
-│   └── index.html           # index.html template
-├── src/                 # project root
-│   ├── assets/                 # module assets (processed by webpack)
-│   │   └── scss/               # user styles
-│   ├── components/             # ui components
-│   ├── containers/             # ui containers
-│   ├── router/                 # routing 
-│   ├── shared/                 # utils
-│   ├── views/                  # ui views
-│   ├── _nav.js                 # sidebar nav config
-│   ├── App.vue                 # main app component
-│   └── main.js                 # app entry file
-├── test/
-│   └── unit/            # unit tests
-│   └── e2e/             # e2e tests
-├── .eslintrc.js         # eslint config
-├── .gitignore           # defaults for gitignore
-├── .postcssrc.js        # postcss config
-├── CHANGELOG.md
-├── README.md
-├── babel.config.js      # babel config
-├── jest.config.js       # jest config
-├── vue.config.js        # vue-cli config
-├── LICENSE
-└── package.json         # build scripts and dependencies
-```
-
-## Bugs and feature requests
-
-Have a bug or a feature request? [Please open a new issue](https://github.com/coreui/coreui-free-vue-admin-template/issues).
-
-## Documentation
-
-CoreUI's documentation, is hosted on our website [CoreUI](http://coreui.io/)
-
-## Contributing
-
-Please read through our [contributing guidelines](https://github.com/coreui/coreui-free-bootstrap-admin-template/blob/master/CONTRIBUTING.md). Included are directions for opening issues, coding standards, and notes on development.
-
-Editor preferences are available in the [editor config](https://github.com/coreui/coreui-free-vue-admin-template/blob/master/.editorconfig) for easy use in common text editors. Read more and download plugins at <http://editorconfig.org>.
-
-## Versioning
-
-For transparency into our release cycle and in striving to maintain backward compatibility,CoreUI Free Admin Template is maintained under [the Semantic Versioning guidelines](http://semver.org/).
-
-See [the Releases section of our project](https://github.com/coreui/coreui-free-vue-admin-template/releases) for changelogs for each release version.
-
-## Creators
-
-**Łukasz Holeczek**
-
-* <https://twitter.com/lukaszholeczek>
-* <https://github.com/mrholek>
-
-**Andrzej Kopański**
-
-* <https://github.com/xidedix>
-
-## Community
-
-Get updates on CoreUI's development and chat with the project maintainers and community members.
-
-- Follow [@core_ui on Twitter](https://twitter.com/core_ui).
-- Read and subscribe to [CoreUI Blog](https://coreui.ui/blog/).
-
-### Community Projects
-
-Some of projects created by community but not maintained by CoreUI team.
-
-* [NuxtJS + Vue CoreUI](https://github.com/muhibbudins/nuxt-coreui)
-* [Colmena](https://github.com/colmena/colmena)
-
-## Copyright and license
-
-copyright 2017 creativeLabs Łukasz Holeczek. Code released under [the MIT license](https://github.com/coreui/coreui-free-vue-admin-template/blob/master/LICENSE).
-There is only one limitation you cannot re-distribute the `CoreUI` as stock nor if you modify the `CoreUI`. In the past we faced some problems with persons who tried to sell `CoreUI` based templates.
-
-## Support CoreUI Development
-CoreUI is an MIT licensed open source project and completely free to use. However, the amount of effort needed to maintain and develop new features for the project is not sustainable without proper financial backing. You can support development by donating on [PayPal](https://www.paypal.me/holeczek), buying [CoreUI Pro Version](https://coreui.io/pro) or buying one of our [premium admin templates](https://genesisui.com/?support=1).
-
-As of now I am exploring the possibility of working on CoreUI fulltime - if you are a business that is building core products using CoreUI, I am also open to conversations regarding custom sponsorship / consulting arrangements. Get in touch on [Twitter](https://twitter.com/lukaszholeczek).
+[MIT](http://opensource.org/licenses/MIT)
