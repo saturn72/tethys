@@ -52,7 +52,7 @@ const httpCallListMap = {
             commands: { css: 'th:nth-child(5)' },
         },
         rows: {
-            css: "tr"
+            css: "tbody tr"
         },
         pagination: {
             css: "#pagination",
@@ -76,13 +76,13 @@ describe('httpCalls - check http-calls list', () => {
         verifier.equals(httpCallListMap.dataTable.header.commands, "Commands");
 
         // test pagination
-        verifier.haveLength(httpCallListMap.dataTable.rows, 12);
+        verifier.haveLength(httpCallListMap.dataTable.rows, 11);
         verifier.equals(httpCallListMap.dataTable.pagination.label, "1 / 5");
         // go to last page
         for (let i = 0; i < 4; i++) {
             commander.click(httpCallListMap.dataTable.pagination.next);
         }
-        verifier.haveLength(httpCallListMap.dataTable.rows, 5);
+        verifier.haveLength(httpCallListMap.dataTable.rows, 4);
         verifier.equals(httpCallListMap.dataTable.pagination.label, "5 / 5");
     });
 });
