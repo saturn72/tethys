@@ -35,7 +35,7 @@
 
     <br />
 
-    <vue-pagination v-show="count > maxRows"
+    <vue-pagination id="pagination" v-show="count > maxRows"
                     :current="currentPage + 1"
                     :pages="maxPages"
                     @change="paginationClick" />

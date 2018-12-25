@@ -1,8 +1,19 @@
 /// <reference types="cypress"/>
 
+const domSynchronizer = {
+    getByDescriptor: (descriptor: DomElementDescriptor) => {
+        if (stringUtil.hasValue(descriptor.css)) {
+            return cy.get(descriptor.css);
+        }
+    }
+};
+
 const commander = {
     goToUrl: (url: string) => {
         cy.visit(url);
+    },
+    click: (descriptor: DomElementDescriptor) => {
+        domSynchronizer.getByDescriptor(descriptor).click();
     }
 };
 
@@ -14,17 +25,11 @@ const stringUtil = {
 
 const verifier = {
     haveLength: (descriptor: DomElementDescriptor, expectedLength: number) => {
-        if (stringUtil.hasValue(descriptor.css)) {
-            shoulder(cy.get(descriptor.css), "be.have.length", expectedLength);
-            return;
-        }
+        shoulder(domSynchronizer.getByDescriptor(descriptor), "be.have.length", expectedLength);
     },
 
     equals: (descriptor: DomElementDescriptor, expectedValue: string) => {
-        if (stringUtil.hasValue(descriptor.css)) {
-            shoulder(cy.get(descriptor.css), ($ded) => expect($ded.text().trim()).to.eq(expectedValue));
-            return;
-        }
+        shoulder(domSynchronizer.getByDescriptor(descriptor), ($ded) => expect($ded.text().trim()).to.eq(expectedValue));
     }
 };
 
@@ -48,12 +53,17 @@ const httpCallListMap = {
         },
         rows: {
             css: "tr"
+        },
+        pagination: {
+            css: "#pagination",
+            label: { css: '#pagination [class^="label"]' },
+            next: { css: '#pagination [class^="next"]' }
         }
     }
 };
 
 describe('httpCalls - check http-calls list', () => {
-    it("test data table on http-call list", async () => {
+    it("Loads datatable as expected", async () => {
         commander.goToUrl("http://localhost:3000/httpCalls");
 
         // test headers
@@ -65,8 +75,14 @@ describe('httpCalls - check http-calls list', () => {
         verifier.equals(httpCallListMap.dataTable.header.name, "Name");
         verifier.equals(httpCallListMap.dataTable.header.commands, "Commands");
 
-        // test content
-        verifier.haveLength(httpCallListMap.dataTable.rows, 10);
-
+        // test pagination
+        verifier.haveLength(httpCallListMap.dataTable.rows, 12);
+        verifier.equals(httpCallListMap.dataTable.pagination.label, "1 / 5");
+        // go to last page
+        for (let i = 0; i < 4; i++) {
+            commander.click(httpCallListMap.dataTable.pagination.next);
+        }
+        verifier.haveLength(httpCallListMap.dataTable.rows, 5);
+        verifier.equals(httpCallListMap.dataTable.pagination.label, "5 / 5");
     });
 });
