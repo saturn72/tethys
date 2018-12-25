@@ -8,6 +8,20 @@ import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import App from './App'
 import router from './router'
+// font awsome
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCoffee } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+//bootstrap
+import BootstrapVue from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+
+library.add(faCoffee);
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.config.productionTip = false;
+
+Vue.use(BootstrapVue);
 
 // todo
 // cssVars()

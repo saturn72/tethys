@@ -8,7 +8,9 @@
       <ul :class="$style.nav">
         <li>
           <router-link to="/httpCalls" @click.native="navBarClose">
-            <vue-icon-hashtag/>
+            <span>
+              <font-awesome-icon icon="cloud"/>
+            </span>&nbsp;
             <small>{{ $t('App.nav.httpCalls' /* Counter */) }}</small>
           </router-link>
         </li>
@@ -94,6 +96,12 @@ import VueNavigationProgress from "../../shared/components/VueNavigationProgress
 import { loadLocaleAsync } from "../../shared/plugins/i18n/i18n";
 import { EventBus } from "../../shared/services/EventBus";
 
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faCloud } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+
+library.add(faCloud);
+
 export default {
   components: {
     VueNavigationProgress,
@@ -106,7 +114,8 @@ export default {
     VueGrid,
     VueGridItem,
     VueFooter,
-    VueNotificationStack
+    VueNotificationStack,
+    FontAwesomeIcon
   },
   data(): any {
     return {

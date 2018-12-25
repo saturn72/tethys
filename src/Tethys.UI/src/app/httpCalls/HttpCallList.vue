@@ -15,22 +15,31 @@
     <vue-grid-item class="vueGridItem">
       <h2>Http Calls</h2>
       <vue-data-table
-        max-rows="10"
+        :max-rows="10"
         :header="dataTableHeaders"
         :data="dataTableData"
         placeholder="Search"
-        @click="dataTableClick"
       >
         <!-- <template slot="date" slot-scope="{cell}">{{ new Date(cell.value).toDateString() }}</template> -->
-        <template slot="age" slot-scope="{cell}">
-          <div :class="$style.age">
+        <template slot="httpMethod" slot-scope="{cell}">
+          <div :class="$style.httpMethod">
+            <span>{{ cell.value }}</span>
+          </div>
+        </template>
+
+        <template slot="usage" slot-scope="{cell}">
+          <div :class="$style.usage">
             <div :style="{width: `${cell.value}%`}"/>
             <span>{{ cell.value }}</span>
           </div>
         </template>
 
         <template slot="commands" slot-scope="{row}">
-          <vue-button @click="onDeleteRow(row)">Delete</vue-button>
+          <vue-button @click="onHttpCallClicked(row)">
+            <span>
+              <font-awesome-icon icon="info-circle"/>
+            </span>&nbsp;Details
+          </vue-button>
         </template>
       </vue-data-table>
     </vue-grid-item>
@@ -39,10 +48,16 @@
 
 <script lang="ts">
 import VueDataTable from "../shared/components/VueDataTable/VueDataTable.vue";
-import { dataTableHeaderFixture } from "../shared/components/VueDataTable/DataTableFixtures";
 import VueGrid from "../shared/components/VueGrid/VueGrid.vue";
 import VueGridItem from "../shared/components/VueGridItem/VueGridItem.vue";
 import VueGridRow from "../shared/components/VueGridRow/VueGridRow.vue";
+import VueButton from "../shared/components/VueButton/VueButton.vue";
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+
+library.add(faInfoCircle);
 
 export default {
   name: "HttpCall",
@@ -52,41 +67,57 @@ export default {
   data(): any {
     return {
       dataTableData: [
-        { id: 1, age: 11, name: "Roi" },
-        { id: 2, age: 11, name: "Yohanna" },
-        { id: 3, age: 10, name: "Uriyah" },
-        { id: 4, age: 18, name: "Offer" },
-        { id: 5, age: 12, name: "Yohanna" },
-        { id: 6, age: 17, name: "Shay" },
-        { id: 7, age: 15, name: "Roi" },
-        { id: 8, age: 12, name: "Offer" },
-        { id: 9, age: 13, name: "Yohanna" }
+        { id: 1, httpMethod: "GET", usage: 30, name: "Roi" },
+        { id: 2, httpMethod: "GET", usage: 20, name: "Yohanna" },
+        { id: 3, httpMethod: "GET|OPTIONS", usage: 100, name: "Uriyah" },
+        { id: 4, httpMethod: "POST", usage: 15, name: "Offer" },
+        { id: 5, httpMethod: "DELETE", usage: 73, name: "Yohanna" },
+        { id: 7, httpMethod: "GET", usage: 100, name: "Roi" },
+        { id: 8, httpMethod: "DELETE", usage: 26, name: "Offer" },
+        { id: 9, httpMethod: "GET", usage: 98, name: "Yohanna" }
       ],
       dataTableHeaders: {
         id: {
           visible: true,
-          title: "Id"
+          title: "Id",
+          fitContent: true
+        },
+        httpMethod: {
+          title: "Http Method",
+          slot: "httpMethod",
+          fitContent: true
+        },
+        usage: {
+          title: "Usage (%)",
+          slot: "usage",
+          fitContent: true
         },
         name: {
           title: "Name",
-          slot: "name"
+          slot: "name",
+          fitContent: true
         },
-        age: {
-          title: "Age",
-          slot: "age"
-        },
-        actions: {
+        commands: {
           title: "Commands",
-          slot: "commands"
+          slot: "commands",
+          sortable: false,
+          fitContent: true
         }
       }
     };
   },
+  methods: {
+    onHttpCallClicked(httpCall: any) {
+      alert("raw was clicked: " + JSON.stringify(httpCall));
+    }
+  },
   components: {
+    VueButton,
     VueGrid,
     VueGridItem,
     VueGridRow,
-    VueDataTable
+    VueDataTable,
+    FontAwesomeIcon
   }
 };
 </script>
@@ -112,7 +143,7 @@ export default {
 .header {
   padding: $nav-bar-height 0 $nav-bar-height * 0.5;
   text-align: center;
-  text-shadow: 0 5px 10px rgba(0, 0, 0, 0.33);
+  text-shadow: 0 5px "GET|OPTIONS" px rgba(0, 0, 0, 0.33);
   @include background-gradient($brand-dark-primary, $brand-accent, 152deg);
 }
 
@@ -123,7 +154,22 @@ export default {
   color: #fff;
 }
 
-.age {
+.httpMethod {
+  > div {
+    height: $space-unit;
+    background: $brand-accent;
+    margin-top: $space-unit * 1.5;
+    display: inline-block;
+  }
+
+  > span {
+    font-size: $font-size - 0.4;
+    display: inline-block;
+    margin-left: $space-unit;
+  }
+}
+
+.usage {
   > div {
     height: $space-unit;
     background: $brand-accent;
