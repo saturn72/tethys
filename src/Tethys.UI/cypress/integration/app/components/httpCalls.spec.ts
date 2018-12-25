@@ -63,7 +63,7 @@ const httpCallListMap = {
 };
 
 describe('httpCalls - check http-calls list', () => {
-    it("Loads datatable as expected", async () => {
+    it("Loads datatable as expected", () => {
         commander.goToUrl("http://localhost:3000/httpCalls");
 
         // test headers
@@ -85,4 +85,17 @@ describe('httpCalls - check http-calls list', () => {
         verifier.haveLength(httpCallListMap.dataTable.rows, 4);
         verifier.equals(httpCallListMap.dataTable.pagination.label, "5 / 5");
     });
+
+    it("Loads data from server", () => {
+        throw new Error("Not Implemented");
+    });
+
+    it("Click on line load content for preview", () => {
+        throw new Error("Not Implemented");
+    });
+
+    it("Click on Details moves to edit screen", () => {
+        throw new Error("Not Implemented");
+    });
+
 });
