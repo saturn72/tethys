@@ -5,6 +5,10 @@ const domSynchronizer = {
         if (stringUtil.hasValue(descriptor.css)) {
             return cy.get(descriptor.css);
         }
+
+        if (stringUtil.hasValue(descriptor.text.contains)) {
+            return cy.contains(descriptor.text.contains);
+        }
     }
 };
 
@@ -39,6 +43,9 @@ const shoulder = (predicate: Cypress.Chainable, chainer: any, expectedValue?: an
 
 export interface DomElementDescriptor {
     css?: string;
+    text?: {
+        contains?: string;
+    };
 }
 
 const httpCallListMap = {
@@ -62,9 +69,18 @@ const httpCallListMap = {
     }
 };
 
+const httpCallUrl = "http://localhost:3000/httpCall";
+
 describe('httpCalls - check http-calls list', () => {
     it("Loads datatable as expected", () => {
-        commander.goToUrl("http://localhost:3000/httpCalls");
+        cy.server();
+        cy.route({
+            method: 'GET',
+            url: '**/httpCalls',
+            response: 'fixture:httpCallData.json'
+        });
+
+        commander.goToUrl(httpCallUrl);
 
         // test headers
         verifier.haveLength(httpCallListMap.dataTable.header, 5);
@@ -86,16 +102,21 @@ describe('httpCalls - check http-calls list', () => {
         verifier.equals(httpCallListMap.dataTable.pagination.label, "5 / 5");
     });
 
-    it("Loads data from server", () => {
-        throw new Error("Not Implemented");
-    });
-
     it("Click on line load content for preview", () => {
         throw new Error("Not Implemented");
     });
 
     it("Click on Details moves to edit screen", () => {
-        throw new Error("Not Implemented");
+        cy.server();
+        cy.route({
+            method: 'GET',
+            url: '**/httpCalls',
+            response: 'fixture:httpCallData.json'
+        });
+
+        commander.goToUrl(httpCallUrl);
+        commander.click({ text: { contains: "Edit" } });
+        cy.url().should('contain', '/httpcall/1/edit');
     });
 
 });

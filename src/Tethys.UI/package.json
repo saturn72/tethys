@@ -109,7 +109,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.4",
     "accept-language": "3.0.18",
     "animejs": "2.2.0",
-    "axios": "0.18.0",
+    "axios": "^0.18.0",
     "body-parser": "1.18.3",
     "bootstrap-vue": "^2.0.0-rc.11",
     "compression": "1.7.3",
