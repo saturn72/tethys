@@ -1,75 +1,9 @@
 /// <reference types="cypress"/>
 
-const domSynchronizer = {
-    getByDescriptor: (descriptor: DomElementDescriptor) => {
-        if (stringUtil.hasValue(descriptor.css)) {
-            return cy.get(descriptor.css);
-        }
+import { commander, verifier } from "../../../testSdk";
+import { httpCallListMap } from "../../../pageMaps/httpCallListMap";
 
-        if (stringUtil.hasValue(descriptor.text.contains)) {
-            return cy.contains(descriptor.text.contains);
-        }
-    }
-};
-
-const commander = {
-    goToUrl: (url: string) => {
-        cy.visit(url);
-    },
-    click: (descriptor: DomElementDescriptor) => {
-        domSynchronizer.getByDescriptor(descriptor).click();
-    }
-};
-
-const stringUtil = {
-    hasValue: (source: string): boolean => {
-        return source && source.trim().length > 0;
-    }
-};
-
-const verifier = {
-    haveLength: (descriptor: DomElementDescriptor, expectedLength: number) => {
-        shoulder(domSynchronizer.getByDescriptor(descriptor), "be.have.length", expectedLength);
-    },
-
-    equals: (descriptor: DomElementDescriptor, expectedValue: string) => {
-        shoulder(domSynchronizer.getByDescriptor(descriptor), ($ded) => expect($ded.text().trim()).to.eq(expectedValue));
-    }
-};
-
-const shoulder = (predicate: Cypress.Chainable, chainer: any, expectedValue?: any) => {
-    predicate.should(chainer, expectedValue);
-};
-
-export interface DomElementDescriptor {
-    css?: string;
-    text?: {
-        contains?: string;
-    };
-}
-
-const httpCallListMap = {
-    dataTable: {
-        header: {
-            css: "th",
-            id: { css: 'th:nth-child(1)' },
-            httpMethod: { css: 'th:nth-child(2)' },
-            usage: { css: 'th:nth-child(3)' },
-            name: { css: 'th:nth-child(4)' },
-            commands: { css: 'th:nth-child(5)' },
-        },
-        rows: {
-            css: "tbody tr"
-        },
-        pagination: {
-            css: "#pagination",
-            label: { css: '#pagination [class^="label"]' },
-            next: { css: '#pagination [class^="next"]' }
-        }
-    }
-};
-
-const httpCallUrl = "http://localhost:3000/httpCall";
+const httpCallUrl = "httpCall";
 
 describe('httpCalls - check http-calls list', () => {
     it("Loads datatable as expected", () => {
