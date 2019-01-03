@@ -23,6 +23,14 @@ const domSynchronizer = {
     }
 };
 
+export const mockServer = {
+    mockHttpcalls: (httpCalls: Array<{ method: string; url: string; response: any; }>) => {
+        cy.server();
+        for (const hc of httpCalls) {
+            cy.route(hc);
+        }
+    }
+};
 export const commander = {
     goToUrl: (url: string) => {
         cy.visit(url);

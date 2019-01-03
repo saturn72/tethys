@@ -1,18 +1,17 @@
 /// <reference types="cypress"/>
 
-import { commander, verifier } from "../../../testSdk";
+import { commander, verifier, mockServer } from "../../../testSdk";
 import { httpCallListMap } from "../../../pageMaps/httpCallListMap";
 
 const httpCallUrl = "httpCall";
 
 describe('httpCalls - check http-calls list', () => {
     it("Loads datatable as expected", () => {
-        cy.server();
-        cy.route({
+        mockServer.mockHttpcalls([{
             method: 'GET',
             url: '**/httpCalls',
             response: 'fixture:httpCallData.json'
-        });
+        }]);
 
         commander.goToUrl(httpCallUrl);
 
