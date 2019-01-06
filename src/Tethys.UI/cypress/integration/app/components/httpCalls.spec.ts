@@ -10,7 +10,7 @@ describe('httpCalls - check http-calls list', () => {
         mockServer.mockHttpcalls([{
             method: 'GET',
             url: '**/httpCalls',
-            response: 'fixture:httpCallData.json'
+            response: 'fixture:httpCallData.json',
         }]);
 
         commander.goToUrl(httpCallUrl);
@@ -40,12 +40,12 @@ describe('httpCalls - check http-calls list', () => {
     });
 
     it("Click on Details moves to edit screen", () => {
-        cy.server();
-        cy.route({
+
+        mockServer.mockHttpcalls([{
             method: 'GET',
             url: '**/httpCalls',
-            response: 'fixture:httpCallData.json'
-        });
+            response: 'fixture:httpCallData.json',
+        }]);
 
         commander.goToUrl(httpCallUrl);
         commander.click({ text: { contains: "Edit" } });

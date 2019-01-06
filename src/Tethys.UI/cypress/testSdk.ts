@@ -23,14 +23,44 @@ const domSynchronizer = {
     }
 };
 
+export interface HttpCall {
+    method: string;
+    url: string | RegExp;
+    response?: any;
+    delay?: number;
+    status?: number;
+    headers?: any;
+    callbacks?: {
+        onRequest?(...args: any[]): void
+        onResponse?(...args: any[]): void
+        onAbort?(...args: any[]): void
+    };
+}
+
 export const mockServer = {
-    mockHttpcalls: (httpCalls: Array<{ method: string; url: string; response: any; }>) => {
+    mockHttpcalls: (httpCalls: HttpCall[]) => {
         cy.server();
         for (const hc of httpCalls) {
-            cy.route(hc);
+            const pro: Partial<Cypress.RouteOptions> = {
+                method: (hc.method.toUpperCase() as Cypress.HttpMethod),
+                url: hc.url,
+                response: hc.response,
+                delay: hc.delay,
+                status: hc.status,
+                headers: hc.headers,
+            };
+
+            if (hc.callbacks) {
+                pro.onRequest = hc.callbacks.onRequest;
+                pro.onResponse = hc.callbacks.onResponse;
+                pro.onAbort = hc.callbacks.onAbort;
+            }
+
+            cy.route(pro);
         }
     }
 };
+
 export const commander = {
     goToUrl: (url: string) => {
         cy.visit(url);
