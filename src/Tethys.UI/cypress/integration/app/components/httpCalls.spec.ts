@@ -5,15 +5,17 @@ import { httpCallListMap } from "../../../pageMaps/httpCallListMap";
 
 const httpCallUrl = "httpCall";
 
+beforeEach(() => {
+    mockServer.mockHttpcalls([{
+        method: 'GET',
+        url: '**/httpCalls',
+        response: 'fixture:httpCallData.json',
+    }]);
+    commander.goToUrl(httpCallUrl);
+});
+
 describe('httpCalls - check http-calls list', () => {
     it("Loads datatable as expected", () => {
-        mockServer.mockHttpcalls([{
-            method: 'GET',
-            url: '**/httpCalls',
-            response: 'fixture:httpCallData.json',
-        }]);
-
-        commander.goToUrl(httpCallUrl);
 
         // test headers
         verifier.haveLength(httpCallListMap.dataTable.header, 5);
@@ -35,19 +37,12 @@ describe('httpCalls - check http-calls list', () => {
         verifier.equals(httpCallListMap.dataTable.pagination.label, "5 / 5");
     });
 
-    it("Click on line load content for preview", () => {
-        throw new Error("Not Implemented");
+    it.only("Click on line load content for preview", () => {
+        commander.click({ text: { contains: "Details" } });
+        commander.isVisible(httpCallListMap.httpCallDetails.collapse);
     });
 
     it("Click on Details moves to edit screen", () => {
-
-        mockServer.mockHttpcalls([{
-            method: 'GET',
-            url: '**/httpCalls',
-            response: 'fixture:httpCallData.json',
-        }]);
-
-        commander.goToUrl(httpCallUrl);
         commander.click({ text: { contains: "Edit" } });
         cy.url().should('contain', '/httpcall/1/edit');
     });

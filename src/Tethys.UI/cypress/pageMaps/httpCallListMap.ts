@@ -16,5 +16,10 @@ export const httpCallListMap = {
             label: { css: '#pagination [class^="label"]' },
             next: { css: '#pagination [class^="next"]' }
         }
+    },
+    httpCallDetails: {
+        collapse: {
+            css: ".collapse"
+        }
     }
 };

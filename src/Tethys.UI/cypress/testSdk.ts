@@ -67,6 +67,12 @@ export const commander = {
     },
     click: (descriptor: DomElementDescriptor) => {
         domSynchronizer.getByDescriptor(descriptor).click();
+    },
+    isVisible: (descriptor: DomElementDescriptor) => {
+        domSynchronizer.getByDescriptor(descriptor).should('be.visible');
+    },
+    isNotVisible: (descriptor: DomElementDescriptor) => {
+        domSynchronizer.getByDescriptor(descriptor).should('not.be.visible');
     }
 };
 

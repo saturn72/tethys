@@ -11,35 +11,61 @@
         </vue-grid-row>
       </vue-grid>
     </div>
+    <vue-grid-row>
+      <vue-grid-item class="vueGridItem">
+        <h2>Http Calls</h2>
+        <vue-data-table
+          :max-rows="10"
+          :header="tableHeaders"
+          :data="tableData"
+          placeholder="Search"
+        >
+          <!-- <template slot="date" slot-scope="{cell}">{{ new Date(cell.value).toDateString() }}</template> -->
+          <template slot="httpMethod" slot-scope="{cell}">
+            <div :class="$style.httpMethod">
+              <span>{{ cell.value }}</span>
+            </div>
+          </template>
 
-    <vue-grid-item class="vueGridItem">
-      <h2>Http Calls</h2>
-      <vue-data-table :max-rows="10" :header="tableHeaders" :data="tableData" placeholder="Search">
-        <!-- <template slot="date" slot-scope="{cell}">{{ new Date(cell.value).toDateString() }}</template> -->
-        <template slot="httpMethod" slot-scope="{cell}">
-          <div :class="$style.httpMethod">
-            <span>{{ cell.value }}</span>
-          </div>
-        </template>
+          <template slot="usage" slot-scope="{cell}">
+            <div :class="$style.usage">
+              <div :style="{width: `${cell.value}%`}"/>
+              <span>{{ cell.value }}</span>
+            </div>
+          </template>
 
-        <template slot="usage" slot-scope="{cell}">
-          <div :class="$style.usage">
-            <div :style="{width: `${cell.value}%`}"/>
-            <span>{{ cell.value }}</span>
-          </div>
-        </template>
-
-        <template slot="commands" slot-scope="{row}">
-          <router-link :to="{ name: 'edit', params: { id: row.id }}">
-            <vue-button>
+          <template slot="commands" slot-scope="{row}">
+            <router-link :to="{ name: 'edit', params: { id: row.id }}">
+              <vue-button>
+                <span>
+                  <font-awesome-icon icon="edit"/>
+                </span>&nbsp;Edit
+              </vue-button>
+            </router-link>
+            <vue-button @click="onHttpCallCollapse(row.id)" accent>
               <span>
                 <font-awesome-icon icon="info-circle"/>
-              </span>&nbsp;Edit
+              </span>&nbsp;Details
             </vue-button>
-          </router-link>
-        </template>
-      </vue-data-table>
-    </vue-grid-item>
+          </template>
+        </vue-data-table>
+      </vue-grid-item>
+    </vue-grid-row>
+    <vue-grid-row>
+      <vue-grid-item class="vueGridItem">
+        <h3>Http Call Data</h3>
+        <vue-collapse :show="collapse">
+          <div class="collapse">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+            labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+            et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+            labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+            et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+          </div>
+        </vue-collapse>
+      </vue-grid-item>
+    </vue-grid-row>
   </div>
 </template>
 
@@ -50,15 +76,16 @@ import VueDataTable from "../shared/components/VueDataTable/VueDataTable.vue";
 import VueGrid from "../shared/components/VueGrid/VueGrid.vue";
 import VueGridItem from "../shared/components/VueGridItem/VueGridItem.vue";
 import VueGridRow from "../shared/components/VueGridRow/VueGridRow.vue";
+import VueCollapse from "../shared/components/VueCollapse/VueCollapse.vue";
 import VueButton from "../shared/components/VueButton/VueButton.vue";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle, faEdit } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const serverUrl = "http://localhost:3000/_tethys/api/httpCalls";
 
-library.add(faInfoCircle);
+library.add(faInfoCircle, faEdit);
 
 export default {
   name: "HttpCallList",
@@ -67,6 +94,7 @@ export default {
   },
   data(): any {
     return {
+      httpCallDetails: undefined,
       tableData: [],
       tableHeaders: {
         id: {
@@ -98,12 +126,19 @@ export default {
       }
     };
   },
+  computed:{
+    collapse: function(){
+      return this.httpCallDetails !== undefined;
+    }
+  },
   mounted() {
     HttpService.get(serverUrl).then(res => (this.tableData = res.data));
   },
   methods: {
-    onHttpCallClicked(httpCall: any) {
-      alert("raw was clicked: " + JSON.stringify(httpCall));
+    onHttpCallCollapse: function(id: number) {
+      this.httpCallDetails = this.tableData.find(
+        (td: { id: any }) => td.id === id
+      );
     }
   },
   components: {
@@ -111,6 +146,7 @@ export default {
     VueGrid,
     VueGridItem,
     VueGridRow,
+    VueCollapse,
     VueDataTable,
     FontAwesomeIcon
   }
@@ -142,7 +178,7 @@ export default {
   @include background-gradient($brand-dark-primary, $brand-accent, 152deg);
 }
 
-.collapseDemo {
+.collapse {
   padding: $space-unit * 2;
   background: $panel-bg;
   box-shadow: $panel-shadow;
