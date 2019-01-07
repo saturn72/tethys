@@ -95,7 +95,6 @@ import VueIconFlag from "../../shared/components/icons/VueIconFlag/VueIconFlag.v
 import VueNavigationProgress from "../../shared/components/VueNavigationProgress/VueNavigationProgress.vue";
 import { loadLocaleAsync } from "../../shared/plugins/i18n/i18n";
 import { EventBus } from "../../shared/services/EventBus";
-
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCloud } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -150,6 +149,21 @@ export default {
   },
   created() {
     this.initProgressBar();
+  },
+  beforeMount() {
+    const directEmit = (e: any) => {
+      if (e.key === "mock-notification") {
+        console.log(e);
+        EventBus.$emit("notification.add", {
+          id: 1,
+          title: "mock-notification",
+          text: e.newValue
+        });
+      }
+    };
+
+    window.removeEventListener("storage", directEmit);
+    window.addEventListener("storage", directEmit);
   }
 };
 </script>

@@ -57,7 +57,8 @@
     "ci": "concurrently \"npm run lint\" \"npm run test:coverage -- --runInBand\"",
     "postci": "codecov -f ./coverage/*.json && npm run build && concurrently \"npm run build-storybook\" \"vuepress build docs\"",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "cypress:open": "cypress open"
   },
   "jest": {
     "verbose": true,
