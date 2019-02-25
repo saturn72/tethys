@@ -71,7 +71,7 @@ namespace Tethys.Server.Middlewares
             }
 
             await _requestResponseCoupleService.Update(reqRes);
-            _notificationPublisher.ToServerUnderTestClients(TethysNotificationKeys.NewRequestResponseCouple, reqRes);
+            _notificationPublisher.ToClients(TethysNotificationKeys.NewRequestResponseCouple, reqRes);
         }
 
         private async Task<RequestResponseCouple> ExtractRequestAsync(HttpRequest request)

@@ -58,7 +58,7 @@ namespace Tethys.Server.Services.Notifications
                         notification.NotifiedOnUtc = DateTime.UtcNow;
                         var body = JsonObject.Parse(notification.Body);
 
-                        _publisher.ToServerUnderTestClients(notification.Key, body);
+                        _publisher.ToClients(notification.Key, body);
                         notification.NotifiedCounter++;
                         _notificationRepository.Update(notification);
                     }

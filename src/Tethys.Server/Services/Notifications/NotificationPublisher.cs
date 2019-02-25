@@ -14,7 +14,7 @@ namespace Tethys.Server.Services.Notifications
             _mockHub = mockHub;
             _tethysHub = tethysHub;
         }
-        public async Task ToServerUnderTestClients(string notificationKey, object notificationBody)
+        public async Task ToClients(string notificationKey, object notificationBody)
         {
             await _mockHub.Clients.All.SendAsync(notificationKey, notificationBody);
             await ToLogClients(notificationKey, notificationBody);
