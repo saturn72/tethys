@@ -6,6 +6,9 @@
 #liteDB
 *.db
 
+#cypress
+screenshots
+
 # User-specific files
 *.suo
 *.user

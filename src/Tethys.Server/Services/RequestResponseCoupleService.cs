@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Tethys.Server.DbModel.Repositories;
+using Tethys.Server.DbModel;
 using Tethys.Server.Models;
 
 namespace Tethys.Server.Services
@@ -8,25 +8,25 @@ namespace Tethys.Server.Services
     public class RequestResponseCoupleService : IRequestResponseCoupleService
     {
         #region fields
-        private readonly IRequestResponseCoupleRepository _reqResCoupleRepository;
+        private readonly IRepository<RequestResponseCouple> _reqResCoupleRepository;
 
         #endregion
 
         #region ctor
-        public RequestResponseCoupleService(IRequestResponseCoupleRepository requestResponseCoupleRepository)
+        public RequestResponseCoupleService(IRepository<RequestResponseCouple> reqResCoupleRepository)
         {
-            _reqResCoupleRepository = requestResponseCoupleRepository;
+            _reqResCoupleRepository = reqResCoupleRepository;
         }
 
         #endregion
         public async Task Create(RequestResponseCouple requestResponseCouple)
         {
-            await Task.Run(() => _reqResCoupleRepository.Create(requestResponseCouple));
+            await Task.Run(() => _reqResCoupleRepository.Create(new[] { requestResponseCouple }));
         }
 
         public async Task DeleteAllAsync()
         {
-            await Task.Run(() => _reqResCoupleRepository.DeleteAllAsync());
+            await Task.Run(() => _reqResCoupleRepository.DeleteAll());
         }
 
         public async Task<IEnumerable<RequestResponseCouple>> GetAllAsync()

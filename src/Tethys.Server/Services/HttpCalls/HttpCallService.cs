@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Tethys.Server.Controllers;
-using Tethys.Server.DbModel.Repositories;
+using Tethys.Server.DbModel;
 using Tethys.Server.Models;
 using Tethys.Server.Services.Notifications;
 
@@ -14,9 +14,9 @@ namespace Tethys.Server.Services.HttpCalls
     public class HttpCallService : IHttpCallService
     {
         private readonly INotificationPublisher _notificationPublisher;
-        private readonly IHttpCallRepository _httpCallRepository;
+        private readonly IRepository<HttpCall> _httpCallRepository;
 
-        public HttpCallService(INotificationPublisher notificationPublisher, IHttpCallRepository httpCallRepository)
+        public HttpCallService(INotificationPublisher notificationPublisher, IRepository<HttpCall> httpCallRepository)
         {
             _notificationPublisher = notificationPublisher;
             _httpCallRepository = httpCallRepository;
@@ -46,7 +46,7 @@ namespace Tethys.Server.Services.HttpCalls
             return httpCall;
         }
 
-        public async Task AddHttpCalls(IEnumerable<HttpCall> httpCalls)
+        public async Task CreateOrUpdateHttpCalls(IEnumerable<HttpCall> httpCalls)
         {
             if (httpCalls == null || !httpCalls.Any())
                 return;
@@ -57,7 +57,7 @@ namespace Tethys.Server.Services.HttpCalls
                 {
                     hc.WasFullyHandled = false;
                     hc.CreatedOnUtc = DateTime.UtcNow;
-                    hc.AllowedCallsNumber = hc.AllowedCallsNumber == 0 ? 1024 : hc.AllowedCallsNumber;
+                    hc.AllowedCallsNumber = hc.AllowedCallsNumber == 0 ? 100 : hc.AllowedCallsNumber;
                     hc.CallsCounter = 0;
                 }
 
@@ -67,7 +67,13 @@ namespace Tethys.Server.Services.HttpCalls
 
         public void Reset()
         {
-            _httpCallRepository.FlushUnhandled();
+            var notHandledOrFlushed = _httpCallRepository.GetAll(hc => !hc.WasFullyHandled && !hc.Flushed);
+            foreach (var nf in notHandledOrFlushed)
+            {
+                nf.FlushedOnUtc = DateTime.UtcNow;
+                nf.Flushed = true;
+                _httpCallRepository.Update(nf);
+            }
         }
 
     }

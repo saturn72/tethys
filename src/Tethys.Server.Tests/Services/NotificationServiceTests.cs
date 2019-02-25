@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Moq;
 using Shouldly;
-using Tethys.Server.DbModel.Repositories;
+using Tethys.Server.DbModel;
 using Tethys.Server.Hubs;
 using Tethys.Server.Models;
 using Tethys.Server.Services.Notifications;
@@ -28,7 +28,7 @@ namespace Tethys.Server.Tests.Services
         [MemberData(nameof(NotificationService_Notifyt_EmptyCollection_Data))]
         public async Task NotificationService_Notify_EmptyCollection(IEnumerable<PushNotification> notifications)
         {
-            var nRepo = new Mock<INotificationRepository>();
+            var nRepo = new Mock<IRepository<PushNotification>>();
             var ns = new NotificationService(null, nRepo.Object);
             await ns.NotifyAsync(notifications);
             nRepo.Verify(n => n.Create(It.IsAny<IEnumerable<PushNotification>>()), Times.Never);
@@ -51,7 +51,7 @@ namespace Tethys.Server.Tests.Services
             };
 
             var np = new Mock<INotificationPublisher>();
-            var nRepo = new Mock<INotificationRepository>();
+            var nRepo = new Mock<IRepository<PushNotification>>();
             var ns = new NotificationService(np.Object, nRepo.Object);
             await ns.NotifyAsync(notifications);
 
@@ -74,7 +74,7 @@ namespace Tethys.Server.Tests.Services
     }
     public class NotificationServiceTestObject : NotificationService
     {
-        public NotificationServiceTestObject(INotificationPublisher publisher, INotificationRepository notificationRepository)
+        public NotificationServiceTestObject(INotificationPublisher publisher, IRepository<PushNotification> notificationRepository)
         : base(publisher, notificationRepository)
         {
         }

@@ -8,8 +8,8 @@ namespace Tethys.Server.Models
         [Required] public Request Request { get; set; }
         [Required] public Response Response { get; set; }
 
-        public int AllowedCallsNumber { get; set; }
-        public int CallsCounter { get; set; }
+        public ulong AllowedCallsNumber { get; set; }
+        public ulong CallsCounter { get; set; }
 
         public bool WasFullyHandled { get; set; }
         public DateTime? HandledOnUtc { get; set; }

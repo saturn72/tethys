@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using ServiceStack;
 using ServiceStack.Text;
-using Tethys.Server.DbModel.Repositories;
+using Tethys.Server.DbModel;
 using Tethys.Server.Hubs;
 using Tethys.Server.Models;
 
@@ -15,10 +15,10 @@ namespace Tethys.Server.Services.Notifications
     public class NotificationService : INotificationService
     {
         protected static CancellationTokenSource _notificationsCancelationTokenSource;
-        private readonly INotificationRepository _notificationRepository;
+        private readonly IRepository<PushNotification> _notificationRepository;
         private readonly INotificationPublisher _publisher;
 
-        public NotificationService(INotificationPublisher publisher, INotificationRepository notificationRepository)
+        public NotificationService(INotificationPublisher publisher, IRepository<PushNotification> notificationRepository)
         {
             _publisher = publisher;
             _notificationRepository = notificationRepository;

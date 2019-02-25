@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
-using Tethys.Server.DbModel.Repositories;
-using Tethys.Server.DbModel.Repositories.LiteDb;
+using Tethys.Server.DbModel;
 using Tethys.Server.Services;
 using Tethys.Server.Services.Notifications;
 using Tethys.Server.Hubs;
@@ -17,6 +16,8 @@ using Tethys.Server.Middlewares;
 using Microsoft.Extensions.FileProviders;
 using Tethys.Server.Swagger;
 using Tethys.Server.Services.HttpCalls;
+using LiteDB;
+using Tethys.Server.Models;
 
 namespace Tethys.Server
 {
@@ -86,17 +87,30 @@ namespace Tethys.Server
                     c.IncludeXmlComments(xmlPath);
             });
 
-            var dbName = Configuration["tethysConfig:liteDb:name"];
-            services.AddTransient(sr => new UnitOfWorkLiteDb(dbName));
+            AddLiteDb(services, Configuration);
             services.AddTransient<IHttpCallService, HttpCallService>();
-            services.AddTransient<IHttpCallRepository, HttpCallRepositoryLiteDb>();
-            services.AddTransient<INotificationRepository, NotificationRepositoryLiteDb>();
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<INotificationPublisher, NotificationPublisher>();
             services.AddSingleton<IFileUploadManager, FileUploadManager>();
 
             services.AddSingleton<IRequestResponseCoupleService, RequestResponseCoupleService>();
-            services.AddTransient<IRequestResponseCoupleRepository, RequestResponseCoupleRepositoryLiteDb>();
+        }
+
+        private void AddLiteDb(IServiceCollection services, IConfiguration configuration)
+        {
+            var dbName = Configuration["tethysConfig:liteDb:name"];
+
+            using (var db = new LiteDatabase(dbName))
+            {
+                db.GetCollection<HttpCall>().EnsureIndex("Request.Resource");
+                db.GetCollection<HttpCall>().Delete(q => true);
+
+                db.GetCollection<PushNotification>().EnsureIndex("Key");
+                db.GetCollection<RequestResponseCouple>().EnsureIndex("Request.Resource");
+            }
+            services.AddTransient<IRepository<HttpCall>>(sr => new LiteDbRepository<HttpCall>(dbName));
+            services.AddTransient<IRepository<RequestResponseCouple>>(sr => new LiteDbRepository<RequestResponseCouple>(dbName));
+            services.AddTransient<IRepository<PushNotification>>(sr => new LiteDbRepository<PushNotification>(dbName));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
