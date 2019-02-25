@@ -46,7 +46,7 @@ namespace Tethys.Server.Services.HttpCalls
             return httpCall;
         }
 
-        public async Task CreateOrUpdateHttpCalls(IEnumerable<HttpCall> httpCalls)
+        public async Task Create(IEnumerable<HttpCall> httpCalls)
         {
             if (httpCalls == null || !httpCalls.Any())
                 return;
@@ -67,13 +67,14 @@ namespace Tethys.Server.Services.HttpCalls
 
         public void Reset()
         {
-            var notHandledOrFlushed = _httpCallRepository.GetAll(hc => !hc.WasFullyHandled && !hc.Flushed);
-            foreach (var nf in notHandledOrFlushed)
-            {
-                nf.FlushedOnUtc = DateTime.UtcNow;
-                nf.Flushed = true;
-                _httpCallRepository.Update(nf);
-            }
+            _httpCallRepository.DeleteAll();
+            // var notHandledOrFlushed = _httpCallRepository.GetAll(hc => !hc.WasFullyHandled && !hc.Flushed);
+            // foreach (var nf in notHandledOrFlushed)
+            // {
+            //     nf.FlushedOnUtc = DateTime.UtcNow;
+            //     nf.Flushed = true;
+            //     _httpCallRepository.Update(nf);
+            // }
         }
 
     }

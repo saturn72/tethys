@@ -25,7 +25,7 @@ namespace Tethys.Server.Services
                 var cur = JsonSerializer.DeserializeFromStream<HttpCallSequence>(s);
                 s.Dispose();
                 _notificationService.NotifyAsync(cur.PushNotifications);
-                await _httpCallService.CreateOrUpdateHttpCalls(cur.HttpCalls);
+                await _httpCallService.Create(cur.HttpCalls);
             }
         }
     }
