@@ -25,18 +25,19 @@ namespace Tethys.Server.Services.HttpCalls
         {
             var filter = new Func<HttpCall, bool>(hc =>
             {
-                var res = !hc.Flushed &&
-                !hc.WasFullyHandled &&
+                var res = Regex.IsMatch(request.Resource, hc.Request.Resource, RegexOptions.IgnoreCase) &&
                 hc.Request.HttpMethod.Split('|').Any(hm => hm.Trim().Equals(request.HttpMethod, StringComparison.InvariantCultureIgnoreCase)) &&
-                Regex.IsMatch(request.Resource, hc.Request.Resource, RegexOptions.IgnoreCase);
+                !hc.Flushed &&
+                !hc.WasFullyHandled;
 
                 return res;
             });
 
             var filteredHC = _httpCallRepository.GetAll(filter);
-            var httpCall = filteredHC.FirstOrDefault();
-            if (httpCall == null)
+            if (filteredHC == null || !filteredHC.Any())
                 return null;
+
+            var httpCall = filteredHC.OrderByDescending(h => h.Id).First();
             // await ReportViaWebSocket(httpCall.Request, httpCall.Request);
             httpCall.CallsCounter++;
             httpCall.WasFullyHandled = httpCall.CallsCounter == httpCall.AllowedCallsNumber;
@@ -57,7 +58,7 @@ namespace Tethys.Server.Services.HttpCalls
                 {
                     hc.WasFullyHandled = false;
                     hc.CreatedOnUtc = DateTime.UtcNow;
-                    hc.AllowedCallsNumber = hc.AllowedCallsNumber == 0 ? 100 : hc.AllowedCallsNumber;
+                    hc.AllowedCallsNumber = hc.AllowedCallsNumber == 0 ? 1 : hc.AllowedCallsNumber;
                     hc.CallsCounter = 0;
                 }
 
